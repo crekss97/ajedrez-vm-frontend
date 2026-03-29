@@ -1,0 +1,173 @@
+<main class="home-page">
+  <section class="featured-carousel">
+    @if (eventoPrincipal(); as evento) {
+      <div class="featured-carousel__frame">
+        @if (totalSlides() > 1) {
+          <button
+            type="button"
+            class="carousel-arrow carousel-arrow--left"
+            aria-label="Ver evento destacado anterior"
+            (click)="showPreviousSlide()"
+          >
+            <span>&lsaquo;</span>
+          </button>
+        }
+
+        <a class="featured-event-card" [routerLink]="['/eventos', evento.slug]">
+        <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+        <div class="featured-event-card__overlay">
+          <div class="featured-event-card__topbar">
+            <span class="badge">Destacado</span>
+          </div>
+          <h2>{{ evento.titulo }}</h2>
+          <p>{{ evento.descripcionCorta }}</p>
+          <div class="featured-event-card__meta">
+            <span>{{ evento.fechaInicio | date: 'fullDate' }}</span>
+            <span>{{ evento.ubicacion }}</span>
+          </div>
+        </div>
+        </a>
+
+        @if (totalSlides() > 1) {
+          <button
+            type="button"
+            class="carousel-arrow carousel-arrow--right"
+            aria-label="Ver siguiente evento destacado"
+            (click)="showNextSlide()"
+          >
+            <span>&rsaquo;</span>
+          </button>
+        }
+      </div>
+
+      @if (totalSlides() > 1) {
+        <div class="featured-carousel__dots" aria-label="Selector de eventos destacados">
+            @for (eventoDestacado of eventosDestacados(); track eventoDestacado.id; let index = $index) {
+              <button
+                type="button"
+                class="carousel-dot"
+                [class.carousel-dot--active]="index === activeSlideIndex()"
+                [attr.aria-label]="'Ver destacado ' + (index + 1)"
+                (click)="goToSlide(index)"
+              ></button>
+            }
+        </div>
+      }
+
+    }
+  </section>
+
+  <section class="content-sections">
+    <div class="events-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Eventos publicados</span>
+          <h2>Eventos visibles para el visitante</h2>
+        </div>
+      </div>
+
+      @if (mostrarError()) {
+        <div class="feedback-card feedback-card--error">
+          No se pudieron cargar los eventos. Verifica que el backend este corriendo en
+          <strong>http://localhost:3000</strong>.
+        </div>
+      } @else if (!eventos().length) {
+        <div class="feedback-card">
+          Todavia no hay eventos publicados. Cuando agregues uno desde el editor, va a aparecer aca.
+        </div>
+      } @else {
+        <div class="events-grid">
+          @for (evento of eventos(); track evento.id) {
+            <a class="event-card" [routerLink]="['/eventos', evento.slug]">
+              <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+              <div class="event-card__content">
+                <div class="event-card__header">
+                  <span class="badge badge--subtle">{{ evento.categoria }}</span>
+                  <span class="event-card__price">{{ evento.precio }}</span>
+                </div>
+                <h3>{{ evento.titulo }}</h3>
+                <p>{{ evento.descripcionCorta }}</p>
+                <div class="event-card__details">
+                  <span>{{ evento.fechaInicio | date: 'mediumDate' }}</span>
+                  <span>{{ evento.modalidad }}</span>
+                </div>
+                <div class="event-card__location">
+                  <span>{{ evento.ubicacion }}</span>
+                  <span class="event-card__link">Ver detalle</span>
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    <aside class="popular-section">
+      <div class="popular-section__sticky">
+        <span class="eyebrow eyebrow--soft">Entradas populares</span>
+        <h2>Eventos mas consultados</h2>
+
+        @if (!entradasPopulares().length) {
+          <div class="feedback-card">Aun no hay consultas registradas para mostrar aca.</div>
+        } @else {
+          <div class="popular-list">
+            @for (evento of entradasPopulares(); track evento.id) {
+              <a class="popular-card" [routerLink]="['/eventos', evento.slug]">
+                <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+                <div class="popular-card__content">
+                  <span class="popular-card__views">{{ evento.views }} consultas</span>
+                  <h3>{{ evento.titulo }}</h3>
+                  <p>{{ evento.fechaInicio | date: 'mediumDate' }}</p>
+                </div>
+              </a>
+            }
+          </div>
+        }
+      </div>
+    </aside>
+  </section>
+
+  <section class="events-section events-section--legacy">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Publicados</span>
+        <h2>Eventos visibles para el visitante</h2>
+      </div>
+    </div>
+
+    @if (mostrarError()) {
+      <div class="feedback-card feedback-card--error">
+        No se pudieron cargar los eventos. Verificá que el backend esté corriendo en
+        <strong>http://localhost:3000</strong>.
+      </div>
+    } @else if (!eventos().length) {
+      <div class="feedback-card">
+        Todavía no hay eventos publicados. Cuando agregues uno desde el editor, va a aparecer acá.
+      </div>
+    } @else {
+      <div class="events-grid">
+        @for (evento of eventos(); track evento.id) {
+          <a class="event-card" [routerLink]="['/eventos', evento.slug]">
+            <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+            <div class="event-card__content">
+              <div class="event-card__header">
+                <span class="badge badge--subtle">{{ evento.categoria }}</span>
+                <span class="event-card__price">{{ evento.precio }}</span>
+              </div>
+              <h3>{{ evento.titulo }}</h3>
+              <p>{{ evento.descripcionCorta }}</p>
+              <div class="event-card__details">
+                <span>{{ evento.fechaInicio | date: 'mediumDate' }}</span>
+                <span>{{ evento.modalidad }}</span>
+              </div>
+              <div class="event-card__location">
+                <span>{{ evento.ubicacion }}</span>
+                <span class="event-card__link">Ver detalle</span>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </section>
+</main>
