@@ -68,8 +68,8 @@
 
       @if (mostrarError()) {
         <div class="feedback-card feedback-card--error">
-          No se pudieron cargar los eventos. Verifica que el backend este corriendo en
-          <strong>http://localhost:3000</strong>.
+          No se pudieron cargar los eventos. Verifica que el backend este disponible y que la URL
+          configurada para la API sea correcta.
         </div>
       } @else if (!eventos().length) {
         <div class="feedback-card">
@@ -137,8 +137,8 @@
 
     @if (mostrarError()) {
       <div class="feedback-card feedback-card--error">
-        No se pudieron cargar los eventos. Verificá que el backend esté corriendo en
-        <strong>http://localhost:3000</strong>.
+        No se pudieron cargar los eventos. Verifica que el backend este disponible y que la URL
+        configurada para la API sea correcta.
       </div>
     } @else if (!eventos().length) {
       <div class="feedback-card">

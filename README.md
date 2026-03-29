@@ -1,59 +1,72 @@
-# AjedrezVm
+# Ajedrez VM Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.9.
+Frontend Angular para visualizar los eventos publicados por el backend.
 
-## Development server
+## Scripts
 
-To start a local development server, run:
+- `npm install`
+- `npm start`
+- `npm run build`
+- `npm test`
 
-```bash
-ng serve
+## Desarrollo local
+
+El frontend corre por defecto en `http://localhost:4200`.
+
+La URL de la API se toma desde `runtime-config.js`. Para desarrollo local, el valor por defecto es:
+
+```txt
+http://localhost:3000/api
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Variables de entorno
 
-## Code scaffolding
+Revisa [`.env.example`](C:\valentin\Proyectos\ajedrez-vm\ajedrez-vm-frontend\.env.example).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- `NG_APP_API_URL`: URL pública del backend incluyendo `/api`.
 
-```bash
-ng generate component component-name
+Ejemplo:
+
+```env
+NG_APP_API_URL=https://tu-backend.vercel.app/api
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Build
+
+Antes del build se genera automáticamente `public/runtime-config.js` usando la variable `NG_APP_API_URL`.
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+Si no defines la variable, el build usa `http://localhost:3000/api`.
 
-To build the project run:
+## Despliegue en Vercel
 
-```bash
-ng build
+El proyecto ya tiene configuración para SPA en [vercel.json](C:\valentin\Proyectos\ajedrez-vm\ajedrez-vm-frontend\vercel.json).
+
+### Configuración recomendada
+
+1. Crea un proyecto de Vercel apuntando a esta carpeta.
+2. Agrega la variable `NG_APP_API_URL` con la URL del backend desplegado.
+3. Despliega o vuelve a desplegar.
+
+Ejemplo:
+
+```env
+NG_APP_API_URL=https://tu-backend.vercel.app/api
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Conexión con el backend desplegado
 
-## Running unit tests
+Para que el frontend se conecte correctamente:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+1. Despliega primero el backend.
+2. Copia su URL pública.
+3. Configura `NG_APP_API_URL` en el frontend con esa URL terminada en `/api`.
+4. Asegúrate de que el backend tenga permitido el origen del frontend mediante `ALLOWED_ORIGINS`.
 
-```bash
-ng test
-```
+## Git y archivos `.env`
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `.env` sí debe estar ignorado.
+- `.env.example` no debe ir al `.gitignore`, porque documenta qué variables necesita el proyecto.
