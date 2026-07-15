@@ -1,0 +1,102 @@
+.editor-login-page {
+  min-height: calc(100vh - 88px);
+  padding: clamp(1rem, 4vw, 3rem) 1rem 5rem;
+  background:
+    radial-gradient(circle at top left, rgba(185, 212, 122, 0.22), transparent 22rem),
+    linear-gradient(145deg, #f2efe7 0%, #e8eee7 52%, #f7f4ed 100%);
+}
+
+.editor-login-card {
+  width: min(560px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 1.25rem;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: var(--shadow-soft);
+}
+
+.editor-login-card__eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  color: #f6fbff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.editor-login-card h1,
+.mock-access h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-family: Georgia, 'Times New Roman', serif;
+  letter-spacing: -0.04em;
+}
+
+.editor-login-card p,
+.mock-access p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.mock-access {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1rem 1.1rem;
+  border-radius: 1.2rem;
+  background: var(--surface-soft);
+}
+
+.editor-login-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.editor-login-form label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.editor-login-form span {
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.editor-login-form input {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 1rem;
+  background: #fff;
+  color: var(--text-main);
+  font: inherit;
+}
+
+.editor-login-form button {
+  padding: 1rem 1.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--text-main);
+  color: #f6fbff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.editor-login-form button:hover {
+  background: var(--accent-primary-strong);
+  transform: translateY(-2px);
+}
+
+.editor-login-form__error {
+  color: #a43e3e;
+  font-weight: 700;
+}

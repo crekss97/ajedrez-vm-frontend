@@ -1,0 +1,36 @@
+<main class="editor-login-page">
+  <section class="editor-login-card">
+    <div class="editor-login-card__intro">
+      <span class="editor-login-card__eyebrow">Acceso editorial</span>
+      <h1>Ingreso del editor</h1>
+      <p>
+        Por ahora este acceso está mockeado para preparar el flujo de creación de eventos antes de
+        conectar base de datos y autenticación real.
+      </p>
+    </div>
+
+    <div class="mock-access">
+      <h2>Credenciales mock</h2>
+      <p><strong>Email:</strong> {{ mockEmail }}</p>
+      <p><strong>Password:</strong> {{ mockPassword }}</p>
+    </div>
+
+    <form class="editor-login-form" [formGroup]="loginForm" (ngSubmit)="submit()">
+      <label>
+        <span>Email</span>
+        <input type="email" formControlName="email" placeholder="editor@ajedrezvm.com" />
+      </label>
+
+      <label>
+        <span>Password</span>
+        <input type="password" formControlName="password" placeholder="Ingresa la clave mock" />
+      </label>
+
+      @if (loginError()) {
+        <p class="editor-login-form__error">{{ loginError() }}</p>
+      }
+
+      <button type="submit">Entrar al editor</button>
+    </form>
+  </section>
+</main>

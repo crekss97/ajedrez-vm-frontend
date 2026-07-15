@@ -1,0 +1,18 @@
+@if (links().length) {
+  <aside class="links-section">
+    <div class="links-section__sticky">
+      <span class="eyebrow eyebrow--soft">Links destacados</span>
+      <h2>Accesos rápidos editoriales</h2>
+      <p class="links-section__intro">Links definidos por el editor para destacar sitios externos.</p>
+
+      <div class="links-list">
+        @for (link of links(); track link.id) {
+          <a [href]="link.url" target="_blank" rel="noopener noreferrer">
+            <span>{{ link.titulo }}</span>
+            <strong>Abrir</strong>
+          </a>
+        }
+      </div>
+    </div>
+  </aside>
+}

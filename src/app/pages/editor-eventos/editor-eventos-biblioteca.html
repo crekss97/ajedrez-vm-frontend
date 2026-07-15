@@ -1,0 +1,48 @@
+<section class="library-page">
+  <div class="library-heading">
+    <div>
+      <span class="subpage-kicker">Contenido</span>
+      <h2>Biblioteca de eventos</h2>
+      <p>Revisá, editá y ordená las citas que construyen la agenda.</p>
+    </div>
+    <a class="library-primary" routerLink="/editor/eventos/nuevo">+ Crear evento</a>
+  </div>
+
+  @if (actionError()) { <p class="library-error" role="alert">{{ actionError() }}</p> }
+
+  <section class="library-card">
+    <div class="library-card__header">
+      <div><span class="library-eyebrow">Archivo editorial</span><h3>Todos los eventos</h3></div>
+      <span class="library-count">Actualizado desde la API</span>
+    </div>
+
+    @if (events$ | async; as events) {
+      @if (!events.length) {
+        <div class="library-empty">
+          <span class="library-empty__mark" aria-hidden="true">♞</span>
+          <h3>La biblioteca todavía está vacía</h3>
+          <p>Creá el primer evento para empezar a darle forma a la agenda.</p>
+          <a class="library-primary" routerLink="/editor/eventos/nuevo">Crear primer evento</a>
+        </div>
+      } @else {
+        <div class="events-list">
+          @for (event of events; track event.id) {
+            <article class="event-row">
+              <div class="event-row__main">
+                <span class="event-status" [class.event-status--draft]="event.estadoEditorial === 'draft'">{{ event.estadoEditorial === 'published' ? 'Publicado' : 'Borrador' }}</span>
+                <h3>{{ event.titulo }}</h3>
+                <small>{{ event.categoria }} · {{ event.fechaInicio | date: 'mediumDate' }} · {{ event.views }} consultas</small>
+              </div>
+              <div class="event-row__actions">
+                <a [routerLink]="['/editor/eventos', event.id, 'editar']">Editar</a>
+                <button type="button" (click)="deleteEvent(event.id, event.titulo)">Eliminar</button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    } @else {
+      <app-editor-loading message="Cargando biblioteca..." />
+    }
+  </section>
+</section>

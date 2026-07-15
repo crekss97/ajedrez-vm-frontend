@@ -1,0 +1,27 @@
+<main class="editor-page">
+  <section class="editor-shell">
+    <nav class="editor-nav" aria-label="Secciones del editor">
+      <a routerLink="/editor" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="editor-nav__link--active">
+        <span class="editor-nav__index">01</span>
+        <span>Resumen</span>
+      </a>
+      <a routerLink="/editor/eventos" routerLinkActive="editor-nav__link--active">
+        <span class="editor-nav__index">02</span>
+        <span>Biblioteca</span>
+      </a>
+      <a routerLink="/editor/metricas" routerLinkActive="editor-nav__link--active">
+        <span class="editor-nav__index">03</span>
+        <span>Métricas</span>
+      </a>
+      <a routerLink="/editor/enlaces" routerLinkActive="editor-nav__link--active">
+        <span class="editor-nav__index">04</span>
+        <span>Enlaces</span>
+      </a>
+    </nav>
+
+    @if (navigating()) {
+      <div class="editor-route-loading"><app-editor-loading message="Abriendo sección..." /></div>
+    }
+    <router-outlet />
+  </section>
+</main>

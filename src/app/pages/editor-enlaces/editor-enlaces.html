@@ -1,0 +1,18 @@
+<section class="editor-subpage">
+  <div class="subpage-heading"><div><span class="subpage-kicker">Navegación</span><h2>Enlaces destacados</h2><p>Sumá accesos útiles para acompañar la agenda desde la home.</p></div></div>
+  <div class="links-layout">
+    <form class="editor-card" [formGroup]="linkForm" (ngSubmit)="saveLink()">
+      <div><span class="editor-card__eyebrow">{{ editingLink() ? 'Editar enlace' : 'Nuevo enlace' }}</span><h3>{{ editingLink() ? 'Actualizar acceso' : 'Agregar un acceso' }}</h3></div>
+      <label><span>Nombre del link</span><input type="text" formControlName="titulo" placeholder="Blog de ajedrez" /></label>
+      <label><span>URL</span><input type="url" formControlName="url" placeholder="https://tu-sitio.com" /></label>
+      <div class="form-actions">@if (editingLink()) { <button class="editor-cancel" type="button" (click)="cancelEdit()">Cancelar</button> } <button class="editor-submit" type="submit">{{ editingLink() ? 'Actualizar enlace' : 'Guardar enlace' }}</button></div>
+      @if (saveError()) { <p class="form-error">{{ saveError() }}</p> }
+    </form>
+    <section class="editor-card links-list-card">
+      <div><span class="editor-card__eyebrow">Biblioteca actual</span><h3>Enlaces publicados</h3></div>
+       @if (loading()) { <app-editor-loading message="Cargando enlaces..." /> } @else if (loadError()) { <p class="form-error">{{ loadError() }}</p> } @else if (!sidebarLinks().length) { <p class="editor-empty">Todavía no hay enlaces definidos.</p> } @else {
+        <div class="links-list">@for (link of sidebarLinks(); track link.id) { <article class="link-row"><div><strong>{{ link.titulo }}</strong><small>{{ link.url }}</small></div><div class="link-row__actions"><time>{{ link.createdAt | date: 'mediumDate' }}</time><button type="button" (click)="startEdit(link)">Editar</button><button type="button" (click)="deleteLink(link)">Eliminar</button></div></article> }</div>
+      }
+    </section>
+  </div>
+</section>

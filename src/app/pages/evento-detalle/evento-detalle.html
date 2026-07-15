@@ -1,47 +1,48 @@
-<main class="detail-page">
+﻿<main class="detail-page">
   <div class="detail-shell">
-    <a class="back-link" routerLink="/">Volver a eventos</a>
+    <a class="back-link" routerLink="/">← Volver a la agenda</a>
 
     @if (mostrarError()) {
       <section class="state-card">
-        No se pudo cargar este evento. Verificá que exista o que el backend esté levantado.
+        No se pudo cargar este evento. Verifica que exista o que el backend esté disponible.
       </section>
     } @else if (!evento()) {
       <section class="state-card">Cargando detalle del evento...</section>
     } @else if (evento(); as evento) {
-      <section class="event-cover">
-        <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
-        <div class="event-cover__content">
-          <span class="badge">{{ evento.categoria }}</span>
+      <section class="event-intro">
+        <div class="event-intro__visual">
+          <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+        </div>
+        <div class="event-intro__content">
+          <div class="event-intro__eyebrow"><span class="badge">{{ evento.categoria }}</span><span class="event-intro__status">Agenda abierta</span></div>
           <h1>{{ evento.titulo }}</h1>
           <p>{{ evento.descripcionCorta }}</p>
+        </div>
+      </section>
 
-          <div class="event-cover__meta">
-            <article>
-              <span class="meta-label">Fecha</span>
-              <strong>{{ evento.fechaInicio | date: 'fullDate' }}</strong>
-            </article>
-            <article>
-              <span class="meta-label">Modalidad</span>
-              <strong>{{ evento.modalidad }}</strong>
-            </article>
-            <article>
-              <span class="meta-label">Ubicación</span>
-              <strong>{{ evento.ubicacion }}</strong>
-            </article>
-            <article>
-              <span class="meta-label">Valor</span>
-              <strong>{{ evento.precio }}</strong>
-            </article>
-          </div>
+      <section class="important-facts" aria-labelledby="important-facts-title">
+        <div class="section-heading">
+          <div><span class="panel-label">Para decidir rápido</span><h2 id="important-facts-title">Datos importantes</h2></div>
+          <span class="section-heading__rule" aria-hidden="true"></span>
+        </div>
+        <div class="facts-grid">
+          <article class="fact-card"><span class="fact-card__icon" aria-hidden="true">◷</span><div><span class="meta-label">Cuándo</span><strong>{{ evento.fechaInicio | date: 'EEE d MMM, y' }}</strong>@if (evento.fechaFin) { <small>Hasta {{ evento.fechaFin | date: 'short' }}</small> }</div></article>
+          <article class="fact-card"><span class="fact-card__icon" aria-hidden="true">⌖</span><div><span class="meta-label">Dónde</span><strong>{{ evento.ubicacion }}</strong></div></article>
+          <article class="fact-card"><span class="fact-card__icon" aria-hidden="true">♙</span><div><span class="meta-label">Modalidad</span><strong>{{ evento.modalidad }}</strong></div></article>
+          <article class="fact-card"><span class="fact-card__icon" aria-hidden="true">◇</span><div><span class="meta-label">Entrada</span><strong>{{ evento.precio }}</strong></div></article>
         </div>
       </section>
 
       <section class="detail-grid">
-        <article class="detail-panel">
-          <span class="panel-label">Sobre el evento</span>
-          <h2>Información completa</h2>
-          <p>{{ evento.descripcionLarga }}</p>
+          <article class="detail-panel detail-panel--description">
+          <span class="panel-label">El encuentro</span>
+          <h2>Todo lo que necesitás saber</h2>
+          <div class="detail-copy" [innerHTML]="evento.descripcionLarga"></div>
+          @if (evento.tags.length) {
+            <div class="tag-list" aria-label="Etiquetas del evento">
+              @for (tag of evento.tags; track tag) { <span>#{{ tag }}</span> }
+            </div>
+          }
         </article>
 
         <aside class="detail-panel detail-panel--aside">
@@ -67,6 +68,30 @@
               <dd>{{ evento.tags.join(' · ') }}</dd>
             </div>
           </dl>
+
+          @if (evento.linksExternos?.length) {
+            <div class="detail-links">
+            <span class="panel-label">Para participar</span>
+              <div class="detail-links__list">
+                @for (link of evento.linksExternos; track link.id) {
+                  <a [href]="link.url" target="_blank" rel="noopener noreferrer">
+                    <span>{{ link.titulo }}</span>
+                    <strong>Ver más ↗</strong>
+                  </a>
+                }
+              </div>
+            </div>
+          }
+          @if (evento.adjuntos?.length) {
+            <div class="detail-links">
+              <span class="panel-label">Documentos</span>
+              <div class="detail-links__list">
+                @for (adjunto of evento.adjuntos; track adjunto.id) {
+                  <a [href]="adjunto.url" target="_blank" rel="noopener noreferrer"><span>📎 {{ adjunto.nombre }}</span><strong>Abrir ↗</strong></a>
+                }
+              </div>
+            </div>
+          }
         </aside>
       </section>
     }

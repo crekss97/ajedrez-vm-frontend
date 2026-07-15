@@ -8,21 +8,33 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Evento } from '../../models/evento';
-import { EventosService } from '../../services/evento.service';
 import { RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
+import { EntradasPopularesComponent } from '../../components/entradas-populares/entradas-populares';
+import { EventosPublicadosListComponent } from '../../components/eventos-publicados-list/eventos-publicados-list';
+import { LinksDestacadosComponent } from '../../components/links-destacados/links-destacados';
+import { Evento } from '../../models/evento';
+import { SidebarLink } from '../../models/sidebar-link';
+import { EventosService } from '../../services/evento.service';
+import { SidebarLinksService } from '../../services/sidebar-links.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, DatePipe],
+  imports: [
+    RouterLink,
+    DatePipe,
+    EventosPublicadosListComponent,
+    EntradasPopularesComponent,
+    LinksDestacadosComponent,
+  ],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
   private readonly eventosService = inject(EventosService);
+  private readonly sidebarLinksService = inject(SidebarLinksService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly hasError = signal(false);
   protected readonly activeSlideIndex = signal(0);
@@ -47,6 +59,16 @@ export class Home {
     { initialValue: [] as Evento[] },
   );
 
+  protected readonly linksDestacados = toSignal(
+    this.sidebarLinksService.getLinks().pipe(
+      catchError(() => {
+        this.hasError.set(true);
+        return of([] as SidebarLink[]);
+      }),
+    ),
+    { initialValue: [] as SidebarLink[] },
+  );
+
   protected readonly eventosDestacados = computed(() => {
     const destacados = this.eventos().filter((evento) => evento.destacado);
     return destacados.length ? destacados : this.eventos().slice(0, 1);
@@ -63,13 +85,8 @@ export class Home {
     return destacados[normalizedIndex] ?? destacados[0];
   });
 
-  protected readonly otrosEventos = computed(() => {
-    const principal = this.eventoPrincipal();
-
-    return this.eventos().filter((evento) => evento.id !== principal?.id);
-  });
-
   protected readonly totalSlides = computed(() => this.eventosDestacados().length);
+  protected readonly mostrarError = this.hasError.asReadonly();
 
   constructor() {
     const intervalId = window.setInterval(() => {
@@ -80,8 +97,6 @@ export class Home {
       window.clearInterval(intervalId);
     });
   }
-
-  protected readonly mostrarError = this.hasError.asReadonly();
 
   protected goToSlide(index: number): void {
     const total = this.totalSlides();

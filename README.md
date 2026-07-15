@@ -2,6 +2,8 @@
 
 Frontend Angular para visualizar los eventos publicados por el backend.
 
+El editor editorial separa la gestión en tres vistas: `/editor/eventos` muestra la biblioteca, `/editor/eventos/nuevo` crea eventos y `/editor/eventos/:id/editar` permite editarlos.
+
 ## Scripts
 
 - `npm install`

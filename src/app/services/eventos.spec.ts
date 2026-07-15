@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
 
-import { Eventos } from './evento.service';
+import { EventosService } from './evento.service';
 
-describe('Eventos', () => {
-  let service: Eventos;
+describe('EventosService', () => {
+  let service: EventosService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Eventos);
+    TestBed.configureTestingModule({ providers: [provideHttpClient()] });
+    service = TestBed.inject(EventosService);
   });
 
   it('should be created', () => {
