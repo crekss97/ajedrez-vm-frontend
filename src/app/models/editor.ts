@@ -1,18 +1,11 @@
 import { Evento, EventoAdjunto, EventoEstadoEditorial, EventoLinkExterno, EventoModalidad } from './evento';
 
-export const MOCK_EDITOR_EMAIL = 'editor@ajedrezvm.com';
-export const MOCK_EDITOR_PASSWORD = 'editor123';
-
-export interface EditorCredentials {
-  email: string;
-  password: string;
-}
-
-export type EditorRole = 'editor';
+export type EditorRole = 'editor' | 'admin';
 
 export interface EditorSession {
+  id: string;
   email: string;
-  displayName: string;
+  displayName: string | null;
   role: EditorRole;
 }
 

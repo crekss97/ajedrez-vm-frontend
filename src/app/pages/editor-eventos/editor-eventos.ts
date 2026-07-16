@@ -6,7 +6,6 @@ import { QuillEditorComponent } from 'ngx-quill';
 import { finalize, take } from 'rxjs';
 import { EventoAdjunto, EventoEstadoEditorial, EventoModalidad } from '../../models/evento';
 import { EventoEditorDraft, EventoEditorInput } from '../../models/editor';
-import { EditorAuthService } from '../../services/editor-auth.service';
 import { EditorEventosService } from '../../services/editor-eventos.service';
 
 interface PendingAttachment {
@@ -27,14 +26,12 @@ interface PendingAttachment {
 export class EditorEventos {
   private readonly fb = inject(FormBuilder);
   private readonly editorEventosService = inject(EditorEventosService);
-  private readonly authService = inject(EditorAuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly maxFilesBytes = 4 * 1024 * 1024;
   private readonly maxAttachments = 5;
 
-  protected readonly session = this.authService.getSession();
   protected readonly minShortDescription = 20;
   protected readonly maxShortDescription = 180;
   protected readonly editingEvent = signal<EventoEditorDraft | null>(null);
@@ -103,10 +100,6 @@ export class EditorEventos {
   protected saveEvent(): void {
     this.formSubmitted.set(true);
 
-    if (!this.session) {
-      this.saveError.set('La sesión editorial no está disponible. Volvé a iniciar sesión.');
-      return;
-    }
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched();
       this.saveError.set('Revisá los campos marcados antes de guardar.');
@@ -133,7 +126,7 @@ export class EditorEventos {
     const pendingFiles = this.pendingAttachments().map((attachment) => attachment.file);
     const request = editingEvent
       ? this.editorEventosService.updateEvent(editingEvent.id, input, selectedImage, pendingFiles)
-      : this.editorEventosService.createEvent(input, this.session.email, selectedImage!, pendingFiles);
+      : this.editorEventosService.createEvent(input, selectedImage!, pendingFiles);
 
     this.saving.set(true);
     this.saveError.set('');

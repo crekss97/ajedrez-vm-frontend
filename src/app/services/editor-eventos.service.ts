@@ -9,11 +9,12 @@ import { EventoEditorDraft, EventoEditorInput } from '../models/editor';
 })
 export class EditorEventosService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${API_URL}/events`;
+  private readonly mutationsUrl = `${API_URL}/events`;
+  private readonly editorEventsUrl = `${API_URL}/editor/events`;
   private readonly refreshSubject = new BehaviorSubject<void>(undefined);
 
   readonly drafts$ = this.refreshSubject.pipe(
-    switchMap(() => this.http.get<EventoEditorDraft[]>(this.apiUrl)),
+    switchMap(() => this.http.get<EventoEditorDraft[]>(this.editorEventsUrl)),
     map((events) => events.map((event) => this.toEditorEvent(event))),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
@@ -23,13 +24,12 @@ export class EditorEventosService {
 
   createEvent(
     input: EventoEditorInput,
-    editorEmail: string,
     image: File,
     attachments: File[],
   ): Observable<EventoEditorDraft> {
-    const formData = this.toFormData({ ...input, creadoPor: editorEmail }, image, attachments);
+    const formData = this.toFormData(input, image, attachments);
 
-    return this.http.post<EventoEditorDraft>(this.apiUrl, formData).pipe(
+    return this.http.post<EventoEditorDraft>(this.mutationsUrl, formData).pipe(
       map((event) => this.toEditorEvent(event)),
       tap(() => this.refresh()),
     );
@@ -43,14 +43,14 @@ export class EditorEventosService {
   ): Observable<EventoEditorDraft> {
     const formData = this.toFormData(input, image, attachments);
 
-    return this.http.put<EventoEditorDraft>(`${this.apiUrl}/${id}`, formData).pipe(
+    return this.http.put<EventoEditorDraft>(`${this.mutationsUrl}/${id}`, formData).pipe(
       map((event) => this.toEditorEvent(event)),
       tap(() => this.refresh()),
     );
   }
 
   deleteEvent(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(tap(() => this.refresh()));
+    return this.http.delete<void>(`${this.mutationsUrl}/${id}`).pipe(tap(() => this.refresh()));
   }
 
   private refresh(): void {
@@ -73,7 +73,7 @@ export class EditorEventosService {
   }
 
   private toFormData(
-    input: EventoEditorInput & { creadoPor?: string },
+    input: EventoEditorInput,
     image: File | null,
     attachments: File[],
   ): FormData {

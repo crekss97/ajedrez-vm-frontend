@@ -1,50 +1,72 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MOCK_EDITOR_EMAIL, MOCK_EDITOR_PASSWORD } from '../../models/editor';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { take } from 'rxjs';
 import { EditorAuthService } from '../../services/editor-auth.service';
+
+const LOGIN_ERRORS: Record<string, string> = {
+  access_denied: 'Google no autorizó el acceso. Podés intentarlo nuevamente cuando quieras.',
+  not_allowed: 'Esta cuenta no tiene permisos editoriales en Ajedrez VM.',
+  oauth_failed: 'Google no pudo completar la autenticación. Intentá nuevamente en unos instantes.',
+  session_expired: 'Tu sesión editorial venció. Volvé a ingresar para continuar.',
+  logout_failed: 'La sesión local se cerró, pero el servidor no pudo confirmar la operación.',
+};
 
 @Component({
   selector: 'app-editor-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [RouterLink],
   templateUrl: './editor-login.html',
   styleUrl: './editor-login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditorLogin {
-  private readonly authService = inject(EditorAuthService);
+  private readonly auth = inject(EditorAuthService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly errorCode = this.route.snapshot.queryParamMap.get('error');
+  private readonly returnUrl = validEditorReturnUrl(
+    this.route.snapshot.queryParamMap.get('returnUrl'),
+  );
 
-  protected readonly loginError = signal('');
-  protected readonly mockEmail = MOCK_EDITOR_EMAIL;
-  protected readonly mockPassword = MOCK_EDITOR_PASSWORD;
+  protected readonly redirecting = signal(false);
+  protected readonly checkingSession = signal(true);
+  protected readonly errorMessage = this.errorCode
+    ? LOGIN_ERRORS[this.errorCode]
+      ?? `El servidor informó el error “${this.errorCode}”. Podés intentar el ingreso nuevamente.`
+    : '';
 
-  protected readonly loginForm = new FormGroup({
-    email: new FormControl(MOCK_EDITOR_EMAIL, {
-      nonNullable: true,
-      validators: [Validators.required, Validators.email],
-    }),
-    password: new FormControl(MOCK_EDITOR_PASSWORD, {
-      nonNullable: true,
-      validators: [Validators.required, Validators.minLength(6)],
-    }),
-  });
+  constructor() {
+    this.auth.ensureSession().pipe(take(1)).subscribe((session) => {
+      if (session) {
+        void this.router.navigateByUrl(this.returnUrl ?? '/editor');
+        return;
+      }
 
-  protected submit(): void {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
+      this.checkingSession.set(false);
+    });
+  }
+
+  protected authenticate(): void {
+    this.redirecting.set(true);
+    this.auth.startGoogleLogin(this.returnUrl);
+  }
+}
+
+function validEditorReturnUrl(value: string | null): string | undefined {
+  if (!value || !value.startsWith('/') || value.startsWith('//') || value.includes('\\')) {
+    return undefined;
+  }
+
+  try {
+    const url = new URL(value, window.location.origin);
+    if (
+      url.origin !== window.location.origin
+      || (url.pathname !== '/editor' && !url.pathname.startsWith('/editor/'))
+    ) {
+      return undefined;
     }
-
-    const success = this.authService.login(this.loginForm.getRawValue());
-
-    if (!success) {
-      this.loginError.set('Las credenciales mock no coinciden. Usa las que figuran en pantalla.');
-      return;
-    }
-
-    this.loginError.set('');
-    void this.router.navigate(['/editor']);
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return undefined;
   }
 }

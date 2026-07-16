@@ -7,6 +7,7 @@
         </a>
       </div>
 
+      @if (editorSession(); as session) {
       <div class="profile-menu">
         <button
           type="button"
@@ -28,35 +29,22 @@
 
         @if (profileMenuOpen()) {
           <div class="profile-menu__panel" role="menu">
-            @if (editorSession(); as session) {
               <div class="profile-menu__identity">
                 <span class="profile-menu__status">Sesión activa</span>
-                <strong>{{ session.displayName }}</strong>
+                <strong>{{ session.displayName || session.email }}</strong>
                 <small>{{ session.email }}</small>
               </div>
-              @if (session.role === 'editor') {
-                <a class="profile-menu__item profile-menu__item--featured" routerLink="/editor" role="menuitem" (click)="closeProfileMenu()">
-                  <span>Panel editorial</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              }
+              <a class="profile-menu__item profile-menu__item--featured" routerLink="/editor" role="menuitem" (click)="closeProfileMenu()">
+                <span>Panel editorial</span>
+                <span aria-hidden="true">↗</span>
+              </a>
               <button type="button" class="profile-menu__item profile-menu__item--button" role="menuitem" (click)="logout()">
                 Cerrar sesión
               </button>
-            } @else {
-              <div class="profile-menu__identity">
-                <span class="profile-menu__status">Acceso privado</span>
-                <strong>Gestiona la agenda</strong>
-                <small>Ingresa con un perfil editorial.</small>
-              </div>
-              <a class="profile-menu__item profile-menu__item--featured" routerLink="/editor/login" role="menuitem" (click)="closeProfileMenu()">
-                <span>Entrar al editor</span>
-                <span aria-hidden="true">↗</span>
-              </a>
-            }
           </div>
         }
       </div>
+      }
     </div>
   </header>
 
@@ -73,7 +61,7 @@
 
       <nav class="site-footer__nav" aria-label="Navegación del pie de página">
         <a routerLink="/">Eventos</a>
-        <a routerLink="/editor/login">Acceso editorial</a>
+        <a routerLink="/login">Acceso editorial</a>
       </nav>
 
       <div class="site-footer__socials">

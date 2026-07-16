@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const defaultApiUrl = 'http://localhost:3000/api';
+const defaultApiUrl = '/api';
 const apiUrl = process.env.NG_APP_API_URL || defaultApiUrl;
 const runtimeConfigPath = resolve(process.cwd(), 'public', 'runtime-config.js');
 

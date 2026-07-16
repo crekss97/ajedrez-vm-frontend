@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { EditorAuthService } from './services/editor-auth.service';
 
@@ -17,14 +16,16 @@ export class App {
   protected readonly title = signal('Ajedrez VM');
   protected readonly profileMenuOpen = signal(false);
   protected readonly currentYear = new Date().getFullYear();
-  protected readonly editorSession = toSignal(this.authService.session$, {
-    initialValue: this.authService.getSession(),
-  });
+  protected readonly editorSession = this.authService.session;
   protected readonly socialLinks = [
     { label: 'Instagram', href: 'https://instagram.com', icon: 'instagram' },
     { label: 'X', href: 'https://x.com', icon: 'x' },
     { label: 'YouTube', href: 'https://youtube.com', icon: 'youtube' },
   ] as const;
+
+  constructor() {
+    this.authService.ensureSession().subscribe();
+  }
 
   protected toggleProfileMenu(): void {
     this.profileMenuOpen.update((isOpen) => !isOpen);
@@ -49,8 +50,12 @@ export class App {
   }
 
   protected logout(): void {
-    this.authService.logout();
     this.closeProfileMenu();
-    void this.router.navigate(['/']);
+    this.authService.logout().subscribe({
+      next: () => void this.router.navigate(['/']),
+      error: () => void this.router.navigate(['/login'], {
+        queryParams: { error: 'logout_failed' },
+      }),
+    });
   }
 }

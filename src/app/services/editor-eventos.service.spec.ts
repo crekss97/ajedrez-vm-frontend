@@ -40,13 +40,13 @@ describe('EditorEventosService', () => {
     const image = new File(['imagen'], 'portada.jpg', { type: 'image/jpeg' });
     const pdf = new File(['%PDF-1.7'], 'bases.pdf', { type: 'application/pdf' });
 
-    service.createEvent(input, 'editor@ajedrezvm.com', image, [pdf]).subscribe();
+    service.createEvent(input, image, [pdf]).subscribe();
 
     const request = httpTesting.expectOne((candidate) => candidate.url.endsWith('/events'));
     const formData = request.request.body as FormData;
     const eventData = JSON.parse(String(formData.get('evento')));
     expect(request.request.method).toBe('POST');
-    expect(eventData.creadoPor).toBe('editor@ajedrezvm.com');
+    expect(eventData.creadoPor).toBeUndefined();
     expect((formData.get('imagen') as File).name).toBe('portada.jpg');
     expect((formData.getAll('adjuntos')[0] as File).name).toBe('bases.pdf');
     request.flush({
@@ -59,5 +59,13 @@ describe('EditorEventosService', () => {
       creadoPor: 'editor@ajedrezvm.com',
       actualizadoEn: '2026-07-15T00:00:00.000Z',
     });
+  });
+
+  it('consulta la colección privada del editor', () => {
+    service.drafts$.subscribe();
+
+    const request = httpTesting.expectOne((candidate) => candidate.url.endsWith('/editor/events'));
+    expect(request.request.method).toBe('GET');
+    request.flush([]);
   });
 });

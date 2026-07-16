@@ -10,16 +10,18 @@
 
 ## Configuración
 
-- La URL de API se obtiene de `window.__APP_CONFIG__.apiUrl`, generado desde `NG_APP_API_URL`; si falta, se usa `http://localhost:3000/api`.
-- Para despliegues, `NG_APP_API_URL` debe incluir el sufijo `/api`; configura primero el backend y su CORS (`ALLOWED_ORIGINS`).
-- `vercel.json` publica `dist/ajedrez-vm/browser` y redirige todas las rutas a `index.html` porque la aplicación es una SPA.
+- La URL de API se obtiene de `window.__APP_CONFIG__.apiUrl`; si falta, usa `/api`.
+- Mantener API mismo origen: `proxy.conf.json` reenvía `/api` en local y `vercel.json` lo reescribe al backend en producción. No configurar el dominio backend directo porque rompería las cookies OAuth.
+- `vercel.json` debe conservar el rewrite `/api/:path*` antes del fallback SPA a `index.html`.
 
 ## Arquitectura
 
 - Es una única aplicación Angular standalone; la entrada es `src/main.ts`, la configuración global está en `src/app/app.config.ts` y las rutas en `src/app/app.routes.ts`.
 - La parte pública consume `/events` y `/sidebar-links` mediante los servicios en `src/app/services`.
 - `EventosService` combina eventos de la API con eventos editoriales publicados; las consultas de eventos de la API fallan de forma tolerante a una lista vacía.
-- El panel `/editor` está protegido por `editor-auth.guard`; su autenticación es mock y la sesión persiste en `localStorage`, mientras que la gestión editorial usa la API.
+- `/login` muestra el acceso editorial y solo inicia Google después del clic explícito. `EditorAuthService` obtiene `/auth/me`; no guardar tokens o sesiones en `localStorage`. El guard de `/editor` valida la sesión remota y preserva `returnUrl`.
+- La cookie es `HttpOnly`; todas las peticiones API usan `withCredentials` mediante el interceptor. Un `401` editorial vuelve a `/login`.
+- Las lecturas públicas usan `/events` y solo reciben `published`; el editor usa `/editor/events` para incluir borradores.
 - Dentro del editor, `/editor/eventos` es la biblioteca; `/editor/eventos/nuevo` crea y `/editor/eventos/:id/editar` edita. No mezclar la lista con el formulario.
 - Imagen y PDF permanecen como `File` en memoria hasta guardar. `POST/PUT /api/events` envía un multipart con `evento`, `imagen` y `adjuntos`; el máximo combinado es 4 MB. Los documentos se muestran en la lista inferior y no se insertan en `descripcionLarga`.
 - `descripcionLarga` se guarda como HTML sanitizable y los PDFs se registran en `adjuntos`; no usar Base64 para imágenes o documentos.

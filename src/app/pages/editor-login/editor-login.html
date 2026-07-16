@@ -1,36 +1,79 @@
-<main class="editor-login-page">
-  <section class="editor-login-card">
-    <div class="editor-login-card__intro">
-      <span class="editor-login-card__eyebrow">Acceso editorial</span>
-      <h1>Ingreso del editor</h1>
-      <p>
-        Por ahora este acceso está mockeado para preparar el flujo de creación de eventos antes de
-        conectar base de datos y autenticación real.
-      </p>
+<main class="login-page">
+  <div class="login-board" aria-hidden="true">
+    <span class="login-board__file">A</span>
+    <span class="login-board__file">J</span>
+    <span class="login-board__file">E</span>
+    <span class="login-board__file">D</span>
+    <span class="login-board__file">R</span>
+    <span class="login-board__file">E</span>
+    <span class="login-board__file">Z</span>
+  </div>
+
+  <section class="login-layout" aria-labelledby="login-title">
+    <div class="login-editorial">
+      <p class="login-kicker"><span>Edición privada</span><span>Turno de las blancas</span></p>
+      <div class="login-mark" aria-hidden="true">♞</div>
+      <blockquote>
+        “Cada posición cuenta una historia. Esta es la mesa donde empieza a publicarse.”
+      </blockquote>
+      <p class="login-notation">VM · 01 <span>Acceso seguro mediante Google</span></p>
     </div>
 
-    <div class="mock-access">
-      <h2>Credenciales mock</h2>
-      <p><strong>Email:</strong> {{ mockEmail }}</p>
-      <p><strong>Password:</strong> {{ mockPassword }}</p>
-    </div>
+    <div class="login-card">
+      <div class="login-card__number" aria-hidden="true">01</div>
+      <p class="login-card__eyebrow">Ajedrez VM / Editor</p>
+      <h1 id="login-title">Ingreso editorial</h1>
 
-    <form class="editor-login-form" [formGroup]="loginForm" (ngSubmit)="submit()">
-      <label>
-        <span>Email</span>
-        <input type="email" formControlName="email" placeholder="editor@ajedrezvm.com" />
-      </label>
+      @if (checkingSession()) {
+        <div class="login-status" role="status" aria-live="polite">
+          <span class="login-spinner" aria-hidden="true"></span>
+          <div>
+            <strong>Verificando sesión</strong>
+            <p>Estamos comprobando si ya tenés acceso al panel editorial.</p>
+          </div>
+        </div>
+      } @else {
+        @if (errorMessage) {
+          <div class="login-status login-status--error" role="alert">
+            <span class="login-status__symbol" aria-hidden="true">!</span>
+            <div>
+              <strong>La jugada no pudo completarse</strong>
+              <p>{{ errorMessage }}</p>
+            </div>
+          </div>
+        } @else {
+          <div class="login-status">
+            <span class="login-status__symbol login-status__symbol--secure" aria-hidden="true">✓</span>
+            <div>
+              <strong>Acceso exclusivo para editores</strong>
+              <p>Usá la cuenta de Google habilitada por Ajedrez VM para ingresar al panel.</p>
+            </div>
+          </div>
+        }
 
-      <label>
-        <span>Password</span>
-        <input type="password" formControlName="password" placeholder="Ingresa la clave mock" />
-      </label>
-
-      @if (loginError()) {
-        <p class="editor-login-form__error">{{ loginError() }}</p>
+        <button class="login-action" type="button" [disabled]="redirecting()" (click)="authenticate()">
+          <span class="login-action__google" aria-hidden="true">G</span>
+          <span>
+            @if (redirecting()) {
+              Conectando con Google…
+            } @else if (errorMessage) {
+              Reintentar con Google
+            } @else {
+              Continuar con Google
+            }
+          </span>
+          @if (redirecting()) {
+            <span class="login-spinner login-spinner--button" aria-hidden="true"></span>
+          } @else {
+            <span aria-hidden="true">→</span>
+          }
+        </button>
       }
 
-      <button type="submit">Entrar al editor</button>
-    </form>
+      <div class="login-card__footer">
+        <span>Sesión protegida por cookie segura</span>
+        <a routerLink="/">Regresar al sitio</a>
+      </div>
+    </div>
   </section>
 </main>

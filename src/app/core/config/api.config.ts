@@ -6,6 +6,6 @@ declare global {
   }
 }
 
-const DEFAULT_API_URL = 'http://localhost:3000/api';
+const DEFAULT_API_URL = '/api';
 
-export const API_URL = window.__APP_CONFIG__?.apiUrl ?? DEFAULT_API_URL;
+export const API_URL = (window.__APP_CONFIG__?.apiUrl || DEFAULT_API_URL).replace(/\/$/, '');
