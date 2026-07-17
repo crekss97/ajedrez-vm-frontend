@@ -5,35 +5,12 @@
   box-shadow: var(--shadow-soft);
 }
 
-.eyebrow {
-  display: inline-flex;
-  width: fit-content;
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.eyebrow--soft {
-  background: var(--surface-strong);
-  color: var(--accent-primary-strong);
-}
-
 .popular-section__sticky {
   display: grid;
   gap: 1rem;
   padding: 1rem;
   border-radius: 1.15rem;
   background: rgba(255, 253, 248, 0.78);
-}
-
-.popular-section h2 {
-  margin: 0;
-  color: var(--text-main);
-  font-family: Georgia, 'Times New Roman', serif;
-  letter-spacing: -0.03em;
 }
 
 .popular-list {
