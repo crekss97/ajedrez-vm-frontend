@@ -22,5 +22,6 @@ describe('Home', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.featured-carousel')).toBeNull();
   });
 });

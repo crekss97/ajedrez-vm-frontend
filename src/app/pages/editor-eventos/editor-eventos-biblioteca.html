@@ -1,9 +1,7 @@
 <section class="library-page">
   <div class="library-heading">
     <div>
-      <span class="subpage-kicker">Contenido</span>
       <h2>Biblioteca de eventos</h2>
-      <p>Revisá, editá y ordená las citas que construyen la agenda.</p>
     </div>
     <a class="library-primary" routerLink="/editor/eventos/nuevo">+ Crear evento</a>
   </div>
@@ -12,8 +10,7 @@
 
   <section class="library-card">
     <div class="library-card__header">
-      <div><span class="library-eyebrow">Archivo editorial</span><h3>Todos los eventos</h3></div>
-      <span class="library-count">Actualizado desde la API</span>
+      <h3>Todos los eventos</h3>
     </div>
 
     @if (events$ | async; as events) {
@@ -21,7 +18,6 @@
         <div class="library-empty">
           <span class="library-empty__mark" aria-hidden="true">♞</span>
           <h3>La biblioteca todavía está vacía</h3>
-          <p>Creá el primer evento para empezar a darle forma a la agenda.</p>
           <a class="library-primary" routerLink="/editor/eventos/nuevo">Crear primer evento</a>
         </div>
       } @else {

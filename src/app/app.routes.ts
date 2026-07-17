@@ -6,7 +6,7 @@ import { EditorPanel } from './pages/editor-panel/editor-panel';
 import { Home } from './pages/home/home';
 
 export const routes: Routes = [
-  { path: '', component: Home, title: 'Eventos destacados' },
+  { path: '', component: Home, title: 'Ajedrez VM' },
   { path: 'eventos/:slug', component: EventoDetalle, title: 'Detalle del evento' },
   { path: 'login', component: EditorLogin, title: 'Ingreso editorial' },
   { path: 'editor/login', redirectTo: 'login', pathMatch: 'full' },
