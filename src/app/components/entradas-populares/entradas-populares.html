@@ -3,7 +3,20 @@
     <span class="eyebrow eyebrow--soft">Entradas populares</span>
     <h2>Eventos mas consultados</h2>
 
-    @if (!eventos().length) {
+    @if (cargando()) {
+      <div class="popular-loading" role="status" aria-live="polite">
+        <span class="loading-announcement">Cargando eventos populares</span>
+        <div class="popular-loading__sheet" aria-hidden="true">
+          <span class="popular-loading__line popular-loading__line--long"></span>
+          <span class="popular-loading__line popular-loading__line--medium"></span>
+          <span class="popular-loading__line popular-loading__line--short"></span>
+        </div>
+      </div>
+    } @else if (mostrarError()) {
+      <div class="feedback-card feedback-card--error" role="alert">
+        No se pudieron cargar los eventos mas consultados.
+      </div>
+    } @else if (!eventos().length) {
       <div class="feedback-card">Aun no hay consultas registradas para mostrar aca.</div>
     } @else {
       <div class="popular-list">

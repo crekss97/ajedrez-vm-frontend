@@ -36,37 +36,37 @@ export class Home {
   private readonly eventosService = inject(EventosService);
   private readonly sidebarLinksService = inject(SidebarLinksService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly hasError = signal(false);
   protected readonly activeSlideIndex = signal(0);
+  private readonly errorEventos = signal(false);
+  private readonly errorLinks = signal(false);
 
-  protected readonly eventos = toSignal(
+  private readonly eventosCargados = toSignal(
     this.eventosService.getEventos().pipe(
       catchError(() => {
-        this.hasError.set(true);
+        this.errorEventos.set(true);
         return of([] as Evento[]);
       }),
     ),
-    { initialValue: [] as Evento[] },
   );
 
-  protected readonly entradasPopulares = toSignal(
-    this.eventosService.getEventosPopulares(5).pipe(
-      catchError(() => {
-        this.hasError.set(true);
-        return of([] as Evento[]);
-      }),
-    ),
-    { initialValue: [] as Evento[] },
-  );
-
-  protected readonly linksDestacados = toSignal(
+  private readonly linksCargados = toSignal(
     this.sidebarLinksService.getLinks().pipe(
       catchError(() => {
-        this.hasError.set(true);
+        this.errorLinks.set(true);
         return of([] as SidebarLink[]);
       }),
     ),
-    { initialValue: [] as SidebarLink[] },
+  );
+
+  protected readonly eventos = computed(() => this.eventosCargados() ?? []);
+  protected readonly linksDestacados = computed(() => this.linksCargados() ?? []);
+  protected readonly cargandoEventos = computed(() => this.eventosCargados() === undefined);
+  protected readonly cargandoLinks = computed(() => this.linksCargados() === undefined);
+  protected readonly mostrarErrorEventos = this.errorEventos.asReadonly();
+  protected readonly mostrarErrorLinks = this.errorLinks.asReadonly();
+
+  protected readonly entradasPopulares = computed(() =>
+    [...this.eventos()].sort((a, b) => b.views - a.views).slice(0, 5),
   );
 
   protected readonly eventosDestacados = computed(() => {
@@ -86,7 +86,6 @@ export class Home {
   });
 
   protected readonly totalSlides = computed(() => this.eventosDestacados().length);
-  protected readonly mostrarError = this.hasError.asReadonly();
 
   constructor() {
     const intervalId = window.setInterval(() => {

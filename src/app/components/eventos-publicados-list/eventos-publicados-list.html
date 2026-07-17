@@ -4,11 +4,33 @@
       <span class="eyebrow">La agenda</span>
       <h2>Próximas partidas, encuentros y torneos</h2>
     </div>
-    <span class="section-count">{{ eventos().length }} {{ eventos().length === 1 ? 'evento' : 'eventos' }}</span>
+    <span class="section-count">
+      @if (cargando()) {
+        Cargando agenda
+      } @else if (mostrarError()) {
+        Agenda no disponible
+      } @else {
+        {{ eventos().length }} {{ eventos().length === 1 ? 'evento' : 'eventos' }}
+      }
+    </span>
   </div>
 
-  @if (mostrarError()) {
-    <div class="feedback-card feedback-card--error">
+  @if (cargando()) {
+    <div class="events-grid events-grid--skeleton" role="status" aria-live="polite">
+      <span class="loading-announcement">Cargando eventos publicados</span>
+      @for (item of [1, 2, 3]; track item) {
+        <div class="event-card-skeleton" aria-hidden="true">
+          <div class="event-card-skeleton__media skeleton-block"></div>
+          <div class="event-card-skeleton__content">
+            <span class="event-card-skeleton__title skeleton-block"></span>
+            <span class="event-card-skeleton__line skeleton-block"></span>
+            <span class="event-card-skeleton__line event-card-skeleton__line--short skeleton-block"></span>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (mostrarError()) {
+    <div class="feedback-card feedback-card--error" role="alert">
       No se pudieron cargar los eventos. Verifica que el backend este disponible y que la URL
       configurada para la API sea correcta.
     </div>

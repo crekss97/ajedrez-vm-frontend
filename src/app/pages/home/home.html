@@ -1,6 +1,13 @@
 <main class="home-page">
   <section class="featured-carousel">
-    @if (eventoPrincipal(); as evento) {
+    @if (cargandoEventos()) {
+      <div class="featured-carousel__skeleton" role="status" aria-live="polite">
+        <span class="loading-announcement">Cargando evento destacado</span>
+        <span class="featured-carousel__skeleton-badge skeleton-block"></span>
+        <span class="featured-carousel__skeleton-title skeleton-block"></span>
+        <span class="featured-carousel__skeleton-copy skeleton-block"></span>
+      </div>
+    } @else if (eventoPrincipal(); as evento) {
       <div class="featured-carousel__frame">
         @if (totalSlides() > 1) {
           <button
@@ -59,10 +66,22 @@
   </section>
 
   <section class="content-sections">
-    <app-eventos-publicados-list [eventos]="eventos()" [mostrarError]="mostrarError()" />
+    <app-eventos-publicados-list
+      [eventos]="eventos()"
+      [cargando]="cargandoEventos()"
+      [mostrarError]="mostrarErrorEventos()"
+    />
     <div class="sidebar-sections">
-      <app-links-destacados [links]="linksDestacados()" />
-      <app-entradas-populares [eventos]="entradasPopulares()" />
+      <app-links-destacados
+        [links]="linksDestacados()"
+        [cargando]="cargandoLinks()"
+        [mostrarError]="mostrarErrorLinks()"
+      />
+      <app-entradas-populares
+        [eventos]="entradasPopulares()"
+        [cargando]="cargandoEventos()"
+        [mostrarError]="mostrarErrorEventos()"
+      />
     </div>
   </section>
 </main>
