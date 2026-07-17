@@ -8,6 +8,27 @@
 - Ejecutar la suite Karma/Jasmine con `npm test`.
 - No hay scripts dedicados de lint ni typecheck en `package.json`; no asumir que existen.
 
+## Flujo de trabajo
+
+- OpenProject es la fuente de verdad del backlog. Trabajar sobre un único work package en estado
+  `In progress` y usar su ID numerico en Git y en el PR.
+- Usar GitFlow: `main` representa produccion y `develop` integra el trabajo de la siguiente entrega.
+  No hacer commits directos a ninguna de las dos ramas.
+- Crear ramas cortas desde `develop` actualizado con formato `feat/op-<id>-<slug>`,
+  `fix/op-<id>-<slug>` o `chore/op-<id>-<slug>`, y abrir el PR hacia `develop`.
+- Reservar `hotfix/op-<id>-<slug>` para incidentes urgentes de produccion: nace desde `main`, se
+  integra en `main` mediante PR y luego se sincroniza en `develop` mediante otro PR.
+- Crear `release/<version>` desde `develop` solo para estabilizar una entrega; integrarla mediante PR
+  en `main`, etiquetar la version y devolver sus cambios a `develop`.
+- No mezclar work packages ni cambios ajenos en una rama. Si una tarea afecta backend y frontend,
+  crear una rama y un PR independientes en cada repositorio con el mismo OP#.
+- Usar commits convencionales, ejecutar `npm test` y `npm run build`, y no publicar la rama si las
+  verificaciones fallan.
+- Incluir en cada PR `OP#<id>`, alcance, pruebas, riesgos, migraciones y pasos de despliegue.
+- Pasar el work package a `In review` al abrir el PR y a `Done` despues de fusionarlo en `develop` y
+  completar los checks. Para `release/*` y `hotfix/*`, verificar tambien produccion.
+- Los comandos de OpenCode `/op-status`, `/op-start`, `/op-pr` y `/op-close` implementan este flujo.
+
 ## Configuración
 
 - La URL de API se obtiene de `window.__APP_CONFIG__.apiUrl`; si falta, usa `/api`.
