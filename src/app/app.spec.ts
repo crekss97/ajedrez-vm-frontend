@@ -1,8 +1,13 @@
 import { signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { NavigationEnd, NavigationStart, provideRouter, Router } from '@angular/router';
+import { of, Subject } from 'rxjs';
 import { App } from './app';
+import {
+  AppLoadingService,
+  MINIMO_VISIBLE_CARGADOR_MS,
+  RETARDO_CARGADOR_MS,
+} from './core/app-loading.service';
 import { EditorSession } from './models/editor';
 import { EditorAuthService } from './services/editor-auth.service';
 
@@ -42,6 +47,52 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.site-brand__title')?.textContent).toContain('Ajedrez VM');
   });
+
+  it('muestra un unico tablero global de 3 por 3 durante la carga', fakeAsync(() => {
+    const fixture = TestBed.createComponent(App);
+    const loading = TestBed.inject(AppLoadingService);
+    const finalizar = loading.iniciar();
+
+    tick(RETARDO_CARGADOR_MS);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelectorAll('[role="status"]').length).toBe(1);
+    expect(fixture.nativeElement.querySelectorAll('.chess-loader__square').length).toBe(9);
+    expect(fixture.nativeElement.querySelector('.app-shell')?.getAttribute('aria-busy')).toBe('true');
+    expect(fixture.nativeElement.querySelector('.app-shell')?.hasAttribute('inert')).toBeTrue();
+    expect(fixture.nativeElement.querySelector('[role="status"]')?.closest('[aria-busy="true"]')).toBeNull();
+
+    finalizar();
+    tick(MINIMO_VISIBLE_CARGADOR_MS);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[role="status"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.app-shell')?.hasAttribute('inert')).toBeFalse();
+  }));
+
+  it('muestra el tablero desde el inicio de una navegacion', fakeAsync(() => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    const eventosRouter = router.events as Subject<NavigationStart | NavigationEnd>;
+    fixture.detectChanges();
+
+    eventosRouter.next(new NavigationStart(1, '/eventos/torneo-apertura'));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.app-loading-overlay')).not.toBeNull();
+
+    eventosRouter.next(
+      new NavigationEnd(
+        1,
+        '/eventos/torneo-apertura',
+        '/eventos/torneo-apertura',
+      ),
+    );
+    tick(MINIMO_VISIBLE_CARGADOR_MS);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.app-loading-overlay')).toBeNull();
+  }));
 
   it('usa el email como nombre visible para un admin sin displayName', () => {
     const fixture = TestBed.createComponent(App);

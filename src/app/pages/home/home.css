@@ -30,63 +30,6 @@
   height: clamp(270px, 31vw, 360px);
 }
 
-.featured-carousel__skeleton {
-  position: relative;
-  display: grid;
-  align-content: end;
-  gap: 0.8rem;
-  height: clamp(270px, 31vw, 360px);
-  overflow: hidden;
-  padding: clamp(1.1rem, 3vw, 2.25rem);
-  border: 1px solid rgba(20, 45, 61, 0.16);
-  border-radius: 1.25rem;
-  background: linear-gradient(145deg, #d9e1df, #c9d5d6);
-  box-shadow: var(--shadow-soft);
-}
-
-.featured-carousel__skeleton::after {
-  position: absolute;
-  inset: 0;
-  content: '';
-  background: linear-gradient(180deg, transparent 20%, rgba(20, 45, 61, 0.34));
-}
-
-.skeleton-block {
-  position: relative;
-  z-index: 1;
-  display: block;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(246, 251, 255, 0.42);
-}
-
-.skeleton-block::after {
-  position: absolute;
-  inset: 0;
-  content: '';
-  background: linear-gradient(100deg, transparent 25%, rgba(255, 255, 255, 0.42) 50%, transparent 75%);
-  transform: translateX(-100%);
-  animation: skeleton-shimmer 1.6s ease-in-out infinite;
-}
-
-.featured-carousel__skeleton-badge { width: 6.5rem; height: 1.6rem; }
-.featured-carousel__skeleton-title { width: min(28rem, 76%); height: clamp(2.2rem, 5vw, 4rem); }
-.featured-carousel__skeleton-copy { width: min(38rem, 88%); height: 1rem; }
-
-.loading-announcement {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  clip-path: inset(50%);
-}
-
-@keyframes skeleton-shimmer {
-  to { transform: translateX(100%); }
-}
-
 .featured-event-card {
   position: relative;
   display: block;
@@ -269,8 +212,7 @@
     padding-inline: 0.9rem;
   }
 
-  .featured-carousel__frame,
-  .featured-carousel__skeleton { height: 285px; }
+  .featured-carousel__frame { height: 285px; }
 
   .featured-event-card__overlay {
     padding: 1rem;
@@ -286,8 +228,4 @@
     grid-template-columns: minmax(0, 1fr) 320px;
     align-items: start;
   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skeleton-block::after { animation: none; }
 }

@@ -1,4 +1,14 @@
-<div class="app-shell">
+@if (cargadorVisible()) {
+  <div class="app-loading-overlay">
+    <app-cargador-ajedrez mensaje="Preparando el tablero" />
+  </div>
+}
+
+<div
+  class="app-shell"
+  [attr.aria-busy]="cargadorVisible() ? 'true' : null"
+  [attr.inert]="cargadorVisible() ? '' : null"
+>
   <header class="site-header">
     <div class="site-header__inner">
       <div class="site-brand">

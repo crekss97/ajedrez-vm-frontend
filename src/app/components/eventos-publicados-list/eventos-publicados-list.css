@@ -27,16 +27,6 @@
 .event-card__price { color: var(--text-main); font-weight: 800; }
 .feedback-card { padding: 1.1rem 1.2rem; border: 1px solid var(--border-soft); border-radius: 1rem; background: var(--surface-bg); box-shadow: var(--shadow-soft); color: var(--text-soft); }
 .feedback-card--error { border-color: rgba(93, 135, 181, 0.26); background: #eef6fb; }
-.event-card-skeleton { overflow: hidden; border: 1px solid var(--border-soft); border-radius: 1rem; background: var(--surface-bg); box-shadow: var(--shadow-soft); }
-.event-card-skeleton__media { position: relative; aspect-ratio: 1.35; border-radius: 0; background: var(--surface-strong); }
-.event-card-skeleton__content { display: grid; gap: 0.85rem; padding: 1.1rem 1.15rem 1.4rem; }
-.event-card-skeleton__title { width: 72%; height: 1.35rem; }
-.event-card-skeleton__line { width: 100%; height: 0.8rem; }
-.event-card-skeleton__line--short { width: 58%; }
-.skeleton-block { position: relative; display: block; overflow: hidden; border-radius: 999px; background: var(--surface-strong); }
-.skeleton-block::after { position: absolute; inset: 0; content: ''; background: linear-gradient(100deg, transparent 25%, rgba(255, 255, 255, 0.72) 50%, transparent 75%); transform: translateX(-100%); animation: skeleton-shimmer 1.6s ease-in-out infinite; }
-.loading-announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; clip-path: inset(50%); }
-@keyframes skeleton-shimmer { to { transform: translateX(100%); } }
 @media (max-width: 930px) { .events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .events-grid { grid-template-columns: 1fr; } .event-card__media, .event-card-skeleton__media { aspect-ratio: 1.65; } }
-@media (prefers-reduced-motion: reduce) { .event-card, .event-card img, .event-card__arrow { transition: none; } .skeleton-block::after { animation: none; } }
+@media (max-width: 600px) { .events-grid { grid-template-columns: 1fr; } .event-card__media { aspect-ratio: 1.65; } }
+@media (prefers-reduced-motion: reduce) { .event-card, .event-card img, .event-card__arrow { transition: none; } }

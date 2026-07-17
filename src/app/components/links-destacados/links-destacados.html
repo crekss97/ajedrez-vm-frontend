@@ -1,17 +1,4 @@
-@if (cargando()) {
-  <aside class="links-section">
-    <div class="links-section__sticky" role="status" aria-live="polite">
-      <span class="loading-announcement">Cargando links destacados</span>
-      <span class="links-skeleton__eyebrow skeleton-block"></span>
-      <span class="links-skeleton__title skeleton-block"></span>
-      <span class="links-skeleton__copy skeleton-block"></span>
-      <div class="links-list" aria-hidden="true">
-        <span class="links-skeleton__item skeleton-block"></span>
-        <span class="links-skeleton__item skeleton-block"></span>
-      </div>
-    </div>
-  </aside>
-} @else if (mostrarError()) {
+@if (!cargando() && mostrarError()) {
   <aside class="links-section">
     <div class="links-section__sticky">
       <span class="eyebrow eyebrow--soft">Links destacados</span>
@@ -20,7 +7,7 @@
       </div>
     </div>
   </aside>
-} @else if (links().length) {
+} @else if (!cargando() && links().length) {
   <aside class="links-section">
     <div class="links-section__sticky">
       <span class="eyebrow eyebrow--soft">Links destacados</span>

@@ -1,13 +1,6 @@
 <main class="home-page">
   <section class="featured-carousel">
-    @if (cargandoEventos()) {
-      <div class="featured-carousel__skeleton" role="status" aria-live="polite">
-        <span class="loading-announcement">Cargando evento destacado</span>
-        <span class="featured-carousel__skeleton-badge skeleton-block"></span>
-        <span class="featured-carousel__skeleton-title skeleton-block"></span>
-        <span class="featured-carousel__skeleton-copy skeleton-block"></span>
-      </div>
-    } @else if (eventoPrincipal(); as evento) {
+    @if (eventoPrincipal(); as evento) {
       <div class="featured-carousel__frame">
         @if (totalSlides() > 1) {
           <button

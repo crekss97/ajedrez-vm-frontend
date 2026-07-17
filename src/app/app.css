@@ -7,6 +7,43 @@
   min-height: 100vh;
 }
 
+.app-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  background:
+    radial-gradient(circle at 50% 46%, rgba(230, 189, 85, 0.2), transparent 24rem),
+    linear-gradient(145deg, rgba(245, 240, 228, 0.98), rgba(232, 238, 231, 0.99));
+  animation: app-loading-in 0.22s ease-out both;
+}
+
+.app-loading-overlay::before {
+  position: absolute;
+  width: min(72vw, 42rem);
+  aspect-ratio: 1;
+  border: 1px solid rgba(20, 45, 61, 0.08);
+  content: '';
+  transform: rotate(45deg) scale(1.2);
+}
+
+.app-loading-overlay app-cargador-ajedrez {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes app-loading-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-loading-overlay { animation: none; }
+}
+
 .site-header {
   position: sticky;
   top: 0;

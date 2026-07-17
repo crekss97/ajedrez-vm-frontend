@@ -60,10 +60,11 @@ describe('Home', () => {
     fixture.detectChanges();
   });
 
-  it('muestra esqueletos sin anunciar estados vacios mientras carga', () => {
+  it('espera la respuesta sin mostrar loaders locales ni estados vacios', () => {
     const contenido = fixture.nativeElement.textContent as string;
 
-    expect(fixture.nativeElement.querySelectorAll('[role="status"]').length).toBe(4);
+    expect(fixture.nativeElement.querySelector('[role="status"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.chess-loader__board')).toBeNull();
     expect(contenido).not.toContain('Todavia no hay eventos publicados');
     expect(contenido).not.toContain('Aun no hay consultas registradas');
   });
