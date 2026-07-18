@@ -65,6 +65,7 @@ describe('Home', () => {
 
     expect(fixture.nativeElement.querySelector('[role="status"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('.chess-loader__board')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.featured-carousel')).toBeNull();
     expect(contenido).not.toContain('Todavia no hay eventos publicados');
     expect(contenido).not.toContain('Aun no hay consultas registradas');
   });
@@ -128,15 +129,19 @@ describe('Home', () => {
     expect(contenido).not.toContain('No se pudieron cargar los accesos rapidos');
   });
 
-  it('presenta el afiche destacado separado de su informacion', () => {
+  it('muestra la cartelera y el afiche destacado separado de su informacion', () => {
     eventos$.next([crearEvento()]);
     links$.next([]);
     fixture.detectChanges();
 
+    expect(fixture.nativeElement.querySelector('.event-card')).not.toBeNull();
     expect(fixture.nativeElement.querySelector('.featured-poster')).not.toBeNull();
-    expect(fixture.nativeElement.querySelector('.featured-details h1')?.textContent).toContain('Torneo Apertura');
-    expect(fixture.nativeElement.querySelector('.featured-event-card__overlay')).toBeNull();
-    expect(fixture.nativeElement.querySelector('.featured-stage__ambient')?.getAttribute('aria-hidden')).toBe('true');
+    expect(fixture.nativeElement.querySelector('.featured-details h1')?.textContent).toContain(
+      'Torneo Apertura',
+    );
+    expect(fixture.nativeElement.querySelector('.featured-stage__ambient')?.getAttribute('aria-hidden')).toBe(
+      'true',
+    );
   });
 
   it('navega manualmente entre destacados y anuncia el actual', () => {
@@ -147,13 +152,21 @@ describe('Home', () => {
     links$.next([]);
     fixture.detectChanges();
 
-    const next = fixture.nativeElement.querySelector('[aria-label="Ver siguiente evento destacado"]') as HTMLButtonElement;
+    const next = fixture.nativeElement.querySelector(
+      '[aria-label="Ver siguiente evento destacado"]',
+    ) as HTMLButtonElement;
     next.click();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.featured-details h1')?.textContent).toContain('Segundo destacado');
-    expect(fixture.nativeElement.querySelectorAll('.carousel-dot')[1].getAttribute('aria-current')).toBe('true');
-    expect(fixture.nativeElement.querySelector('[aria-live="polite"]')?.textContent).toContain('Segundo destacado. Destacado 2 de 2.');
+    expect(fixture.nativeElement.querySelector('.featured-details h1')?.textContent).toContain(
+      'Segundo destacado',
+    );
+    expect(fixture.nativeElement.querySelectorAll('.carousel-dot')[1].getAttribute('aria-current')).toBe(
+      'true',
+    );
+    expect(fixture.nativeElement.querySelector('[aria-live="polite"]')?.textContent).toContain(
+      'Segundo destacado. Destacado 2 de 2.',
+    );
   });
 
   it('no rota los destacados automaticamente', fakeAsync(() => {
@@ -167,7 +180,9 @@ describe('Home', () => {
     tick(12000);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.featured-details h1')?.textContent).toContain('Primer destacado');
+    expect(fixture.nativeElement.querySelector('.featured-details h1')?.textContent).toContain(
+      'Primer destacado',
+    );
   }));
 
   it('muestra un fallback cuando falla el afiche destacado', () => {
@@ -179,6 +194,8 @@ describe('Home', () => {
     poster.dispatchEvent(new Event('error'));
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.featured-poster__fallback')?.textContent).toContain('Torneo Apertura');
+    expect(fixture.nativeElement.querySelector('.featured-poster__fallback')?.textContent).toContain(
+      'Torneo Apertura',
+    );
   });
 });
