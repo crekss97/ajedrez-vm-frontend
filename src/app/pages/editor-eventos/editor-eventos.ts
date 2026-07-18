@@ -86,7 +86,7 @@ export class EditorEventos {
     fechaInicio: ['', Validators.required], fechaFin: [''], ubicacion: ['', Validators.required],
     organizador: ['', Validators.required],
     imagenUrl: ['', Validators.required],
-    destacado: [true], modalidad: ['Presencial' as EventoModalidad, Validators.required],
+    destacado: [false], modalidad: ['Presencial' as EventoModalidad, Validators.required],
     precio: ['Entrada libre', Validators.required], tags: ['torneo, magistral, comunidad'],
     estadoEditorial: ['published' as EventoEstadoEditorial, Validators.required],
   });
@@ -283,7 +283,7 @@ export class EditorEventos {
     this.imageFileName.set('');
     this.attachments.set([]);
     this.pendingAttachments.set([]);
-    this.eventForm.reset({ titulo: '', slug: '', categoria: '', descripcionCorta: '', descripcionLarga: '', fechaInicio: '', fechaFin: '', ubicacion: '', organizador: '', imagenUrl: '', destacado: true, modalidad: 'Presencial', precio: 'Entrada libre', tags: 'torneo, magistral, comunidad', estadoEditorial: 'published' });
+    this.eventForm.reset({ titulo: '', slug: '', categoria: '', descripcionCorta: '', descripcionLarga: '', fechaInicio: '', fechaFin: '', ubicacion: '', organizador: '', imagenUrl: '', destacado: false, modalidad: 'Presencial', precio: 'Entrada libre', tags: 'torneo, magistral, comunidad', estadoEditorial: 'published' });
   }
 
   private fitsTotalLimit(imageBytes: number, attachments: File[]): boolean {

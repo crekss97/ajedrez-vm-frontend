@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   HostListener,
+  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -46,6 +47,27 @@ export class App {
   private finalizarNavegacion: (() => void) | undefined;
 
   constructor() {
+    effect((onCleanup) => {
+      if (!this.cargadorVisible()) {
+        return;
+      }
+
+      const elementoEnfocado = document.activeElement instanceof HTMLElement
+        && document.activeElement !== document.body
+        ? document.activeElement
+        : null;
+      const overflowAnterior = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+
+      onCleanup(() => {
+        document.documentElement.style.overflow = overflowAnterior;
+
+        if (elementoEnfocado?.isConnected) {
+          elementoEnfocado.focus({ preventScroll: true });
+        }
+      });
+    });
+
     this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.finalizarNavegacion?.();

@@ -2,7 +2,6 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChang
 import {
   PreloadAllModules,
   provideRouter,
-  withInMemoryScrolling,
   withPreloading,
 } from '@angular/router';
 
@@ -18,10 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withPreloading(PreloadAllModules),
-      withInMemoryScrolling({
-        scrollPositionRestoration: 'top',
-        anchorScrolling: 'enabled',
-      }),
     ),
     provideHttpClient(withInterceptors([appLoadingInterceptor, apiCredentialsInterceptor])),
   ]

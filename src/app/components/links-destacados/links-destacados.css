@@ -8,35 +8,6 @@
   box-shadow: var(--shadow-soft);
 }
 
-.eyebrow {
-  display: inline-flex;
-  width: fit-content;
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.eyebrow--soft {
-  background: var(--surface-strong);
-  color: var(--accent-primary-strong);
-}
-
-.links-section h2 {
-  margin: 0;
-  color: var(--text-main);
-  font-family: Georgia, 'Times New Roman', serif;
-  letter-spacing: -0.03em;
-}
-
-.links-section__intro {
-  margin: 0;
-  color: var(--text-soft);
-  line-height: 1.6;
-}
-
 .links-list {
   display: grid;
   gap: 0.75rem;

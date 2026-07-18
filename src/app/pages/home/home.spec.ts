@@ -127,4 +127,8 @@ describe('Home', () => {
     expect(contenido).not.toContain('0 eventos');
     expect(contenido).not.toContain('No se pudieron cargar los accesos rapidos');
   });
+
+  it('no muestra el carrusel de eventos destacados', () => {
+    expect(fixture.nativeElement.querySelector('.featured-carousel')).toBeNull();
+  });
 });

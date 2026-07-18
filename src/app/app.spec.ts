@@ -70,6 +70,27 @@ describe('App', () => {
     expect(fixture.nativeElement.querySelector('.app-shell')?.hasAttribute('inert')).toBeFalse();
   }));
 
+  it('bloquea el scroll y restaura el foco al terminar la carga', fakeAsync(() => {
+    const fixture = TestBed.createComponent(App);
+    const loading = TestBed.inject(AppLoadingService);
+    fixture.detectChanges();
+    const enlaceActivo = fixture.nativeElement.querySelector('.site-brand__title') as HTMLAnchorElement;
+    enlaceActivo.focus();
+
+    const finalizar = loading.iniciar();
+    tick(RETARDO_CARGADOR_MS);
+    fixture.detectChanges();
+
+    expect(document.documentElement.style.overflow).toBe('hidden');
+
+    finalizar();
+    tick(MINIMO_VISIBLE_CARGADOR_MS);
+    fixture.detectChanges();
+
+    expect(document.documentElement.style.overflow).toBe('');
+    expect(document.activeElement).toBe(enlaceActivo);
+  }));
+
   it('muestra el tablero desde el inicio de una navegacion', fakeAsync(() => {
     const fixture = TestBed.createComponent(App);
     const router = TestBed.inject(Router);

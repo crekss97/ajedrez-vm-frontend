@@ -3,9 +3,7 @@
     <a class="back-link" routerLink="/editor/eventos">← Volver a la biblioteca</a>
     <div class="subpage-heading__row">
       <div>
-        <span class="subpage-kicker">Ficha editorial</span>
         <h2>{{ editingEvent() ? 'Editar evento' : 'Crear evento' }}</h2>
-        <p>{{ editingEvent() ? 'Ajustá la información antes de volver a publicarla.' : 'Completá la información del evento y publicalo cuando esté listo.' }}</p>
       </div>
       <span class="form-hint"><strong>*</strong> Campo obligatorio</span>
     </div>
@@ -80,7 +78,6 @@
         <label class="field"><span>Etiquetas <em>opcional</em></span><input type="text" formControlName="tags" placeholder="torneo, juvenil, fide" /></label>
         <label class="field" [class.field-invalid]="hasError('estadoEditorial')"><span>Estado <b aria-hidden="true">*</b></span><select formControlName="estadoEditorial" [attr.aria-invalid]="hasError('estadoEditorial')"><option value="published">Publicado</option><option value="draft">Borrador</option></select>@if (hasError('estadoEditorial')) { <small class="field-error">{{ errorMessage('estadoEditorial') }}</small> }</label>
       </div>
-      <label class="editor-toggle"><input type="checkbox" formControlName="destacado" /><span>Marcar como destacado en la cabecera</span></label>
       @if (attachmentError()) { <p class="form-error" role="alert">{{ attachmentError() }}</p> }
     </section>
 
@@ -91,6 +88,6 @@
   </form>
 
   @if (createdEvent(); as event) {
-    <div class="modal-backdrop" role="presentation"><section class="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-title"><span class="success-modal__mark" aria-hidden="true">✓</span><span class="editor-card__eyebrow">Publicación lista</span><h3 id="success-title">El evento ya está guardado</h3><p><strong>{{ event.titulo }}</strong> se creó correctamente. Volvé al resumen para revisar la actividad editorial.</p><button class="editor-submit" type="button" (click)="closeCreatedModal()">Ir al resumen</button></section></div>
+    <div class="modal-backdrop" role="presentation"><section class="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-title"><span class="success-modal__mark" aria-hidden="true">✓</span><h3 id="success-title">El evento ya está guardado</h3><p><strong>{{ event.titulo }}</strong> se creó correctamente. Volvé al resumen para revisar la actividad editorial.</p><button class="editor-submit" type="button" (click)="closeCreatedModal()">Ir al resumen</button></section></div>
   }
 </section>
