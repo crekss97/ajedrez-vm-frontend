@@ -128,7 +128,13 @@ describe('Home', () => {
     expect(contenido).not.toContain('No se pudieron cargar los accesos rapidos');
   });
 
-  it('no muestra el carrusel de eventos destacados', () => {
+  it('muestra la cartelera sin recuperar el carrusel de destacados', () => {
+    eventos$.next([crearEvento()]);
+    links$.next([]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.event-card')).not.toBeNull();
     expect(fixture.nativeElement.querySelector('.featured-carousel')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('Evento destacado');
   });
 });

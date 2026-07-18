@@ -67,12 +67,15 @@
     <section class="form-section">
       <h3 class="form-section__title">Publicación</h3>
       <div class="editor-fields editor-fields--three">
-        <div class="field" [class.field-invalid]="hasError('imagenUrl')">
+        <div class="field" [class.field-invalid]="hasError('imagenUrl') || imageError()">
           <span>Imagen principal <b aria-hidden="true">*</b></span>
           <input type="hidden" formControlName="imagenUrl" />
-          <label class="upload-dropzone"><input class="file-input" type="file" accept="image/jpeg,image/png,image/webp" (change)="selectImage($event)" [disabled]="saving()" /><span class="upload-dropzone__icon" aria-hidden="true">＋</span><strong>Elegir imagen</strong><small>Imagen y PDF: 4 MB en total</small></label>
+          <label class="upload-dropzone"><input class="file-input" type="file" accept="image/jpeg,image/png,image/webp" (change)="selectImage($event)" [disabled]="saving()" /><span class="upload-dropzone__icon" aria-hidden="true">＋</span><strong>Elegir imagen</strong><small>JPG, PNG o WebP · máximo 2 MiB · lado menor desde 800 px</small><small>Recomendado: 1080 × 1080 px · imagen y PDF: 4 MiB en total</small></label>
           @if (imagePreview()) { <img class="upload-preview" [src]="imagePreview()" alt="Vista previa de la imagen principal" /> }
           @if (imageFileName()) { <small class="selected-file">Archivo seleccionado: <strong>{{ imageFileName() }}</strong></small> }
+          @if (validatingImage()) { <small role="status">Validando imagen...</small> }
+          @if (imageWarning()) { <small class="field-warning" role="status">{{ imageWarning() }}</small> }
+          @if (imageError()) { <small class="field-error" role="alert">{{ imageError() }}</small> }
           @if (hasError('imagenUrl')) { <small class="field-error">{{ errorMessage('imagenUrl') }}</small> }
         </div>
         <label class="field"><span>Etiquetas <em>opcional</em></span><input type="text" formControlName="tags" placeholder="torneo, juvenil, fide" /></label>
@@ -83,7 +86,7 @@
 
     <div class="form-actions">
       @if (saveError()) { <p class="form-error" role="alert">{{ saveError() }}</p> }
-      <div class="form-actions__buttons"><button class="editor-cancel" type="button" (click)="cancelEdit()">Cancelar</button><button class="editor-submit" type="submit" [disabled]="saving()">{{ saving() ? 'Guardando...' : editingEvent() ? 'Actualizar evento' : 'Crear evento' }}</button></div>
+      <div class="form-actions__buttons"><button class="editor-cancel" type="button" (click)="cancelEdit()">Cancelar</button><button class="editor-submit" type="submit" [disabled]="saving() || validatingImage()">{{ validatingImage() ? 'Validando imagen...' : saving() ? 'Guardando...' : editingEvent() ? 'Actualizar evento' : 'Crear evento' }}</button></div>
     </div>
   </form>
 
