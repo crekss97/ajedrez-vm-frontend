@@ -83,17 +83,13 @@
       [cargando]="cargandoEventos()"
       [mostrarError]="mostrarErrorEventos()"
     />
-    <div class="sidebar-sections">
-      <app-links-destacados
-        [links]="linksDestacados()"
-        [cargando]="cargandoLinks()"
-        [mostrarError]="mostrarErrorLinks()"
-      />
-      <app-entradas-populares
-        [eventos]="entradasPopulares()"
-        [cargando]="cargandoEventos()"
-        [mostrarError]="mostrarErrorEventos()"
-      />
-    </div>
+    <app-barra-lateral-home
+      [links]="linksDestacados()"
+      [cargandoLinks]="cargandoLinks()"
+      [errorLinks]="mostrarErrorLinks()"
+      [puzzle]="puzzleDiario()"
+      [cargandoPuzzle]="cargandoPuzzle()"
+      [errorPuzzle]="mostrarErrorPuzzle()"
+    />
   </section>
 </main>

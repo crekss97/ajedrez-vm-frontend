@@ -10,12 +10,13 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
-import { EntradasPopularesComponent } from '../../components/entradas-populares/entradas-populares';
+import { BarraLateralHomeComponent } from '../../components/barra-lateral-home/barra-lateral-home';
 import { EventosPublicadosListComponent } from '../../components/eventos-publicados-list/eventos-publicados-list';
-import { LinksDestacadosComponent } from '../../components/links-destacados/links-destacados';
 import { Evento } from '../../models/evento';
+import { PuzzleDiario } from '../../models/puzzle-diario';
 import { SidebarLink } from '../../models/sidebar-link';
 import { EventosService } from '../../services/evento.service';
+import { PuzzleDiarioService } from '../../services/puzzle-diario.service';
 import { SidebarLinksService } from '../../services/sidebar-links.service';
 
 @Component({
@@ -25,8 +26,7 @@ import { SidebarLinksService } from '../../services/sidebar-links.service';
     RouterLink,
     DatePipe,
     EventosPublicadosListComponent,
-    EntradasPopularesComponent,
-    LinksDestacadosComponent,
+    BarraLateralHomeComponent,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',
@@ -35,12 +35,14 @@ import { SidebarLinksService } from '../../services/sidebar-links.service';
 export class Home {
   private readonly eventosService = inject(EventosService);
   private readonly sidebarLinksService = inject(SidebarLinksService);
+  private readonly puzzleDiarioService = inject(PuzzleDiarioService);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly activeSlideIndex = signal(0);
   protected readonly parallaxX = signal(0);
   protected readonly parallaxY = signal(0);
   private readonly errorEventos = signal(false);
   private readonly errorLinks = signal(false);
+  private readonly errorPuzzle = signal(false);
   private readonly imagenesDestacadasConError = signal<ReadonlySet<string>>(new Set());
   private parallaxFrameId: number | null = null;
   private pendingParallax = { x: 0, y: 0 };
@@ -63,16 +65,24 @@ export class Home {
     ),
   );
 
+  private readonly puzzleCargado = toSignal(
+    this.puzzleDiarioService.getPuzzleDiario().pipe(
+      catchError(() => {
+        this.errorPuzzle.set(true);
+        return of(null as PuzzleDiario | null);
+      }),
+    ),
+  );
+
   protected readonly eventos = computed(() => this.eventosCargados() ?? []);
   protected readonly linksDestacados = computed(() => this.linksCargados() ?? []);
+  protected readonly puzzleDiario = computed(() => this.puzzleCargado() ?? null);
   protected readonly cargandoEventos = computed(() => this.eventosCargados() === undefined);
   protected readonly cargandoLinks = computed(() => this.linksCargados() === undefined);
+  protected readonly cargandoPuzzle = computed(() => this.puzzleCargado() === undefined);
   protected readonly mostrarErrorEventos = this.errorEventos.asReadonly();
   protected readonly mostrarErrorLinks = this.errorLinks.asReadonly();
-
-  protected readonly entradasPopulares = computed(() =>
-    [...this.eventos()].sort((a, b) => b.views - a.views).slice(0, 5),
-  );
+  protected readonly mostrarErrorPuzzle = this.errorPuzzle.asReadonly();
 
   protected readonly eventosDestacados = computed(() => {
     const destacados = this.eventos().filter((evento) => evento.destacado);
