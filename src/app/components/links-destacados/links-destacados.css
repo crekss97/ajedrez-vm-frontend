@@ -38,3 +38,6 @@
 .links-list strong {
   color: var(--accent-primary);
 }
+
+.feedback-card { padding: 1rem 1.1rem; border: 1px solid var(--border-soft); border-radius: 1rem; background: var(--surface-bg); color: var(--text-soft); }
+.feedback-card--error { border-color: rgba(93, 135, 181, 0.26); background: #eef6fb; }

@@ -1,9 +1,99 @@
 <main class="home-page">
+  <section class="featured-carousel" aria-label="Eventos destacados" aria-roledescription="carrusel">
+    @if (eventoPrincipal(); as evento) {
+      <div
+        class="featured-stage"
+        [style.--parallax-x]="parallaxX() + 'px'"
+        [style.--parallax-y]="parallaxY() + 'px'"
+        (pointermove)="updateParallax($event)"
+        (pointerleave)="resetParallax()"
+      >
+        @if (!imagenDestacadaConError(evento.imagenUrl)) {
+          <img class="featured-stage__ambient" [src]="evento.imagenUrl" alt="" aria-hidden="true" />
+        }
+
+        <div class="featured-layout">
+          <a class="featured-poster" [routerLink]="['/eventos', evento.slug]">
+            @if (imagenDestacadaConError(evento.imagenUrl)) {
+              <span class="featured-poster__fallback" aria-hidden="true">
+                <span>♞</span>
+                <strong>{{ evento.titulo }}</strong>
+              </span>
+            } @else {
+              <img
+                [src]="evento.imagenUrl"
+                alt=""
+                fetchpriority="high"
+                (error)="marcarImagenDestacadaConError(evento.imagenUrl)"
+              />
+            }
+            <span class="visually-hidden">
+              {{ evento.titulo }}. {{ evento.fechaInicio | date: 'dd/MM/yyyy' }}.
+              {{ evento.ubicacion }}. Ver evento.
+            </span>
+          </a>
+
+          <div class="featured-details">
+            <div class="featured-details__eyebrow">
+              <span>Evento destacado</span>
+              <span>{{ activeSlideIndexNormalized() + 1 }} de {{ totalSlides() }}</span>
+            </div>
+            <h1>{{ evento.titulo }}</h1>
+            <p>{{ evento.descripcionCorta }}</p>
+            <dl class="featured-facts">
+              <div><dt>Fecha</dt><dd>{{ evento.fechaInicio | date: 'dd/MM/yyyy · HH:mm' }}</dd></div>
+              <div><dt>Sede</dt><dd>{{ evento.ubicacion }}</dd></div>
+              <div><dt>Modalidad</dt><dd>{{ evento.modalidad }}</dd></div>
+            </dl>
+            <a class="featured-details__action" [routerLink]="['/eventos', evento.slug]">
+              Ver evento <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      @if (totalSlides() > 1) {
+        <div class="featured-controls" role="group" aria-label="Navegación de eventos destacados">
+          <button type="button" class="featured-controls__arrow" aria-label="Ver evento destacado anterior" (click)="showPreviousSlide()"><span aria-hidden="true">←</span></button>
+          <div class="featured-controls__dots">
+            @for (eventoDestacado of eventosDestacados(); track eventoDestacado.id; let index = $index) {
+              <button
+                type="button"
+                class="carousel-dot"
+                [class.carousel-dot--active]="index === activeSlideIndexNormalized()"
+                [attr.aria-current]="index === activeSlideIndexNormalized() ? 'true' : null"
+                [attr.aria-label]="'Ver destacado ' + (index + 1) + ' de ' + totalSlides()"
+                (click)="goToSlide(index)"
+              ><span></span></button>
+            }
+          </div>
+          <span class="featured-controls__position" aria-hidden="true">{{ activeSlideIndexNormalized() + 1 }} / {{ totalSlides() }}</span>
+          <span class="visually-hidden" aria-live="polite" aria-atomic="true">
+            {{ evento.titulo }}. Destacado {{ activeSlideIndexNormalized() + 1 }} de {{ totalSlides() }}.
+          </span>
+          <button type="button" class="featured-controls__arrow" aria-label="Ver siguiente evento destacado" (click)="showNextSlide()"><span aria-hidden="true">→</span></button>
+        </div>
+      }
+    }
+  </section>
+
   <section class="content-sections">
-    <app-eventos-publicados-list [eventos]="eventos()" [mostrarError]="mostrarError()" />
+    <app-eventos-publicados-list
+      [eventos]="eventos()"
+      [cargando]="cargandoEventos()"
+      [mostrarError]="mostrarErrorEventos()"
+    />
     <div class="sidebar-sections">
-      <app-links-destacados [links]="linksDestacados()" />
-      <app-entradas-populares [eventos]="entradasPopulares()" />
+      <app-links-destacados
+        [links]="linksDestacados()"
+        [cargando]="cargandoLinks()"
+        [mostrarError]="mostrarErrorLinks()"
+      />
+      <app-entradas-populares
+        [eventos]="entradasPopulares()"
+        [cargando]="cargandoEventos()"
+        [mostrarError]="mostrarErrorEventos()"
+      />
     </div>
   </section>
 </main>

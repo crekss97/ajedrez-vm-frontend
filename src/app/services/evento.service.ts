@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { API_URL } from '../core/config/api.config';
+import { OMITIR_CARGADOR_GLOBAL } from '../core/interceptors/app-loading.interceptor';
 import { Evento } from '../models/evento';
 
 @Injectable({
@@ -40,7 +41,9 @@ export class EventosService {
   }
 
   registrarConsulta(slug: string): Observable<{ views: number }> {
-    return this.http.post<{ views: number }>(`${this.apiUrl}/${slug}/view`, {});
+    return this.http.post<{ views: number }>(`${this.apiUrl}/${slug}/view`, {}, {
+      context: new HttpContext().set(OMITIR_CARGADOR_GLOBAL, true),
+    });
   }
 
   private toPublicEvent(event: Evento): Evento {

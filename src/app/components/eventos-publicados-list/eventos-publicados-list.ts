@@ -13,5 +13,6 @@ import { Evento } from '../../models/evento';
 })
 export class EventosPublicadosListComponent {
   readonly eventos = input.required<Evento[]>();
+  readonly cargando = input(false);
   readonly mostrarError = input(false);
 }
