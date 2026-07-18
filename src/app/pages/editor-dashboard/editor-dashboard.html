@@ -1,26 +1,18 @@
 <section class="dashboard-page">
   <div class="dashboard-heading">
-    <div>
-      <span class="dashboard-kicker">Vista general</span>
-      <h2>Todo lo importante, de un vistazo.</h2>
-      <p>Controlá el pulso de tu agenda sin entrar en cada herramienta.</p>
-    </div>
-     <a class="dashboard-primary" routerLink="/editor/eventos/nuevo">+ Crear evento</a>
+    <a class="dashboard-primary" routerLink="/editor/eventos/nuevo">+ Crear evento</a>
   </div>
 
   @if (metrics$ | async; as metrics) {
     <div class="metric-grid">
       <article class="metric-card metric-card--featured">
-        <span>Publicados</span><strong>{{ metrics.publishedEvents }}</strong><small>Eventos visibles para la comunidad</small>
+        <span>Publicados</span><strong>{{ metrics.publishedEvents }}</strong>
       </article>
       <article class="metric-card">
-        <span>Consultas</span><strong>{{ metrics.totalViews }}</strong><small>Vistas acumuladas de tus eventos</small>
+        <span>Consultas</span><strong>{{ metrics.totalViews }}</strong>
       </article>
       <article class="metric-card">
-        <span>Destacados</span><strong>{{ metrics.featuredEvents }}</strong><small>Eventos en la cabecera de la home</small>
-      </article>
-      <article class="metric-card">
-        <span>Borradores</span><strong>{{ metrics.draftEvents }}</strong><small>Contenido pendiente de publicar</small>
+        <span>Borradores</span><strong>{{ metrics.draftEvents }}</strong>
       </article>
     </div>
   } @else {
@@ -31,7 +23,6 @@
     <section class="dashboard-panel">
       <div class="dashboard-panel__heading">
         <div>
-          <span class="dashboard-kicker">Actividad reciente</span>
           <h3>Últimos eventos creados</h3>
         </div>
          <a routerLink="/editor/eventos">Ver biblioteca</a>
@@ -54,12 +45,5 @@
         <app-editor-loading message="Cargando actividad..." />
       }
     </section>
-
-    <aside class="dashboard-callout">
-      <span class="dashboard-kicker">Siguiente paso</span>
-      <h3>Convertí una idea en un evento visible.</h3>
-      <p>Completá la ficha, elegí su estado y publicalo cuando esté listo.</p>
-       <a routerLink="/editor/eventos/nuevo">Abrir creador <span aria-hidden="true">↗</span></a>
-    </aside>
   </div>
 </section>

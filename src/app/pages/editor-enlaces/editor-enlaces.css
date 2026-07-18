@@ -1,12 +1,9 @@
 .editor-subpage { display: grid; gap: 1rem; }
 .subpage-heading { padding: 1.2rem 0 0.3rem; }
-.subpage-kicker { color: var(--accent-primary-strong); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
-.subpage-heading h2 { margin: 0.5rem 0 0; color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.05em; }
-.subpage-heading p { margin: 0.5rem 0 0; color: var(--text-soft); }
+.subpage-heading h2 { margin: 0; color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.05em; }
 .links-layout { display: grid; grid-template-columns: minmax(260px, 0.75fr) minmax(0, 1.25fr); gap: 1rem; align-items: start; }
 .editor-card { display: grid; gap: 1rem; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid var(--border-soft); border-radius: 1.15rem; background: rgba(255, 253, 248, 0.9); box-shadow: var(--shadow-soft); }
-.editor-card__eyebrow { display: inline-flex; padding: 0.35rem 0.7rem; border-radius: 999px; background: var(--accent-primary); color: #fffaf1; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
-.editor-card h3 { margin: 0.7rem 0 0; color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: 1.6rem; letter-spacing: -0.04em; }
+.editor-card h3 { margin: 0; color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: 1.6rem; letter-spacing: -0.04em; }
 .editor-card label { display: grid; gap: 0.45rem; }
 .editor-card label span { color: var(--text-main); font-size: 0.87rem; font-weight: 800; }
 .editor-card input { width: 100%; padding: 0.9rem 0.95rem; border: 1px solid var(--border-soft); border-radius: 0.75rem; background: #fff; color: var(--text-main); font: inherit; }
