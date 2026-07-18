@@ -1,0 +1,74 @@
+<div class="puzzle-meta">
+  <span>Reto diario</span>
+  <span [attr.aria-label]="'Dificultad aproximada: ' + puzzle().rating">{{ puzzle().rating }}</span>
+</div>
+
+@if (posicionValida()) {
+  <div
+    class="puzzle-board"
+    role="grid"
+    [attr.aria-label]="etiquetaTablero()"
+    [attr.aria-busy]="respondiendo()"
+  >
+    @for (fila of filasCasillas(); track $index; let indiceFila = $index) {
+      <div class="puzzle-row" role="row">
+        @for (casilla of fila; track casilla.coordenada; let indiceColumna = $index) {
+          <div
+            role="gridcell"
+            [attr.aria-selected]="estaSeleccionada(casilla.coordenada)"
+          >
+            <button
+              type="button"
+              class="puzzle-square"
+              [class.puzzle-square--light]="casilla.clara"
+              [class.puzzle-square--dark]="!casilla.clara"
+              [class.puzzle-square--selected]="estaSeleccionada(casilla.coordenada)"
+              [class.puzzle-square--last]="esUltimoMovimiento(casilla.coordenada)"
+              [attr.aria-disabled]="tableroBloqueado()"
+              [attr.aria-label]="casilla.coordenada + ', ' + casilla.nombrePieza"
+              [attr.data-board-index]="indiceFila * 8 + indiceColumna"
+              [tabIndex]="esFocoTabulable(indiceFila * 8 + indiceColumna) ? 0 : -1"
+              (click)="seleccionarCasilla(casilla.coordenada)"
+              (keydown)="moverFoco($event, indiceFila * 8 + indiceColumna)"
+            >
+              <span class="puzzle-square__piece" aria-hidden="true">{{ casilla.pieza }}</span>
+              @if (casilla.coordenada[0] === (orientacion() === 'w' ? 'a' : 'h')) {
+                <span class="puzzle-square__rank" aria-hidden="true">{{ casilla.coordenada[1] }}</span>
+              }
+              @if (casilla.coordenada[1] === (orientacion() === 'w' ? '1' : '8')) {
+                <span class="puzzle-square__file" aria-hidden="true">{{ casilla.coordenada[0] }}</span>
+              }
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}
+
+@if (promocionPendiente()) {
+  <div class="promotion-picker" role="group" aria-label="Elige la pieza de promocion">
+    <span>Promocionar a:</span>
+    <div class="promotion-picker__options">
+      @for (opcion of opcionesPromocion; track opcion.pieza) {
+        <button
+          type="button"
+          class="promotion-option"
+          (click)="elegirPromocion(opcion.pieza)"
+        >{{ opcion.nombre }}</button>
+      }
+    </div>
+  </div>
+}
+
+<div
+  class="puzzle-feedback"
+  [class.puzzle-feedback--error]="mensajeIncorrecto()"
+  [class.puzzle-feedback--success]="completado()"
+  role="status"
+  aria-live="polite"
+>{{ mensaje() }}</div>
+
+@if (completado()) {
+  <button type="button" class="puzzle-reset" (click)="reiniciar()">Volver a resolver</button>
+}

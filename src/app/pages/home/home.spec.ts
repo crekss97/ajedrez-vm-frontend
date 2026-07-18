@@ -3,7 +3,9 @@ import { provideRouter } from '@angular/router';
 import { Subject } from 'rxjs';
 import { Evento } from '../../models/evento';
 import { SidebarLink } from '../../models/sidebar-link';
+import { PuzzleDiario } from '../../models/puzzle-diario';
 import { EventosService } from '../../services/evento.service';
+import { PuzzleDiarioService } from '../../services/puzzle-diario.service';
 import { SidebarLinksService } from '../../services/sidebar-links.service';
 import { Home } from './home';
 
@@ -11,8 +13,10 @@ describe('Home', () => {
   let fixture: ComponentFixture<Home>;
   let eventosService: jasmine.SpyObj<EventosService>;
   let sidebarLinksService: jasmine.SpyObj<SidebarLinksService>;
+  let puzzleDiarioService: jasmine.SpyObj<PuzzleDiarioService>;
   let eventos$: Subject<Evento[]>;
   let links$: Subject<SidebarLink[]>;
+  let puzzle$: Subject<PuzzleDiario>;
 
   const crearEvento = (valores: Partial<Evento> = {}): Evento => ({
     id: 1,
@@ -37,15 +41,17 @@ describe('Home', () => {
   beforeEach(async () => {
     eventos$ = new Subject<Evento[]>();
     links$ = new Subject<SidebarLink[]>();
-    eventosService = jasmine.createSpyObj<EventosService>('EventosService', [
-      'getEventos',
-      'getEventosPopulares',
-    ]);
+    puzzle$ = new Subject<PuzzleDiario>();
+    eventosService = jasmine.createSpyObj<EventosService>('EventosService', ['getEventos']);
     sidebarLinksService = jasmine.createSpyObj<SidebarLinksService>('SidebarLinksService', [
       'getLinks',
     ]);
+    puzzleDiarioService = jasmine.createSpyObj<PuzzleDiarioService>('PuzzleDiarioService', [
+      'getPuzzleDiario',
+    ]);
     eventosService.getEventos.and.returnValue(eventos$.asObservable());
     sidebarLinksService.getLinks.and.returnValue(links$.asObservable());
+    puzzleDiarioService.getPuzzleDiario.and.returnValue(puzzle$.asObservable());
 
     await TestBed.configureTestingModule({
       imports: [Home],
@@ -53,6 +59,7 @@ describe('Home', () => {
         provideRouter([]),
         { provide: EventosService, useValue: eventosService },
         { provide: SidebarLinksService, useValue: sidebarLinksService },
+        { provide: PuzzleDiarioService, useValue: puzzleDiarioService },
       ],
     }).compileComponents();
 
@@ -67,7 +74,7 @@ describe('Home', () => {
     expect(fixture.nativeElement.querySelector('.chess-loader__board')).toBeNull();
     expect(fixture.nativeElement.querySelector('.featured-carousel')).toBeNull();
     expect(contenido).not.toContain('Todavia no hay eventos publicados');
-    expect(contenido).not.toContain('Aun no hay consultas registradas');
+    expect(contenido).not.toContain('Entradas populares');
   });
 
   it('muestra el estado vacio solo despues de una respuesta exitosa sin eventos', () => {
@@ -77,11 +84,11 @@ describe('Home', () => {
 
     const contenido = fixture.nativeElement.textContent as string;
     expect(contenido).toContain('Todavia no hay eventos publicados');
-    expect(contenido).toContain('Aun no hay consultas registradas');
+    expect(contenido).toContain('No hay enlaces destacados por el momento');
     expect(fixture.nativeElement.querySelector('[role="status"]')).toBeNull();
   });
 
-  it('carga eventos una sola vez y deriva los populares por cantidad de consultas', () => {
+  it('carga eventos una sola vez y no presenta entradas populares', () => {
     eventos$.next([
       crearEvento({ id: 1, slug: 'menos-visto', titulo: 'Menos visto', views: 2 }),
       crearEvento({ id: 2, slug: 'mas-visto', titulo: 'Mas visto', views: 30 }),
@@ -89,13 +96,9 @@ describe('Home', () => {
     links$.next([]);
     fixture.detectChanges();
 
-    const titulosPopulares = Array.from(
-      fixture.nativeElement.querySelectorAll('.popular-card h3') as NodeListOf<HTMLElement>,
-    ).map((elemento) => elemento.textContent?.trim());
-
     expect(eventosService.getEventos).toHaveBeenCalledTimes(1);
-    expect(eventosService.getEventosPopulares).not.toHaveBeenCalled();
-    expect(titulosPopulares).toEqual(['Mas visto', 'Menos visto']);
+    expect(fixture.nativeElement.textContent).not.toContain('Entradas populares');
+    expect(fixture.nativeElement.textContent).not.toContain('30 visitas');
   });
 
   it('mantiene los eventos visibles cuando falla la carga de links', () => {
@@ -142,6 +145,60 @@ describe('Home', () => {
     expect(fixture.nativeElement.querySelector('.featured-stage__ambient')?.getAttribute('aria-hidden')).toBe(
       'true',
     );
+  });
+
+  it('mantiene el puzzle visible cuando fallan los links', () => {
+    eventos$.next([]);
+    links$.error(new Error('No disponible'));
+    puzzle$.next({
+      id: 'puzzle-1',
+      fen: '8/8/8/8/8/8/4K3/6k1 w - - 0 1',
+      ultimoMovimiento: 'g2g1',
+      solucion: ['e2e3'],
+      rating: 1200,
+      temas: [],
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('No se pudieron cargar los accesos rapidos');
+    expect(fixture.nativeElement.querySelector('.puzzle-board')).not.toBeNull();
+  });
+
+  it('mantiene los links visibles cuando falla el puzzle', () => {
+    eventos$.next([]);
+    links$.next([
+      { id: '1', titulo: 'Federacion regional', url: 'https://example.com', createdAt: '' },
+    ]);
+    puzzle$.error(new Error('No disponible'));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Federacion regional');
+    expect(fixture.nativeElement.textContent).toContain('El puzzle no esta disponible');
+  });
+
+  it('integra eventos, enlaces y puzzle dentro de un unico aside sin populares', () => {
+    eventos$.next([crearEvento()]);
+    links$.next([
+      { id: '1', titulo: 'Federacion regional', url: 'https://example.com', createdAt: '' },
+    ]);
+    puzzle$.next({
+      id: 'puzzle-1',
+      fen: '8/8/8/8/8/8/4K3/6k1 w - - 0 1',
+      ultimoMovimiento: 'g2g1',
+      solucion: ['e2e3'],
+      rating: 1200,
+      temas: [],
+    });
+    fixture.detectChanges();
+
+    const asides = fixture.nativeElement.querySelectorAll('aside');
+    expect(asides.length).toBe(1);
+    expect(asides[0].textContent).toContain('Federacion regional');
+    expect(asides[0].querySelector('.puzzle-board')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('.featured-carousel')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('.event-card')).not.toBeNull();
+    expect(asides[0].textContent).not.toContain('Entradas populares');
+    expect(asides[0].textContent).not.toContain('visitas');
   });
 
   it('navega manualmente entre destacados y anuncia el actual', () => {
