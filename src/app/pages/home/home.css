@@ -6,6 +6,107 @@
     linear-gradient(145deg, #f2efe7 0%, #e8eee7 52%, #f7f4ed 100%);
 }
 
+.featured-carousel {
+  display: grid;
+  gap: 1rem;
+  width: min(1160px, 100%);
+  margin: 0 auto 2rem;
+}
+
+.featured-stage {
+  --parallax-x: 0px;
+  --parallax-y: 0px;
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid rgba(245, 240, 228, 0.18);
+  border-radius: 1.25rem;
+  background: #142d3d;
+  box-shadow: 0 24px 60px rgba(20, 45, 61, 0.2);
+  isolation: isolate;
+}
+
+.featured-stage::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: '';
+  background: linear-gradient(90deg, rgba(20, 45, 61, 0.9), rgba(20, 45, 61, 0.66)), linear-gradient(135deg, transparent 55%, rgba(230, 189, 85, 0.16));
+}
+
+.featured-stage__ambient {
+  position: absolute;
+  inset: -8%;
+  z-index: -2;
+  width: 116%;
+  height: 116%;
+  object-fit: cover;
+  opacity: 0.2;
+  filter: blur(18px) saturate(0.7);
+  transform: translate3d(var(--parallax-x), var(--parallax-y), 0) scale(1.06);
+  transition: transform 0.28s ease-out;
+  will-change: transform;
+}
+
+.featured-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  width: min(100%, 1000px);
+  margin: 0 auto;
+}
+
+.featured-poster {
+  position: relative;
+  display: grid;
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 0.45rem solid #f5f0e4;
+  border-radius: 0.75rem;
+  background: #dce7dd;
+  box-shadow: 0 20px 48px rgba(5, 18, 27, 0.38);
+  color: inherit;
+  text-decoration: none;
+  transform: rotate(-0.6deg);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.featured-poster:hover { transform: rotate(0) translateY(-3px); box-shadow: 0 26px 56px rgba(5, 18, 27, 0.46); }
+.featured-poster:focus-visible { outline: 3px solid #e6bd55; outline-offset: 4px; }
+.featured-poster img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.featured-poster__fallback { display: grid; width: 100%; height: 100%; place-content: center; justify-items: center; gap: 0.8rem; padding: 1.5rem; color: #142d3d; text-align: center; }
+.featured-poster__fallback span { font-family: Georgia, 'Times New Roman', serif; font-size: 4rem; line-height: 1; }
+.featured-poster__fallback strong { max-width: 18ch; font-family: Georgia, 'Times New Roman', serif; font-size: 1.35rem; }
+
+.featured-details { display: grid; align-content: center; gap: 1.2rem; color: #f5f0e4; }
+.featured-details__eyebrow { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem; color: #e6bd55; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.13em; text-transform: uppercase; }
+.featured-details h1 { max-width: 15ch; margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2.25rem, 5vw, 4.4rem); letter-spacing: -0.055em; line-height: 0.96; }
+.featured-details > p { display: -webkit-box; max-width: 52ch; overflow: hidden; margin: 0; color: rgba(245, 240, 228, 0.76); line-height: 1.6; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+
+.featured-facts { display: grid; gap: 0; margin: 0; border-block: 1px solid rgba(245, 240, 228, 0.18); }
+.featured-facts div { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid rgba(245, 240, 228, 0.12); }
+.featured-facts div:last-child { border-bottom: 0; }
+.featured-facts dt { color: #e6bd55; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
+.featured-facts dd { margin: 0; color: rgba(245, 240, 228, 0.9); font-size: 0.88rem; }
+
+.featured-details__action { display: inline-flex; align-items: center; justify-content: space-between; gap: 1rem; width: fit-content; min-width: 10rem; padding: 0.8rem 1rem; border-radius: 999px; background: #e6bd55; color: #142d3d; font-size: 0.82rem; font-weight: 900; text-decoration: none; transition: transform 0.2s ease, background 0.2s ease; }
+.featured-details__action:hover { background: #f0cd73; transform: translateY(-2px); }
+.featured-details__action:focus-visible { outline: 3px solid #f5f0e4; outline-offset: 4px; }
+
+.featured-controls { display: flex; align-items: center; justify-content: center; gap: 0.35rem; }
+.featured-controls__arrow, .carousel-dot { display: grid; width: 2.75rem; height: 2.75rem; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #142d3d; cursor: pointer; }
+.featured-controls__arrow { border: 1px solid #53636a; background: #fffdf8; font-size: 1.1rem; }
+.featured-controls__arrow:hover { border-color: #e4573f; color: #b83d35; }
+.featured-controls button:focus-visible { outline: 3px solid #142d3d; outline-offset: 2px; }
+.featured-controls__dots { display: flex; align-items: center; }
+.carousel-dot span { width: 0.65rem; height: 0.65rem; border-radius: 50%; background: #53636a; transition: transform 0.2s ease, background 0.2s ease; }
+.carousel-dot--active span { background: #e4573f; transform: scale(1.25); }
+.featured-controls__position { min-width: 3.5rem; color: #53636a; font-size: 0.75rem; font-weight: 900; text-align: center; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; clip-path: inset(50%); }
+
 .content-sections {
   display: grid;
   gap: 1.5rem;
@@ -22,6 +123,13 @@
   .home-page {
     padding-inline: 0.9rem;
   }
+
+  .featured-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+  .featured-poster { width: min(100%, 28rem); margin: 0 auto; transform: none; }
+  .featured-details { padding: 0.35rem; }
+  .featured-details h1 { font-size: clamp(2.15rem, 11vw, 3.5rem); }
+  .featured-stage__ambient { transform: scale(1.08); }
+  .featured-controls__dots { display: none; }
 }
 
 @media (min-width: 700px) and (max-width: 1139px) {
@@ -36,4 +144,9 @@
     grid-template-columns: minmax(0, 1fr) 320px;
     align-items: start;
   }
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .featured-stage__ambient { display: none; }
+  .featured-poster, .featured-details__action, .carousel-dot span { transition: none; }
 }
