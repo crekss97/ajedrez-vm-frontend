@@ -132,7 +132,14 @@
   .featured-controls__dots { display: none; }
 }
 
-@media (min-width: 960px) {
+@media (min-width: 700px) and (max-width: 1139px) {
+  .sidebar-sections {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+@media (min-width: 1140px) {
   .content-sections {
     grid-template-columns: minmax(0, 1fr) 320px;
     align-items: start;

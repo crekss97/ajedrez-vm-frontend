@@ -4,6 +4,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FlatpickrDirective, provideFlatpickrDefaults } from 'angularx-flatpickr';
 import { QuillEditorComponent } from 'ngx-quill';
 import { finalize, take } from 'rxjs';
+import {
+  MAX_EVENT_IMAGE_BYTES,
+  readImageDimensions,
+  validateEventImage,
+} from '../../core/event-image.validation';
 import { EventoAdjunto, EventoEstadoEditorial, EventoModalidad } from '../../models/evento';
 import { EventoEditorDraft, EventoEditorInput } from '../../models/editor';
 import { EditorEventosService } from '../../services/editor-eventos.service';
@@ -31,6 +36,7 @@ export class EditorEventos {
   private readonly destroyRef = inject(DestroyRef);
   private readonly maxFilesBytes = 4 * 1024 * 1024;
   private readonly maxAttachments = 5;
+  private imageSelectionId = 0;
 
   protected readonly minShortDescription = 20;
   protected readonly maxShortDescription = 180;
@@ -40,7 +46,10 @@ export class EditorEventos {
   protected readonly saving = signal(false);
   protected readonly saveError = signal('');
   protected readonly imageFileName = signal('');
+  protected readonly imageError = signal('');
   protected readonly attachmentError = signal('');
+  protected readonly imageWarning = signal('');
+  protected readonly validatingImage = signal(false);
   protected readonly attachments = signal<EventoAdjunto[]>([]);
   protected readonly pendingAttachments = signal<PendingAttachment[]>([]);
   protected readonly imageFile = signal<File | null>(null);
@@ -93,12 +102,20 @@ export class EditorEventos {
   protected readonly formTitle = computed(() => this.editingEvent()?.titulo || this.eventForm.controls.titulo.value.trim() || 'Nuevo evento editorial');
 
   constructor() {
-    this.destroyRef.onDestroy(() => this.revokeImagePreview());
+    this.destroyRef.onDestroy(() => {
+      this.imageSelectionId++;
+      this.revokeImagePreview();
+    });
     this.loadEditingEvent();
   }
 
   protected saveEvent(): void {
     this.formSubmitted.set(true);
+
+    if (this.validatingImage()) {
+      this.saveError.set('Esperá a que termine la validación de la imagen.');
+      return;
+    }
 
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched();
@@ -150,31 +167,81 @@ export class EditorEventos {
     void this.router.navigate(['/editor/eventos']);
   }
 
-  protected selectImage(event: Event): void {
+  protected async selectImage(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     input.value = '';
+    const selectionId = ++this.imageSelectionId;
+    this.validatingImage.set(false);
 
     if (!file) {
       return;
     }
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      this.attachmentError.set('Seleccioná una imagen JPG, PNG o WebP.');
+
+    this.discardSelectedImage();
+    this.imageError.set('');
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    const knownMimeType = ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
+    const acceptableGenericType = ['', 'application/octet-stream'].includes(file.type)
+      && ['jpg', 'jpeg', 'png', 'webp'].includes(extension ?? '');
+    if (!knownMimeType && !acceptableGenericType) {
+      this.imageError.set('Seleccioná una imagen JPG, PNG o WebP.');
+      this.imageWarning.set('');
+      return;
+    }
+    if (file.size > MAX_EVENT_IMAGE_BYTES) {
+      const validation = validateEventImage(file, { width: 800, height: 800 });
+      this.imageError.set(validation.error);
+      this.imageWarning.set('');
       return;
     }
     if (!this.fitsTotalLimit(file.size, this.pendingAttachments().map((item) => item.file))) {
-      this.attachmentError.set('La imagen y los PDF no pueden superar 4 MB en total.');
+      this.imageError.set('La imagen y los PDF no pueden superar 4 MiB en total.');
+      this.imageWarning.set('');
       return;
     }
 
-    this.revokeImagePreview();
+    this.validatingImage.set(true);
+    try {
+      const dimensions = await readImageDimensions(file);
+
+      if (selectionId !== this.imageSelectionId) {
+        return;
+      }
+
+      const validation = validateEventImage(file, dimensions);
+      if (validation.error) {
+        this.imageError.set(validation.error);
+        this.imageWarning.set('');
+        return;
+      }
+      if (!this.fitsTotalLimit(file.size, this.pendingAttachments().map((item) => item.file))) {
+        this.imageError.set('La imagen y los PDF no pueden superar 4 MiB en total.');
+        this.imageWarning.set('');
+        return;
+      }
+      this.imageWarning.set(validation.warning);
+    } catch {
+      if (selectionId !== this.imageSelectionId) {
+        return;
+      }
+
+      this.imageError.set('No se pudieron leer las dimensiones de la imagen. Elegí otro archivo.');
+      this.imageWarning.set('');
+      return;
+    } finally {
+      if (selectionId === this.imageSelectionId) {
+        this.validatingImage.set(false);
+      }
+    }
+
     const previewUrl = URL.createObjectURL(file);
     this.imageFile.set(file);
     this.imagePreviewUrl.set(previewUrl);
     this.imageFileName.set(file.name);
     this.eventForm.controls.imagenUrl.setValue(previewUrl);
     this.eventForm.controls.imagenUrl.markAsDirty();
-    this.attachmentError.set('');
+    this.imageError.set('');
   }
 
   protected selectAttachment(event: Event): void {
@@ -197,7 +264,7 @@ export class EditorEventos {
       ...this.pendingAttachments().map((item) => item.file),
       file,
     ])) {
-      this.attachmentError.set('La imagen y los PDF no pueden superar 4 MB en total.');
+      this.attachmentError.set('La imagen y los PDF no pueden superar 4 MiB en total.');
       return;
     }
 
@@ -281,6 +348,10 @@ export class EditorEventos {
     this.formSubmitted.set(false);
     this.imageFile.set(null);
     this.imageFileName.set('');
+    this.imageError.set('');
+    this.imageWarning.set('');
+    this.validatingImage.set(false);
+    this.imageSelectionId++;
     this.attachments.set([]);
     this.pendingAttachments.set([]);
     this.eventForm.reset({ titulo: '', slug: '', categoria: '', descripcionCorta: '', descripcionLarga: '', fechaInicio: '', fechaFin: '', ubicacion: '', organizador: '', imagenUrl: '', destacado: false, modalidad: 'Presencial', precio: 'Entrada libre', tags: 'torneo, magistral, comunidad', estadoEditorial: 'published' });
@@ -296,5 +367,13 @@ export class EditorEventos {
       URL.revokeObjectURL(previewUrl);
       this.imagePreviewUrl.set('');
     }
+  }
+
+  private discardSelectedImage(): void {
+    this.revokeImagePreview();
+    this.imageFile.set(null);
+    const currentImage = this.editingEvent()?.imagenUrl ?? '';
+    this.imageFileName.set(currentImage ? 'Imagen actual' : '');
+    this.eventForm.controls.imagenUrl.setValue(currentImage);
   }
 }
