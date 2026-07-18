@@ -14,6 +14,9 @@
       <article class="metric-card">
         <span>Borradores</span><strong>{{ metrics.draftEvents }}</strong>
       </article>
+      <article class="metric-card">
+        <span>Destacados</span><strong>{{ metrics.featuredEvents }}</strong>
+      </article>
     </div>
   } @else {
     <section class="metric-grid"><app-editor-loading message="Cargando resumen..." /></section>

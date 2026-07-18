@@ -1,6 +1,6 @@
 <main class="home-page">
-  <section class="featured-carousel" aria-label="Eventos destacados" aria-roledescription="carrusel">
-    @if (eventoPrincipal(); as evento) {
+  @if (eventoPrincipal(); as evento) {
+    <section class="featured-carousel" aria-label="Eventos destacados" aria-roledescription="carrusel">
       <div
         class="featured-stage"
         [style.--parallax-x]="parallaxX() + 'px'"
@@ -74,8 +74,8 @@
           <button type="button" class="featured-controls__arrow" aria-label="Ver siguiente evento destacado" (click)="showNextSlide()"><span aria-hidden="true">→</span></button>
         </div>
       }
-    }
-  </section>
+    </section>
+  }
 
   <section class="content-sections">
     <app-eventos-publicados-list
