@@ -81,6 +81,7 @@
         <label class="field"><span>Etiquetas <em>opcional</em></span><input type="text" formControlName="tags" placeholder="torneo, juvenil, fide" /></label>
         <label class="field" [class.field-invalid]="hasError('estadoEditorial')"><span>Estado <b aria-hidden="true">*</b></span><select formControlName="estadoEditorial" [attr.aria-invalid]="hasError('estadoEditorial')"><option value="published">Publicado</option><option value="draft">Borrador</option></select>@if (hasError('estadoEditorial')) { <small class="field-error">{{ errorMessage('estadoEditorial') }}</small> }</label>
       </div>
+      <label class="editor-toggle"><input type="checkbox" formControlName="destacado" /><span>Mostrar en eventos destacados</span></label>
       @if (attachmentError()) { <p class="form-error" role="alert">{{ attachmentError() }}</p> }
     </section>
 

@@ -49,6 +49,7 @@
 .attachment-row span:nth-child(2) { min-width: 0; overflow-wrap: anywhere; }
 .attachment-row button { margin-left: auto; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; line-height: 1; }
 .attachment-row button:hover { color: #a23d3d; }
+.editor-toggle { display: flex; align-items: center; gap: 0.65rem; color: var(--text-main); font-weight: 800; }
 .form-actions { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.25rem 0 1rem; }
 .form-actions__buttons { display: flex; gap: 0.6rem; align-items: center; margin-left: auto; }
 .editor-submit, .editor-cancel { padding: 0.85rem 1.15rem; border: 0; border-radius: 999px; font: inherit; font-weight: 800; cursor: pointer; }
