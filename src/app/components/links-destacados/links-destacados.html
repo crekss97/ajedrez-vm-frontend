@@ -1,4 +1,12 @@
-@if (links().length) {
+@if (!cargando() && mostrarError()) {
+  <aside class="links-section" aria-label="Enlaces externos">
+    <div class="links-section__sticky">
+      <div class="feedback-card feedback-card--error" role="alert">
+        No se pudieron cargar los accesos rapidos.
+      </div>
+    </div>
+  </aside>
+} @else if (!cargando() && links().length) {
   <aside class="links-section" aria-label="Enlaces externos">
     <div class="links-section__sticky">
       <div class="links-list">

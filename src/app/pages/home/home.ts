@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { EntradasPopularesComponent } from '../../components/entradas-populares/entradas-populares';
@@ -24,37 +24,36 @@ import { SidebarLinksService } from '../../services/sidebar-links.service';
 export class Home {
   private readonly eventosService = inject(EventosService);
   private readonly sidebarLinksService = inject(SidebarLinksService);
-  private readonly hasError = signal(false);
+  private readonly errorEventos = signal(false);
+  private readonly errorLinks = signal(false);
 
-  protected readonly eventos = toSignal(
+  private readonly eventosCargados = toSignal(
     this.eventosService.getEventos().pipe(
       catchError(() => {
-        this.hasError.set(true);
+        this.errorEventos.set(true);
         return of([] as Evento[]);
       }),
     ),
-    { initialValue: [] as Evento[] },
   );
 
-  protected readonly entradasPopulares = toSignal(
-    this.eventosService.getEventosPopulares(5).pipe(
-      catchError(() => {
-        this.hasError.set(true);
-        return of([] as Evento[]);
-      }),
-    ),
-    { initialValue: [] as Evento[] },
-  );
-
-  protected readonly linksDestacados = toSignal(
+  private readonly linksCargados = toSignal(
     this.sidebarLinksService.getLinks().pipe(
       catchError(() => {
-        this.hasError.set(true);
+        this.errorLinks.set(true);
         return of([] as SidebarLink[]);
       }),
     ),
-    { initialValue: [] as SidebarLink[] },
   );
 
-  protected readonly mostrarError = this.hasError.asReadonly();
+  protected readonly eventos = computed(() => this.eventosCargados() ?? []);
+  protected readonly linksDestacados = computed(() => this.linksCargados() ?? []);
+  protected readonly cargandoEventos = computed(() => this.eventosCargados() === undefined);
+  protected readonly cargandoLinks = computed(() => this.linksCargados() === undefined);
+  protected readonly mostrarErrorEventos = this.errorEventos.asReadonly();
+  protected readonly mostrarErrorLinks = this.errorLinks.asReadonly();
+
+  protected readonly entradasPopulares = computed(() =>
+    [...this.eventos()].sort((a, b) => b.views - a.views).slice(0, 5),
+  );
+
 }

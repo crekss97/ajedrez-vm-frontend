@@ -10,4 +10,6 @@ import { SidebarLink } from '../../models/sidebar-link';
 })
 export class LinksDestacadosComponent {
   readonly links = input.required<SidebarLink[]>();
+  readonly cargando = input(false);
+  readonly mostrarError = input(false);
 }

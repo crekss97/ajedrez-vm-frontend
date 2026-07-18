@@ -1,0 +1,9 @@
+<div class="chess-loader" role="status" aria-live="polite" aria-atomic="true">
+  <div class="chess-loader__board" aria-hidden="true">
+    @for (casilla of casillas; track $index) {
+      <span class="chess-loader__square"></span>
+    }
+    <span class="chess-loader__knight">♞</span>
+  </div>
+  <span class="chess-loader__message">{{ mensaje() }}</span>
+</div>

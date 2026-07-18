@@ -1,20 +1,22 @@
-<aside class="popular-section" aria-label="Eventos más consultados">
-  <div class="popular-section__sticky">
-    @if (!eventos().length) {
+@if (!cargando() && !mostrarError()) {
+  <aside class="popular-section" aria-label="Eventos más consultados">
+    <div class="popular-section__sticky">
+      @if (!eventos().length) {
       <div class="feedback-card">Aun no hay consultas registradas para mostrar aca.</div>
-    } @else {
-      <div class="popular-list">
-        @for (evento of eventos(); track evento.id) {
-          <a class="popular-card" [routerLink]="['/eventos', evento.slug]">
-            <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
-            <div class="popular-card__content">
-              <span class="popular-card__views">{{ evento.views }} consultas</span>
-              <h3>{{ evento.titulo }}</h3>
-              <p>{{ evento.fechaInicio | date: 'mediumDate' }}</p>
-            </div>
-          </a>
-        }
-      </div>
-    }
-  </div>
-</aside>
+      } @else {
+        <div class="popular-list">
+          @for (evento of eventos(); track evento.id) {
+            <a class="popular-card" [routerLink]="['/eventos', evento.slug]">
+              <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+              <div class="popular-card__content">
+                <span class="popular-card__views">{{ evento.views }} consultas</span>
+                <h3>{{ evento.titulo }}</h3>
+                <p>{{ evento.fechaInicio | date: 'mediumDate' }}</p>
+              </div>
+            </a>
+          }
+        </div>
+      }
+    </div>
+  </aside>
+}

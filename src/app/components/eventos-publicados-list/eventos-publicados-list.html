@@ -1,18 +1,26 @@
 <section class="events-section">
   <div class="section-heading" aria-label="Cantidad de eventos">
-    <span class="section-count">{{ eventos().length }} {{ eventos().length === 1 ? 'evento' : 'eventos' }}</span>
+    <span class="section-count">
+      @if (cargando()) {
+        Cargando agenda
+      } @else if (mostrarError()) {
+        Agenda no disponible
+      } @else {
+        {{ eventos().length }} {{ eventos().length === 1 ? 'evento' : 'eventos' }}
+      }
+    </span>
   </div>
 
-  @if (mostrarError()) {
-    <div class="feedback-card feedback-card--error">
+  @if (!cargando() && mostrarError()) {
+    <div class="feedback-card feedback-card--error" role="alert">
       No se pudieron cargar los eventos. Verifica que el backend este disponible y que la URL
       configurada para la API sea correcta.
     </div>
-  } @else if (!eventos().length) {
+  } @else if (!cargando() && !eventos().length) {
     <div class="feedback-card">
       Todavia no hay eventos publicados. Cuando agregues uno desde el editor, va a aparecer aca.
     </div>
-  } @else {
+  } @else if (!cargando()) {
     <div class="events-grid">
       @for (evento of eventos(); track evento.id) {
         <a class="event-card" [routerLink]="['/eventos', evento.slug]" [attr.aria-label]="'Ver detalle de ' + evento.titulo">

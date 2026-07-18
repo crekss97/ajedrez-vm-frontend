@@ -1,9 +1,21 @@
 <main class="home-page">
   <section class="content-sections">
-    <app-eventos-publicados-list [eventos]="eventos()" [mostrarError]="mostrarError()" />
+    <app-eventos-publicados-list
+      [eventos]="eventos()"
+      [cargando]="cargandoEventos()"
+      [mostrarError]="mostrarErrorEventos()"
+    />
     <div class="sidebar-sections">
-      <app-links-destacados [links]="linksDestacados()" />
-      <app-entradas-populares [eventos]="entradasPopulares()" />
+      <app-links-destacados
+        [links]="linksDestacados()"
+        [cargando]="cargandoLinks()"
+        [mostrarError]="mostrarErrorLinks()"
+      />
+      <app-entradas-populares
+        [eventos]="entradasPopulares()"
+        [cargando]="cargandoEventos()"
+        [mostrarError]="mostrarErrorEventos()"
+      />
     </div>
   </section>
 </main>

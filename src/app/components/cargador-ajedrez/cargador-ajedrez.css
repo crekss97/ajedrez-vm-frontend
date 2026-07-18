@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+.chess-loader {
+  display: grid;
+  justify-items: center;
+  gap: clamp(1.1rem, 3vw, 1.8rem);
+}
+
+.chess-loader__board {
+  --square-size: var(--chess-square-size, clamp(2.35rem, min(9vw, 9vh), 3.25rem));
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, var(--square-size));
+  overflow: hidden;
+  border: clamp(0.35rem, 1vw, 0.65rem) solid #142d3d;
+  background: #f5f0e4;
+  box-shadow:
+    0 2rem 4.5rem rgba(20, 45, 61, 0.22),
+    0 0 0 1px rgba(245, 240, 228, 0.45) inset;
+  transform: rotate(-1.5deg);
+}
+
+.chess-loader__square {
+  width: var(--square-size);
+  aspect-ratio: 1;
+  background: #f5f0e4;
+}
+
+.chess-loader__square:nth-child(even) {
+  background: #7690a5;
+}
+
+.chess-loader__knight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: var(--square-size);
+  height: var(--square-size);
+  place-items: center;
+  color: #102c3c;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: calc(var(--square-size) * 0.82);
+  line-height: 1;
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.82))
+    drop-shadow(0 0.18rem 0.12rem rgba(20, 45, 61, 0.24));
+  animation: knight-tour 4.8s steps(1, end) infinite;
+}
+
+.chess-loader__message {
+  color: #53636a;
+  font-size: clamp(0.72rem, 1.5vw, 0.82rem);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@keyframes knight-tour {
+  0%, 11% { transform: translate(0, 0); }
+  12.5%, 23.5% { transform: translate(200%, 100%); }
+  25%, 36% { transform: translate(0, 200%); }
+  37.5%, 48.5% { transform: translate(100%, 0); }
+  50%, 61% { transform: translate(200%, 200%); }
+  62.5%, 73.5% { transform: translate(0, 100%); }
+  75%, 86% { transform: translate(200%, 0); }
+  87.5%, 98.5% { transform: translate(100%, 200%); }
+  100% { transform: translate(0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chess-loader__board {
+    transform: none;
+  }
+
+  .chess-loader__knight {
+    animation: none;
+    transform: translate(100%, 100%);
+  }
+}
