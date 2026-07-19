@@ -60,8 +60,8 @@ describe('App', () => {
       'Facebook',
     ]);
     expect(enlaces.map((enlace) => enlace.href)).toEqual([
-      'https://instagram.com/',
-      'https://facebook.com/',
+      'https://www.instagram.com/ajedrezvillamaria/',
+      'https://www.facebook.com/profile.php?id=100063519642487',
     ]);
   });
 
