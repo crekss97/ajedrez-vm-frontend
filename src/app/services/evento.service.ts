@@ -25,12 +25,6 @@ export class EventosService {
     );
   }
 
-  getEventosPopulares(limit = 5): Observable<Evento[]> {
-    return this.getEventos().pipe(
-      map((events) => [...events].sort((a, b) => b.views - a.views).slice(0, limit)),
-    );
-  }
-
   getEvento(slug: string): Observable<Evento> {
     return this.getEventos().pipe(
       map((events) => events.find((event) => event.slug === slug)),

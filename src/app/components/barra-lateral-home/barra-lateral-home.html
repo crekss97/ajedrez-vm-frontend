@@ -1,0 +1,37 @@
+<aside class="home-sidebar" aria-label="Contenido destacado">
+  <section class="home-sidebar__section home-sidebar__links" aria-labelledby="links-title">
+    <div class="section-heading">
+      <span aria-hidden="true">En la red</span>
+      <h2 id="links-title">Enlaces destacados</h2>
+    </div>
+    @if (!cargandoLinks() && errorLinks()) {
+      <p class="sidebar-feedback sidebar-feedback--error" role="alert">
+        No se pudieron cargar los accesos rapidos.
+      </p>
+    } @else if (!cargandoLinks() && links().length) {
+      <div class="links-list">
+        @for (link of links(); track link.id) {
+          <a [href]="link.url" target="_blank" rel="noopener noreferrer">
+            <span>{{ link.titulo }}</span>
+            <strong>Abrir <span aria-hidden="true">↗</span></strong>
+          </a>
+        }
+      </div>
+    } @else if (!cargandoLinks()) {
+      <p class="sidebar-feedback">No hay enlaces destacados por el momento.</p>
+    }
+  </section>
+
+  <section class="home-sidebar__section home-sidebar__puzzle" aria-labelledby="puzzle-title">
+    <div class="section-heading">
+      <h2 id="puzzle-title">Puzzle del dia</h2>
+    </div>
+    @if (!cargandoPuzzle() && errorPuzzle()) {
+      <p class="sidebar-feedback sidebar-feedback--error" role="alert">
+        El puzzle no esta disponible ahora. Vuelve a intentarlo mas tarde.
+      </p>
+    } @else if (puzzle(); as puzzleDiario) {
+      <app-tablero-puzzle [puzzle]="puzzleDiario" />
+    }
+  </section>
+</aside>
