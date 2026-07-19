@@ -47,6 +47,76 @@ a {
   color: inherit;
 }
 
+/* Contenido editorial insertado con innerHTML: debe permanecer dentro de su panel. */
+.event-rich-text {
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  padding: 0;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.event-rich-text :where(p, h1, h2, h3, h4, h5, h6, ul, ol, li, a, pre, code) {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.event-rich-text :where(ul, ol) {
+  padding-left: 1.3rem;
+}
+
+.event-rich-text p {
+  margin: 0 0 0.85rem;
+}
+
+.event-rich-text p:last-child {
+  margin-bottom: 0;
+}
+
+.event-rich-text :where(h1, h2, h3, h4, h5, h6) {
+  margin: 1rem 0 0.45rem;
+  color: var(--text-main);
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.event-rich-text a {
+  color: var(--accent-primary-strong);
+  font-weight: 800;
+}
+
+.event-rich-text pre {
+  white-space: pre-wrap;
+}
+
+.event-rich-text code {
+  white-space: break-spaces;
+}
+
+.event-rich-text table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.event-rich-text :where(img, video, iframe) {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.event-rich-text iframe,
+.event-rich-text .ql-video {
+  width: 100%;
+  border: 0;
+}
+
 button,
 a,
 input,

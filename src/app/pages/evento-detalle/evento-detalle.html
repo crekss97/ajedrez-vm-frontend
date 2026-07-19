@@ -1,17 +1,32 @@
-﻿<main class="detail-page">
+﻿<div class="detail-page">
   <div class="detail-shell">
-    <a class="back-link" routerLink="/">← Volver a la agenda</a>
+    <a class="back-link" routerLink="/"><span aria-hidden="true">←</span> Volver a la agenda</a>
 
     @if (mostrarError()) {
-      <section class="state-card">
+      <section class="state-card" role="alert">
         No se pudo cargar este evento. Verifica que exista o que el backend esté disponible.
       </section>
     } @else if (!evento()) {
-      <section class="state-card">Cargando detalle del evento...</section>
+      <section class="state-card" role="status" aria-live="polite">
+        Cargando detalle del evento...
+      </section>
     } @else if (evento(); as evento) {
       <section class="event-intro">
         <div class="event-intro__visual">
-          <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+          <button
+            type="button"
+            class="event-intro__image-button"
+            [attr.aria-label]="'Ampliar afiche de ' + evento.titulo"
+            (click)="abrirAfiche(aficheAmpliado)"
+          >
+            <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+            <span class="event-intro__zoom" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
+                <path d="m20 20-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M10.5 7.5v6m-3-3h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </span>
+          </button>
         </div>
         <div class="event-intro__content">
           <span class="badge">{{ evento.categoria }}</span>
@@ -20,18 +35,28 @@
         </div>
       </section>
 
-      <section class="important-facts" aria-label="Información principal del evento">
-        <div class="facts-grid">
-          <article class="fact-card"><span class="fact-card__icon" aria-hidden="true">◷</span><div><span class="meta-label">Cuándo</span><strong>{{ evento.fechaInicio | date: 'EEE d MMM, y' }}</strong>@if (evento.fechaFin) { <small>Hasta {{ evento.fechaFin | date: 'short' }}</small> }</div></article>
-          <article class="fact-card"><span class="fact-card__icon" aria-hidden="true">⌖</span><div><span class="meta-label">Dónde</span><strong>{{ evento.ubicacion }}</strong></div></article>
-          <article class="fact-card"><span class="fact-card__icon" aria-hidden="true">♙</span><div><span class="meta-label">Modalidad</span><strong>{{ evento.modalidad }}</strong></div></article>
-          <article class="fact-card"><span class="fact-card__icon" aria-hidden="true">◇</span><div><span class="meta-label">Entrada</span><strong>{{ evento.precio }}</strong></div></article>
+      <dialog
+        #aficheAmpliado
+        class="image-lightbox"
+        [attr.aria-label]="'Afiche ampliado de ' + evento.titulo"
+        (click)="cerrarAficheDesdeFondo($event, aficheAmpliado)"
+      >
+        <div class="image-lightbox__content">
+          <button
+            type="button"
+            class="image-lightbox__close"
+            aria-label="Cerrar imagen ampliada"
+            (click)="cerrarAfiche(aficheAmpliado)"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+          <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
         </div>
-      </section>
+      </dialog>
 
       <section class="detail-grid">
         <article class="detail-panel detail-panel--description" aria-label="Descripción del evento">
-          <div class="detail-copy" [innerHTML]="evento.descripcionLarga"></div>
+          <div class="detail-copy event-rich-text ql-editor" [innerHTML]="evento.descripcionLarga"></div>
           @if (evento.tags.length) {
             <div class="tag-list" aria-label="Etiquetas del evento">
               @for (tag of evento.tags; track tag) { <span>#{{ tag }}</span> }
@@ -39,7 +64,7 @@
           }
         </article>
 
-        <aside class="detail-panel detail-panel--aside" aria-label="Organización del evento">
+        <aside class="detail-panel detail-panel--aside" aria-label="Información del evento">
           <dl class="detail-list">
             <div>
               <dt>Organiza</dt>
@@ -55,10 +80,6 @@
                 <dd>{{ evento.fechaFin | date: 'short' }}</dd>
               </div>
             }
-            <div>
-              <dt>Etiquetas</dt>
-              <dd>{{ evento.tags.join(' · ') }}</dd>
-            </div>
           </dl>
 
           @if (evento.linksExternos?.length) {
@@ -67,7 +88,8 @@
                 @for (link of evento.linksExternos; track link.id) {
                   <a [href]="link.url" target="_blank" rel="noopener noreferrer">
                     <span>{{ link.titulo }}</span>
-                    <strong>Ver más ↗</strong>
+                    <strong>Ver más <span aria-hidden="true">↗</span></strong>
+                    <span class="visually-hidden">(abre en una pestaña nueva)</span>
                   </a>
                 }
               </div>
@@ -78,7 +100,11 @@
               <span class="panel-label">Documentos</span>
               <div class="detail-links__list">
                 @for (adjunto of evento.adjuntos; track adjunto.id) {
-                  <a [href]="adjunto.url" target="_blank" rel="noopener noreferrer"><span>📎 {{ adjunto.nombre }}</span><strong>Abrir ↗</strong></a>
+                  <a [href]="adjunto.url" target="_blank" rel="noopener noreferrer">
+                    <span><span aria-hidden="true">📎</span> {{ adjunto.nombre }}</span>
+                    <strong>Abrir <span aria-hidden="true">↗</span></strong>
+                    <span class="visually-hidden">(abre en una pestaña nueva)</span>
+                  </a>
                 }
               </div>
             </div>
@@ -87,4 +113,4 @@
       </section>
     }
   </div>
-</main>
+</div>
