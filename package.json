@@ -30,6 +30,7 @@
     "@angular/forms": "^20.3.26",
     "@angular/platform-browser": "^20.3.26",
     "@angular/router": "^20.3.26",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "angularx-flatpickr": "^8.1.0",
     "chart.js": "^4.5.1",
