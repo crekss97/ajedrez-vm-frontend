@@ -1,34 +1,245 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, convertToParamMap, ParamMap, provideRouter } from '@angular/router';
+import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
 
+import { Evento } from '../../models/evento';
+import { EventosService } from '../../services/evento.service';
 import { EventoDetalle } from './evento-detalle';
 
 describe('EventoDetalle', () => {
-  let component: EventoDetalle;
   let fixture: ComponentFixture<EventoDetalle>;
+  let eventosService: jasmine.SpyObj<EventosService>;
+  let paramMap$: BehaviorSubject<ParamMap>;
+  let respuesta$: Subject<Evento>;
+  let title: Title;
+
+  const crearEvento = (valores: Partial<Evento> = {}): Evento => ({
+    id: 40,
+    slug: 'torneo-apertura',
+    titulo: 'Torneo Apertura',
+    categoria: 'Torneo',
+    descripcionCorta: 'Primera fecha del circuito.',
+    descripcionLarga: '<p>Una jornada abierta para toda la comunidad.</p>',
+    fechaInicio: '2026-08-10T18:00:00.000Z',
+    fechaFin: '2026-08-10T22:00:00.000Z',
+    ubicacion: 'Club Central',
+    organizador: 'Ajedrez VM',
+    imagenUrl: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+    destacado: true,
+    modalidad: 'Presencial',
+    precio: 'Gratis',
+    tags: ['juvenil', 'ritmo-rapido'],
+    views: 12,
+    linksExternos: [
+      { id: 'link-1', titulo: 'Sitio oficial', url: 'https://example.com/evento' },
+    ],
+    adjuntos: [
+      { id: 'adjunto-1', nombre: 'Bases.pdf', url: '/api/uploads/1', tipo: 'application/pdf' },
+    ],
+    estadoEditorial: 'published',
+    ...valores,
+  });
 
   beforeEach(async () => {
+    paramMap$ = new BehaviorSubject(convertToParamMap({ slug: 'torneo-apertura' }));
+    respuesta$ = new Subject<Evento>();
+    eventosService = jasmine.createSpyObj<EventosService>('EventosService', [
+      'getEvento',
+      'registrarConsulta',
+    ]);
+    eventosService.getEvento.and.returnValue(respuesta$.asObservable());
+    eventosService.registrarConsulta.and.returnValue(of({ views: 13 }));
+
     await TestBed.configureTestingModule({
       imports: [EventoDetalle],
       providers: [
-        provideHttpClient(),
         provideRouter([]),
-        {
-          provide: ActivatedRoute,
-          useValue: { paramMap: of(convertToParamMap({ slug: 'evento-de-prueba' })) },
-        },
+        { provide: ActivatedRoute, useValue: { paramMap: paramMap$.asObservable() } },
+        { provide: EventosService, useValue: eventosService },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(EventoDetalle);
-    component = fixture.componentInstance;
+    title = TestBed.inject(Title);
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('renderiza la información vigente y los chips sin datos redundantes', () => {
+    respuesta$.next(crearEvento());
+    fixture.detectChanges();
+
+    const contenido = fixture.nativeElement.textContent as string;
+    const aside = fixture.nativeElement.querySelector('aside') as HTMLElement;
+
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Torneo Apertura');
+    expect(contenido).toContain('Primera fecha del circuito.');
+    expect(contenido).toContain('Ajedrez VM');
+    expect(contenido).toContain('Inicio');
+    expect(contenido).toContain('Finaliza');
+    expect(fixture.nativeElement.querySelector('.important-facts')).toBeNull();
+    expect(contenido).not.toContain('Club Central');
+    expect(contenido).not.toContain('Presencial');
+    expect(contenido).not.toContain('Gratis');
+    expect(aside.textContent).not.toContain('Etiquetas');
+    expect(aside.getAttribute('aria-label')).toBe('Información del evento');
+    expect(fixture.nativeElement.querySelector('.tag-list')?.textContent).toContain('#juvenil');
+    expect(fixture.nativeElement.querySelector('.tag-list')?.textContent).toContain('#ritmo-rapido');
+    expect(fixture.nativeElement.querySelector('main')).toBeNull();
+  });
+
+  it('mantiene HTML enriquecido extremo dentro del panel y conserva la sanitización de Angular', () => {
+    const tokenLargo = 'https://example.com/' + 'ruta'.repeat(100);
+    respuesta$.next(
+      crearEvento({
+        descripcionLarga: `<p>${'palabra'.repeat(100)}</p><a href="${tokenLargo}">${tokenLargo}</a><pre>${'codigo'.repeat(100)}</pre><table><tr><td>${tokenLargo}</td></tr></table><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" onerror="alert(1)"><video></video><script>alert('x')</script>`,
+      }),
+    );
+    fixture.detectChanges();
+
+    const contenido = fixture.nativeElement.querySelector('.event-rich-text') as HTMLElement;
+    const pre = contenido.querySelector('pre') as HTMLElement;
+    const tabla = contenido.querySelector('table') as HTMLTableElement;
+    const imagen = contenido.querySelector('img') as HTMLImageElement;
+    const video = contenido.querySelector('video') as HTMLVideoElement;
+
+    expect(contenido.classList).toContain('ql-editor');
+    expect(contenido.querySelector('a')?.textContent).toContain('https://example.com/');
+    expect(pre.textContent).toContain('codigo');
+    expect(tabla).not.toBeNull();
+    expect(contenido.querySelector('script')).toBeNull();
+    expect(contenido.querySelector('img')?.hasAttribute('onerror')).toBeFalse();
+    expect(getComputedStyle(contenido).maxWidth).toBe('100%');
+    expect(getComputedStyle(contenido).overflowWrap).toBe('anywhere');
+    expect(getComputedStyle(contenido).wordBreak).toBe('break-word');
+    expect(getComputedStyle(pre).whiteSpace).toBe('pre-wrap');
+    expect(getComputedStyle(tabla).maxWidth).toBe('100%');
+    expect(getComputedStyle(tabla).overflowX).toBe('auto');
+    expect(getComputedStyle(imagen).maxWidth).toBe('100%');
+    expect(getComputedStyle(video).maxWidth).toBe('100%');
+  });
+
+  it('muestra el afiche completo sin recortarlo', () => {
+    respuesta$.next(crearEvento());
+    fixture.detectChanges();
+
+    const afiche = fixture.nativeElement.querySelector('.event-intro__visual img') as HTMLImageElement;
+
+    expect(afiche).not.toBeNull();
+    expect(getComputedStyle(afiche).objectFit).toBe('contain');
+    expect(getComputedStyle(afiche).maxWidth).toBe('100%');
+  });
+
+  it('anuncia la carga y luego usa el título del evento', () => {
+    const carga = fixture.nativeElement.querySelector('[role="status"]') as HTMLElement;
+
+    expect(carga.textContent).toContain('Cargando detalle del evento');
+    expect(carga.getAttribute('aria-live')).toBe('polite');
+    expect(title.getTitle()).toBe('Detalle del evento | Ajedrez VM');
+
+    respuesta$.next(crearEvento({ titulo: 'Abierto de Invierno' }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[role="status"]')).toBeNull();
+    expect(title.getTitle()).toBe('Abierto de Invierno | Ajedrez VM');
+  });
+
+  it('anuncia el error y conserva un título seguro', () => {
+    respuesta$.error(new Error('No encontrado'));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(
+      'No se pudo cargar este evento',
+    );
+    expect(title.getTitle()).toBe('Detalle del evento | Ajedrez VM');
+  });
+
+  it('registra una consulta una sola vez después de una carga exitosa', () => {
+    expect(eventosService.registrarConsulta).not.toHaveBeenCalled();
+
+    respuesta$.next(crearEvento());
+    fixture.detectChanges();
+
+    expect(eventosService.registrarConsulta).toHaveBeenCalledOnceWith('torneo-apertura');
+  });
+
+  it('mantiene el evento visible si falla el registro de la consulta', () => {
+    eventosService.registrarConsulta.and.returnValue(
+      throwError(() => new Error('No se pudo registrar')),
+    );
+
+    respuesta$.next(crearEvento());
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Torneo Apertura');
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('restablece el error al navegar de un slug inválido a uno válido', () => {
+    eventosService.getEvento.and.callFake((slug: string): Observable<Evento> =>
+      slug === 'invalido'
+        ? throwError(() => new Error('No encontrado'))
+        : of(crearEvento({ slug, titulo: 'Evento recuperado' })),
+    );
+
+    paramMap$.next(convertToParamMap({ slug: 'invalido' }));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).not.toBeNull();
+
+    paramMap$.next(convertToParamMap({ slug: 'valido' }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Evento recuperado');
+    expect(title.getTitle()).toBe('Evento recuperado | Ajedrez VM');
+  });
+
+  it('oculta el evento anterior y muestra carga mientras responde un nuevo slug', () => {
+    const respuestaB$ = new Subject<Evento>();
+    eventosService.getEvento.and.callFake((slug: string) =>
+      slug === 'evento-b' ? respuestaB$.asObservable() : respuesta$.asObservable(),
+    );
+    respuesta$.next(crearEvento({ slug: 'evento-a', titulo: 'Evento A' }));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Evento A');
+
+    paramMap$.next(convertToParamMap({ slug: 'evento-b' }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('h1')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('Evento A');
+    expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent).toContain(
+      'Cargando detalle del evento',
+    );
+
+    respuestaB$.next(crearEvento({ slug: 'evento-b', titulo: 'Evento B' }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[role="status"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Evento B');
+  });
+
+  it('abre enlaces externos y documentos de forma segura en otra pestaña', () => {
+    respuesta$.next(crearEvento());
+    fixture.detectChanges();
+
+    const enlaces = Array.from(
+      fixture.nativeElement.querySelectorAll('.detail-links__list a'),
+    ) as HTMLAnchorElement[];
+
+    expect(enlaces.length).toBe(2);
+    for (const enlace of enlaces) {
+      expect(enlace.target).toBe('_blank');
+      expect(enlace.rel).toContain('noopener');
+      expect(enlace.rel).toContain('noreferrer');
+    }
+    expect(enlaces[0].textContent).toContain('Ver más');
+    expect(enlaces[0].textContent).toContain('(abre en una pestaña nueva)');
+    expect(enlaces[1].textContent).toContain('Bases.pdf');
+    expect(enlaces[1].textContent).toContain('Abrir');
+    expect(enlaces[1].textContent).toContain('(abre en una pestaña nueva)');
+    expect(enlaces[0].querySelector('.visually-hidden')).not.toBeNull();
+    expect(enlaces[1].querySelector('.visually-hidden')).not.toBeNull();
+    expect(enlaces[1].querySelectorAll('[aria-hidden="true"]').length).toBe(2);
   });
 });
