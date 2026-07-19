@@ -157,6 +157,23 @@ describe('EventoDetalle', () => {
     expect(dialog.open).toBeFalse();
   });
 
+  it('cierra el afiche al pulsar fuera de la imagen', () => {
+    respuesta$.next(crearEvento());
+    fixture.detectChanges();
+
+    const boton = fixture.nativeElement.querySelector('.event-intro__image-button') as HTMLButtonElement;
+    const dialog = fixture.nativeElement.querySelector('.image-lightbox') as HTMLDialogElement;
+    const contenido = dialog.querySelector('.image-lightbox__content') as HTMLElement;
+    const imagen = dialog.querySelector('img') as HTMLImageElement;
+
+    boton.click();
+    imagen.click();
+    expect(dialog.open).toBeTrue();
+
+    contenido.click();
+    expect(dialog.open).toBeFalse();
+  });
+
   it('anuncia la carga y luego usa el título del evento', () => {
     const carga = fixture.nativeElement.querySelector('[role="status"]') as HTMLElement;
 

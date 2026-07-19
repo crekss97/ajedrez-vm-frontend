@@ -63,7 +63,12 @@ export class EventoDetalle {
   }
 
   protected cerrarAficheDesdeFondo(event: MouseEvent, dialog: HTMLDialogElement): void {
-    if (event.target === dialog) {
+    const objetivo = event.target;
+    if (
+      objetivo instanceof Element
+      && !objetivo.closest('.image-lightbox__content img')
+      && !objetivo.closest('.image-lightbox__close')
+    ) {
       dialog.close();
     }
   }
