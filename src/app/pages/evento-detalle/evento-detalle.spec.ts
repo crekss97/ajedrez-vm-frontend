@@ -123,11 +123,38 @@ describe('EventoDetalle', () => {
     respuesta$.next(crearEvento());
     fixture.detectChanges();
 
-    const afiche = fixture.nativeElement.querySelector('.event-intro__visual img') as HTMLImageElement;
+    const contenedor = fixture.nativeElement.querySelector('.event-intro__visual') as HTMLElement;
+    const boton = fixture.nativeElement.querySelector('.event-intro__image-button') as HTMLButtonElement;
+    const afiche = boton.querySelector('img') as HTMLImageElement;
 
     expect(afiche).not.toBeNull();
     expect(getComputedStyle(afiche).objectFit).toBe('contain');
     expect(getComputedStyle(afiche).maxWidth).toBe('100%');
+    expect(getComputedStyle(afiche).maxHeight).toBe('416px');
+    expect(getComputedStyle(contenedor).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    expect(getComputedStyle(boton).cursor).toBe('zoom-in');
+    expect(boton.getAttribute('aria-label')).toBe('Ampliar afiche de Torneo Apertura');
+    expect(boton.querySelector('.event-intro__zoom')).not.toBeNull();
+  });
+
+  it('amplía el afiche en un diálogo modal y permite cerrarlo', () => {
+    respuesta$.next(crearEvento());
+    fixture.detectChanges();
+
+    const boton = fixture.nativeElement.querySelector('.event-intro__image-button') as HTMLButtonElement;
+    const dialog = fixture.nativeElement.querySelector('.image-lightbox') as HTMLDialogElement;
+
+    boton.click();
+    fixture.detectChanges();
+
+    expect(dialog.open).toBeTrue();
+    expect(dialog.getAttribute('aria-label')).toBe('Afiche ampliado de Torneo Apertura');
+    expect(dialog.querySelector('img')?.getAttribute('src')).toBe(crearEvento().imagenUrl);
+
+    (dialog.querySelector('.image-lightbox__close') as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    expect(dialog.open).toBeFalse();
   });
 
   it('anuncia la carga y luego usa el título del evento', () => {

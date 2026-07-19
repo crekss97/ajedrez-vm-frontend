@@ -13,7 +13,20 @@
     } @else if (evento(); as evento) {
       <section class="event-intro">
         <div class="event-intro__visual">
-          <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+          <button
+            type="button"
+            class="event-intro__image-button"
+            [attr.aria-label]="'Ampliar afiche de ' + evento.titulo"
+            (click)="abrirAfiche(aficheAmpliado)"
+          >
+            <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+            <span class="event-intro__zoom" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
+                <path d="m20 20-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M10.5 7.5v6m-3-3h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </span>
+          </button>
         </div>
         <div class="event-intro__content">
           <span class="badge">{{ evento.categoria }}</span>
@@ -21,6 +34,25 @@
           <p>{{ evento.descripcionCorta }}</p>
         </div>
       </section>
+
+      <dialog
+        #aficheAmpliado
+        class="image-lightbox"
+        [attr.aria-label]="'Afiche ampliado de ' + evento.titulo"
+        (click)="cerrarAficheDesdeFondo($event, aficheAmpliado)"
+      >
+        <div class="image-lightbox__content">
+          <button
+            type="button"
+            class="image-lightbox__close"
+            aria-label="Cerrar imagen ampliada"
+            (click)="cerrarAfiche(aficheAmpliado)"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+          <img [src]="evento.imagenUrl" [alt]="evento.titulo" />
+        </div>
+      </dialog>
 
       <section class="detail-grid">
         <article class="detail-panel detail-panel--description" aria-label="Descripción del evento">

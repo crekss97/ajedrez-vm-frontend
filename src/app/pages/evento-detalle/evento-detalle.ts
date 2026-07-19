@@ -51,4 +51,20 @@ export class EventoDetalle {
   );
 
   protected readonly mostrarError = this.hasError.asReadonly();
+
+  protected abrirAfiche(dialog: HTMLDialogElement): void {
+    if (!dialog.open) {
+      dialog.showModal();
+    }
+  }
+
+  protected cerrarAfiche(dialog: HTMLDialogElement): void {
+    dialog.close();
+  }
+
+  protected cerrarAficheDesdeFondo(event: MouseEvent, dialog: HTMLDialogElement): void {
+    if (event.target === dialog) {
+      dialog.close();
+    }
+  }
 }
