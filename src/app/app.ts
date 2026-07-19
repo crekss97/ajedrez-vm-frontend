@@ -41,8 +41,7 @@ export class App {
   protected readonly cargadorVisible = this.appLoading.visible;
   protected readonly socialLinks = [
     { label: 'Instagram', href: 'https://instagram.com', icon: 'instagram' },
-    { label: 'X', href: 'https://x.com', icon: 'x' },
-    { label: 'YouTube', href: 'https://youtube.com', icon: 'youtube' },
+    { label: 'Facebook', href: 'https://facebook.com', icon: 'facebook' },
   ] as const;
   private finalizarNavegacion: (() => void) | undefined;
 
