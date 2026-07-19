@@ -48,6 +48,23 @@ describe('App', () => {
     expect(compiled.querySelector('.site-brand__title')?.textContent).toContain('Ajedrez VM');
   });
 
+  it('muestra solo Instagram y Facebook en el footer', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const enlaces = Array.from(
+      fixture.nativeElement.querySelectorAll('.site-footer .site-socials a') as NodeListOf<HTMLAnchorElement>,
+    );
+
+    expect(enlaces.map((enlace) => enlace.getAttribute('aria-label'))).toEqual([
+      'Instagram',
+      'Facebook',
+    ]);
+    expect(enlaces.map((enlace) => enlace.href)).toEqual([
+      'https://instagram.com/',
+      'https://facebook.com/',
+    ]);
+  });
+
   it('muestra un unico tablero global de 3 por 3 durante la carga', fakeAsync(() => {
     const fixture = TestBed.createComponent(App);
     const loading = TestBed.inject(AppLoadingService);

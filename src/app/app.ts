@@ -40,9 +40,8 @@ export class App {
   protected readonly editorSession = this.authService.session;
   protected readonly cargadorVisible = this.appLoading.visible;
   protected readonly socialLinks = [
-    { label: 'Instagram', href: 'https://instagram.com', icon: 'instagram' },
-    { label: 'X', href: 'https://x.com', icon: 'x' },
-    { label: 'YouTube', href: 'https://youtube.com', icon: 'youtube' },
+    { label: 'Instagram', href: 'https://www.instagram.com/ajedrezvillamaria/', icon: 'instagram' },
+    { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=100063519642487', icon: 'facebook' },
   ] as const;
   private finalizarNavegacion: (() => void) | undefined;
 
