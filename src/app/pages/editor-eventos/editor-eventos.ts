@@ -401,7 +401,7 @@ export class EditorEventos {
     this.richEditorRoot = editor.root;
     editor.root.id = 'descripcion-larga-editor';
     editor.root.setAttribute('aria-labelledby', 'descripcion-larga-label');
-    editor.root.setAttribute('aria-describedby', 'descripcion-larga-help descripcion-larga-error');
+    editor.root.setAttribute('aria-describedby', 'descripcion-larga-error');
     editor.root.setAttribute('aria-required', 'true');
     this.syncRichEditorAccessibility();
   }

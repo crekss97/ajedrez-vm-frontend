@@ -21,8 +21,7 @@
         </div>
         <div class="field">
           <label for="slug">Slug <em>opcional</em></label>
-          <input id="slug" type="text" formControlName="slug" aria-describedby="slug-help" />
-          <small id="slug-help">Se genera desde el título si lo dejás vacío.</small>
+          <input id="slug" type="text" formControlName="slug" />
         </div>
       </div>
     </section>
@@ -53,18 +52,16 @@
           <label for="fecha-inicio-visible">Fecha de inicio <b aria-hidden="true">*</b></label>
           <div class="date-control">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
-            <input id="fecha-inicio" type="text" mwlFlatpickr [options]="dateTimeOptions" formControlName="fechaInicio" required aria-required="true" aria-describedby="timezone-help fecha-inicio-error" [attr.aria-invalid]="hasError('fechaInicio') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
+            <input id="fecha-inicio" type="text" mwlFlatpickr [options]="dateTimeOptions" formControlName="fechaInicio" required aria-required="true" aria-describedby="fecha-inicio-error" [attr.aria-invalid]="hasError('fechaInicio') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
           </div>
-          <small id="timezone-help">Horario de Buenos Aires (UTC-3).</small>
           @if (hasError('fechaInicio')) { <small id="fecha-inicio-error" class="field-error">{{ errorMessage('fechaInicio') }}</small> }
         </div>
         <div class="field field--date" [class.field-invalid]="hasError('fechaFin')">
           <label for="fecha-fin-visible">Fecha de fin <em>opcional</em></label>
           <div class="date-control">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
-            <input id="fecha-fin" type="text" mwlFlatpickr [options]="dateTimeOptions" [minDate]="eventForm.controls.fechaInicio.value || 'today'" formControlName="fechaFin" aria-describedby="fecha-fin-help fecha-fin-error" [attr.aria-invalid]="hasError('fechaFin') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
+            <input id="fecha-fin" type="text" mwlFlatpickr [options]="dateTimeOptions" [minDate]="eventForm.controls.fechaInicio.value || 'today'" formControlName="fechaFin" aria-describedby="fecha-fin-error" [attr.aria-invalid]="hasError('fechaFin') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
           </div>
-          <small id="fecha-fin-help">Debe ser posterior a la fecha de inicio.</small>
           @if (hasError('fechaFin')) { <small id="fecha-fin-error" class="field-error">{{ errorMessage('fechaFin') }}</small> }
         </div>
       </div>
@@ -75,18 +72,16 @@
       <div class="editor-fields">
         <div class="field" [class.field-invalid]="hasError('descripcionCorta')">
           <label for="descripcion-corta">Descripción corta <b aria-hidden="true">*</b></label>
-          <textarea id="descripcion-corta" formControlName="descripcionCorta" rows="3" minlength="20" maxlength="180" required aria-required="true" aria-describedby="descripcion-corta-help descripcion-corta-error" [attr.aria-invalid]="hasError('descripcionCorta') || null"></textarea>
-          <small id="descripcion-corta-help">Entre {{ minShortDescription }} y {{ maxShortDescription }} caracteres. {{ eventForm.controls.descripcionCorta.value.length }}/{{ maxShortDescription }}</small>
+          <textarea id="descripcion-corta" formControlName="descripcionCorta" rows="3" minlength="20" maxlength="180" required aria-required="true" aria-describedby="descripcion-corta-error" [attr.aria-invalid]="hasError('descripcionCorta') || null"></textarea>
           @if (hasError('descripcionCorta')) { <small id="descripcion-corta-error" class="field-error">{{ errorMessage('descripcionCorta') }}</small> }
         </div>
         <div class="field" [class.field-invalid]="hasError('descripcionLarga')">
           <span id="descripcion-larga-label" class="field-label">Descripción larga <b aria-hidden="true">*</b></span>
           <quill-editor class="rich-editor" [class.rich-editor--invalid]="hasError('descripcionLarga')" formControlName="descripcionLarga" [modules]="quillModules" format="html" [required]="true" (onEditorCreated)="configureEditorAccessibility($event)"></quill-editor>
-          <small id="descripcion-larga-help">Podés pegar texto con formato y crear listas. Los PDF aparecerán al final del evento.</small>
           @if (hasError('descripcionLarga')) { <small id="descripcion-larga-error" class="field-error">{{ errorMessage('descripcionLarga') }}</small> }
         </div>
         <div class="attachment-upload">
-          <div><strong>Archivos del evento</strong><small id="pdf-help">Hasta 5 PDF. Se guardarán al confirmar.</small></div>
+          <div><strong>Archivos del evento</strong><small id="pdf-help">Hasta 5 PDF.</small></div>
           <label class="upload-button" for="pdf-input"><input id="pdf-input" class="file-input" type="file" accept="application/pdf,.pdf" aria-describedby="pdf-help attachment-error" (change)="selectAttachment($event)" [disabled]="saving()" /><span>Seleccionar PDF</span></label>
         </div>
         @if (attachmentRows().length) {
@@ -113,12 +108,11 @@
               <div class="poster-placeholder" aria-hidden="true"><span>AVM</span><small>Vista previa del afiche</small></div>
             }
             <label class="upload-dropzone" for="imagen-input">
-              <input id="imagen-input" class="file-input" type="file" accept="image/jpeg,image/png,image/webp" aria-labelledby="imagen-label" aria-describedby="imagen-help imagen-status imagen-error imagen-required-error" aria-required="true" [attr.aria-invalid]="(hasError('imagenUrl') || !!imageError()) || null" (change)="selectImage($event)" [disabled]="saving()" />
+              <input id="imagen-input" class="file-input" type="file" accept="image/jpeg,image/png,image/webp" aria-labelledby="imagen-label" aria-describedby="imagen-status imagen-error imagen-required-error" aria-required="true" [attr.aria-invalid]="(hasError('imagenUrl') || !!imageError()) || null" (change)="selectImage($event)" [disabled]="saving()" />
               <span class="upload-dropzone__icon" aria-hidden="true">＋</span>
               <strong>{{ imagePreview() ? 'Cambiar imagen' : 'Elegir imagen' }}</strong>
             </label>
           </div>
-          <small id="imagen-help">JPG, PNG o WebP · máximo 2 MiB · recomendado 1080 × 1080 px.</small>
           @if (imageFileName()) { <small id="imagen-status" class="selected-file">Archivo seleccionado: <strong>{{ imageFileName() }}</strong></small> }
           @if (validatingImage()) { <small role="status">Validando imagen...</small> }
           @if (imageWarning()) { <small class="field-warning" role="status">{{ imageWarning() }}</small> }
@@ -129,8 +123,7 @@
         <div class="publication-settings">
           <div class="field">
             <label for="tags">Etiquetas <em>opcional</em></label>
-            <input id="tags" type="text" formControlName="tags" aria-describedby="tags-help" />
-            <small id="tags-help">Separalas con comas para facilitar la lectura.</small>
+            <input id="tags" type="text" formControlName="tags" />
           </div>
           <div class="field" [class.field-invalid]="hasError('estadoEditorial')">
             <label for="estado-editorial">Estado <b aria-hidden="true">*</b></label>

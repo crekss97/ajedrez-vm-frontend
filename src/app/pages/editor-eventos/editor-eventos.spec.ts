@@ -75,9 +75,13 @@ describe('EditorEventos', () => {
     );
     expect(generatedPlaceholders.every((element) => element.getAttribute('placeholder') === '')).toBeTrue();
     expect(imageInput.getAttribute('aria-required')).toBe('true');
-    expect(visibleStartDate.getAttribute('aria-describedby')).toContain('timezone-help');
+    expect(visibleStartDate.getAttribute('aria-describedby')).toBe('fecha-inicio-error');
     expect(fixture.nativeElement.querySelector('label[for="fecha-inicio-visible"]')).not.toBeNull();
     expect((component as any).dateTimeOptions.minDate).toBe('today');
+    const remainingHelp = fixture.nativeElement.querySelectorAll('[id$="-help"]');
+    expect(remainingHelp.length).toBe(1);
+    expect(remainingHelp[0].id).toBe('pdf-help');
+    expect(remainingHelp[0].textContent?.trim()).toBe('Hasta 5 PDF.');
   });
 
   it('solo permite destacar eventos publicados', () => {
