@@ -19,7 +19,6 @@ describe('EventosPublicadosListComponent', () => {
     imagenUrl: '/api/uploads/afiche',
     destacado: false,
     modalidad: 'Presencial',
-    precio: '$15000',
     tags: [],
     views: 0,
   };

@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FlatpickrDirective, provideFlatpickrDefaults } from 'angularx-flatpickr';
+import { A11yModule } from '@angular/cdk/a11y';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FlatpickrDefaultsInterface, FlatpickrDirective, provideFlatpickrDefaults } from 'angularx-flatpickr';
+import { Spanish } from 'flatpickr/dist/l10n/es.js';
 import { QuillEditorComponent } from 'ngx-quill';
 import { finalize, take } from 'rxjs';
 import {
@@ -19,10 +22,107 @@ interface PendingAttachment {
   file: File;
 }
 
+const buenosAiresDateTimeFormatter = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'America/Argentina/Buenos_Aires',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
+function getBuenosAiresDateTimeParts(date: Date): Record<string, string> {
+  return Object.fromEntries(
+    buenosAiresDateTimeFormatter
+      .formatToParts(date)
+      .filter((part) => part.type !== 'literal')
+      .map((part) => [part.type, part.value]),
+  );
+}
+
+function toBuenosAiresInput(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  const parts = getBuenosAiresDateTimeParts(date);
+  return `${parts['year']}-${parts['month']}-${parts['day']}T${parts['hour']}:${parts['minute']}`;
+}
+
+function fromBuenosAiresInput(value: string): Date {
+  const [datePart, timePart] = value.split('T');
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hour, minute] = timePart.split(':').map(Number);
+  const desiredWallTime = Date.UTC(year, month - 1, day, hour, minute);
+  let instant = desiredWallTime;
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const represented = getBuenosAiresDateTimeParts(new Date(instant));
+    const representedWallTime = Date.UTC(
+      Number(represented['year']),
+      Number(represented['month']) - 1,
+      Number(represented['day']),
+      Number(represented['hour']),
+      Number(represented['minute']),
+    );
+    const adjustment = desiredWallTime - representedWallTime;
+    instant += adjustment;
+    if (adjustment === 0) {
+      break;
+    }
+  }
+
+  return new Date(instant);
+}
+
+function isValidBuenosAiresDateTime(value: unknown): value is string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) {
+    return false;
+  }
+
+  const instant = fromBuenosAiresInput(value);
+  return !Number.isNaN(instant.getTime()) && toBuenosAiresInput(instant.toISOString()) === value;
+}
+
+const buenosAiresDateTimeValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  const value = control.value;
+  return value === '' || isValidBuenosAiresDateTime(value) ? null : { fechaInvalida: true };
+};
+
+const futureEventDateValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  const value = control.value;
+  if (value === '' || !isValidBuenosAiresDateTime(value)) {
+    return null;
+  }
+  const today = toBuenosAiresInput(new Date().toISOString()).slice(0, 10);
+  return value.slice(0, 10) >= today ? null : { fechaAnterior: true };
+};
+
+const eventDateRangeValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  const start = control.get('fechaInicio')?.value;
+  const end = control.get('fechaFin')?.value;
+  if (!end || !isValidBuenosAiresDateTime(start) || !isValidBuenosAiresDateTime(end)) {
+    return null;
+  }
+  return end > start ? null : { fechaFinAnterior: true };
+};
+
+function toEventInstant(value: string): string {
+  return fromBuenosAiresInput(value).toISOString();
+}
+
 @Component({
   selector: 'app-editor-eventos',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, QuillEditorComponent, FlatpickrDirective],
+  imports: [A11yModule, ReactiveFormsModule, QuillEditorComponent, FlatpickrDirective],
   providers: [provideFlatpickrDefaults()],
   templateUrl: './editor-eventos.html',
   styleUrl: './editor-eventos.css',
@@ -34,9 +134,11 @@ export class EditorEventos {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly maxFilesBytes = 4 * 1024 * 1024;
   private readonly maxAttachments = 5;
   private imageSelectionId = 0;
+  private richEditorRoot: HTMLElement | null = null;
 
   protected readonly minShortDescription = 20;
   protected readonly maxShortDescription = 180;
@@ -69,15 +171,19 @@ export class EditorEventos {
       pending: true,
     })),
   ]);
-  protected readonly dateTimeOptions = {
+  protected readonly dateTimeOptions: FlatpickrDefaultsInterface = {
     enableTime: true,
-    time_24hr: true,
+    time24hr: true,
     dateFormat: 'Y-m-d\\TH:i',
     altInput: true,
     altInputClass: 'editor-date-input',
     altFormat: 'd/m/Y H:i',
     minuteIncrement: 15,
     allowInput: true,
+    disableMobile: true,
+    minDate: 'today',
+    locale: Spanish,
+    ariaDateFormat: 'j \u0064\u0065 F \u0064\u0065 Y, H:i',
   };
   protected readonly quillModules = {
     toolbar: [
@@ -92,25 +198,30 @@ export class EditorEventos {
     slug: [''], categoria: ['', Validators.required],
     descripcionCorta: ['', [Validators.required, Validators.minLength(this.minShortDescription), Validators.maxLength(this.maxShortDescription)]],
     descripcionLarga: ['', Validators.required],
-    fechaInicio: ['', Validators.required], fechaFin: [''], ubicacion: ['', Validators.required],
+    fechaInicio: ['', [Validators.required, buenosAiresDateTimeValidator, futureEventDateValidator]],
+    fechaFin: ['', buenosAiresDateTimeValidator], ubicacion: ['', Validators.required],
     organizador: ['', Validators.required],
     imagenUrl: ['', Validators.required],
     destacado: [false], modalidad: ['Presencial' as EventoModalidad, Validators.required],
-    precio: ['Entrada libre', Validators.required], tags: ['torneo, magistral, comunidad'],
-    estadoEditorial: ['published' as EventoEstadoEditorial, Validators.required],
-  });
-  protected readonly formTitle = computed(() => this.editingEvent()?.titulo || this.eventForm.controls.titulo.value.trim() || 'Nuevo evento editorial');
+    tags: ['torneo, magistral, comunidad'],
+    estadoEditorial: ['draft' as EventoEstadoEditorial, Validators.required],
+  }, { validators: eventDateRangeValidator });
 
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.imageSelectionId++;
       this.revokeImagePreview();
     });
+    this.eventForm.controls.estadoEditorial.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status) => this.syncFeaturedControl(status));
+    this.syncFeaturedControl(this.eventForm.controls.estadoEditorial.value);
     this.loadEditingEvent();
   }
 
   protected saveEvent(): void {
     this.formSubmitted.set(true);
+    this.syncRichEditorAccessibility();
 
     if (this.validatingImage()) {
       this.saveError.set('Esperá a que termine la validación de la imagen.');
@@ -120,6 +231,7 @@ export class EditorEventos {
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched();
       this.saveError.set('Revisá los campos marcados antes de guardar.');
+      this.focusFirstInvalidControl();
       return;
     }
 
@@ -128,6 +240,7 @@ export class EditorEventos {
     if (!editingEvent && !selectedImage) {
       this.eventForm.controls.imagenUrl.setErrors({ required: true });
       this.saveError.set('Seleccioná una imagen principal.');
+      this.focusFirstInvalidControl();
       return;
     }
 
@@ -135,7 +248,8 @@ export class EditorEventos {
     const input: EventoEditorInput = {
       ...value,
       imagenUrl: editingEvent?.imagenUrl ?? '',
-      fechaFin: value.fechaFin || undefined,
+      fechaInicio: toEventInstant(value.fechaInicio),
+      fechaFin: value.fechaFin ? toEventInstant(value.fechaFin) : undefined,
       tags: value.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
       linksExternos: [],
       adjuntos: this.attachments(),
@@ -283,13 +397,40 @@ export class EditorEventos {
     }
   }
 
+  protected configureEditorAccessibility(editor: { root: HTMLElement }): void {
+    this.richEditorRoot = editor.root;
+    editor.root.id = 'descripcion-larga-editor';
+    editor.root.setAttribute('aria-labelledby', 'descripcion-larga-label');
+    editor.root.setAttribute('aria-describedby', 'descripcion-larga-error');
+    editor.root.setAttribute('aria-required', 'true');
+    this.syncRichEditorAccessibility();
+  }
+
+  protected configureDateInputAccessibility(event: {
+    instance: { input: HTMLInputElement; altInput?: HTMLInputElement };
+  }): void {
+    const { input, altInput } = event.instance;
+    if (!altInput) {
+      return;
+    }
+    altInput.id = `${input.id}-visible`;
+    altInput.setAttribute('aria-describedby', input.getAttribute('aria-describedby') ?? '');
+    altInput.setAttribute('aria-required', input.getAttribute('aria-required') ?? 'false');
+    this.syncDateInputsAccessibility();
+  }
+
   protected hasError(controlName: string): boolean {
     const control = this.eventForm.get(controlName);
-    return !!control && control.invalid && (control.touched || this.formSubmitted());
+    const dateRangeError = controlName === 'fechaFin' && this.eventForm.hasError('fechaFinAnterior');
+    return !!control && (control.invalid || dateRangeError) && (control.touched || this.formSubmitted());
   }
 
   protected errorMessage(controlName: string): string {
     const control = this.eventForm.get(controlName);
+
+    if (controlName === 'fechaFin' && this.eventForm.hasError('fechaFinAnterior')) {
+      return 'La fecha de fin debe ser posterior al inicio.';
+    }
 
     if (!control?.errors) {
       return '';
@@ -303,7 +444,12 @@ export class EditorEventos {
     if (control.errors['maxlength']) {
       return `Usá como máximo ${control.errors['maxlength'].requiredLength} caracteres.`;
     }
-
+    if (control.errors['fechaInvalida']) {
+      return 'Ingresá una fecha y hora válidas.';
+    }
+    if (control.errors['fechaAnterior']) {
+      return 'La fecha de inicio no puede ser anterior a hoy.';
+    }
     return 'Revisá este campo.';
   }
 
@@ -318,10 +464,11 @@ export class EditorEventos {
     this.attachments.set(event.adjuntos ?? []);
     this.eventForm.reset({
       ...event,
-      fechaInicio: event.fechaInicio.slice(0, 16),
-      fechaFin: event.fechaFin?.slice(0, 16) ?? '',
+      fechaInicio: toBuenosAiresInput(event.fechaInicio),
+      fechaFin: event.fechaFin ? toBuenosAiresInput(event.fechaFin) : '',
       tags: event.tags.join(', '),
     });
+    this.syncFeaturedControl(event.estadoEditorial);
   }
 
   private loadEditingEvent(): void {
@@ -354,7 +501,45 @@ export class EditorEventos {
     this.imageSelectionId++;
     this.attachments.set([]);
     this.pendingAttachments.set([]);
-    this.eventForm.reset({ titulo: '', slug: '', categoria: '', descripcionCorta: '', descripcionLarga: '', fechaInicio: '', fechaFin: '', ubicacion: '', organizador: '', imagenUrl: '', destacado: false, modalidad: 'Presencial', precio: 'Entrada libre', tags: 'torneo, magistral, comunidad', estadoEditorial: 'published' });
+    this.eventForm.reset({ titulo: '', slug: '', categoria: '', descripcionCorta: '', descripcionLarga: '', fechaInicio: '', fechaFin: '', ubicacion: '', organizador: '', imagenUrl: '', destacado: false, modalidad: 'Presencial', tags: 'torneo, magistral, comunidad', estadoEditorial: 'draft' });
+    this.syncFeaturedControl('draft');
+    this.syncRichEditorAccessibility();
+  }
+
+  private syncFeaturedControl(status: EventoEstadoEditorial): void {
+    const featured = this.eventForm.controls.destacado;
+    if (status === 'draft') {
+      featured.setValue(false, { emitEvent: false });
+      featured.disable({ emitEvent: false });
+      return;
+    }
+    featured.enable({ emitEvent: false });
+  }
+
+  private focusFirstInvalidControl(): void {
+    queueMicrotask(() => {
+      this.syncDateInputsAccessibility();
+      const firstInvalid = this.host.nativeElement.querySelector<HTMLElement>(
+        '.field-invalid input:not([type="hidden"]), .field-invalid select, .field-invalid textarea, .field-invalid .ql-editor',
+      );
+      firstInvalid?.focus();
+    });
+  }
+
+  private syncRichEditorAccessibility(): void {
+    this.richEditorRoot?.setAttribute(
+      'aria-invalid',
+      this.hasError('descripcionLarga') ? 'true' : 'false',
+    );
+  }
+
+  protected syncDateInputsAccessibility(): void {
+    for (const controlName of ['fechaInicio', 'fechaFin']) {
+      const input = this.host.nativeElement.querySelector<HTMLInputElement>(
+        `#${controlName === 'fechaInicio' ? 'fecha-inicio' : 'fecha-fin'}-visible`,
+      );
+      input?.setAttribute('aria-invalid', this.hasError(controlName) ? 'true' : 'false');
+    }
   }
 
   private fitsTotalLimit(imageBytes: number, attachments: File[]): boolean {

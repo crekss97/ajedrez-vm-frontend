@@ -28,7 +28,6 @@ export interface Evento {
   imagenUrl: string;
   destacado: boolean;
   modalidad: EventoModalidad;
-  precio: string;
   tags: string[];
   views: number;
   linksExternos?: EventoLinkExterno[];
