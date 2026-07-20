@@ -1,25 +1,14 @@
 <section class="editor-subpage">
   <header class="subpage-heading">
-    <a class="back-link" routerLink="/editor/eventos">← Volver a la biblioteca</a>
     <div class="subpage-heading__row">
-      <div class="subpage-heading__copy">
-        <p class="subpage-eyebrow">Ficha editorial</p>
-        <h1>{{ editingEvent() ? 'Editar evento' : 'Crear evento' }}</h1>
-        <p>Organizá la información, revisá el afiche y decidí cuándo publicar.</p>
-      </div>
+      <h1>{{ editingEvent() ? 'Editar evento' : 'Crear evento' }}</h1>
       <span class="form-hint"><strong aria-hidden="true">*</strong> Campo obligatorio</span>
     </div>
   </header>
 
   <form class="event-form" [formGroup]="eventForm" (ngSubmit)="saveEvent()" novalidate>
     <section class="form-section" aria-labelledby="datos-evento-title">
-      <div class="form-section__heading">
-        <span class="section-marker" aria-hidden="true">01</span>
-        <div>
-          <h2 id="datos-evento-title">Datos del evento</h2>
-          <p>La información que identifica la actividad en la cartelera.</p>
-        </div>
-      </div>
+      <h2 class="form-section__title" id="datos-evento-title">Datos del evento</h2>
       <div class="editor-fields editor-fields--three">
         <div class="field" [class.field-invalid]="hasError('titulo')">
           <label for="titulo">Título <b aria-hidden="true">*</b></label>
@@ -41,13 +30,7 @@
     </section>
 
     <section class="form-section" aria-labelledby="agenda-title">
-      <div class="form-section__heading">
-        <span class="section-marker" aria-hidden="true">02</span>
-        <div>
-          <h2 id="agenda-title">Agenda y ubicación</h2>
-          <p>Todos los horarios se guardan en la zona de Buenos Aires.</p>
-        </div>
-      </div>
+      <h2 class="form-section__title" id="agenda-title">Agenda y ubicación</h2>
       <div class="editor-fields editor-fields--three">
         <div class="field" [class.field-invalid]="hasError('organizador')">
           <label for="organizador">Organizador <b aria-hidden="true">*</b></label>
@@ -90,13 +73,7 @@
     </section>
 
     <section class="form-section" aria-labelledby="descripcion-title">
-      <div class="form-section__heading">
-        <span class="section-marker" aria-hidden="true">03</span>
-        <div>
-          <h2 id="descripcion-title">Descripción</h2>
-          <p>Combiná un resumen directo con todos los detalles del evento.</p>
-        </div>
-      </div>
+      <h2 class="form-section__title" id="descripcion-title">Descripción</h2>
       <div class="editor-fields">
         <div class="field" [class.field-invalid]="hasError('descripcionCorta')">
           <label for="descripcion-corta">Descripción corta <b aria-hidden="true">*</b></label>
@@ -126,13 +103,7 @@
     </section>
 
     <section class="form-section form-section--publication" aria-labelledby="publicacion-title">
-      <div class="form-section__heading">
-        <span class="section-marker" aria-hidden="true">04</span>
-        <div>
-          <h2 id="publicacion-title">Publicación</h2>
-          <p>Revisá cómo se verá el afiche y prepará la salida editorial.</p>
-        </div>
-      </div>
+      <h2 class="form-section__title" id="publicacion-title">Publicación</h2>
       <div class="publication-layout">
         <div class="field publication-poster" [class.field-invalid]="hasError('imagenUrl') || imageError()">
           <span id="imagen-label" class="field-label">Imagen principal <b aria-hidden="true">*</b></span>
@@ -158,11 +129,6 @@
         </div>
 
         <div class="publication-settings">
-          <div class="publication-settings__intro">
-            <span>Salida editorial</span>
-            <strong>{{ eventForm.controls.estadoEditorial.value === 'draft' ? 'Guardado como borrador' : 'Listo para publicar' }}</strong>
-            <p>Los borradores solo aparecen dentro del editor.</p>
-          </div>
           <div class="field">
             <label for="tags">Etiquetas <em>opcional</em></label>
             <input id="tags" type="text" formControlName="tags" placeholder="torneo, juvenil, fide" aria-describedby="tags-help" />
@@ -170,17 +136,18 @@
           </div>
           <div class="field" [class.field-invalid]="hasError('estadoEditorial')">
             <label for="estado-editorial">Estado <b aria-hidden="true">*</b></label>
-            <select id="estado-editorial" formControlName="estadoEditorial" required aria-required="true" aria-describedby="estado-help estado-error" [attr.aria-invalid]="hasError('estadoEditorial') || null">
+            <select id="estado-editorial" formControlName="estadoEditorial" required aria-required="true" aria-describedby="estado-error" [attr.aria-invalid]="hasError('estadoEditorial') || null">
               <option value="draft">Borrador</option>
               <option value="published">Publicado</option>
             </select>
-            <small id="estado-help">Publicá solo cuando toda la información esté revisada.</small>
             @if (hasError('estadoEditorial')) { <small id="estado-error" class="field-error">{{ errorMessage('estadoEditorial') }}</small> }
           </div>
-          <label class="editor-toggle">
-            <input type="checkbox" formControlName="destacado" />
-            <span><strong>Mostrar como destacado</strong><small>El evento podrá ocupar un lugar principal en la home.</small></span>
-          </label>
+          @if (eventForm.controls.estadoEditorial.value === 'published') {
+            <label class="editor-toggle">
+              <input type="checkbox" formControlName="destacado" />
+              <span>Mostrar como destacado</span>
+            </label>
+          }
         </div>
       </div>
     </section>

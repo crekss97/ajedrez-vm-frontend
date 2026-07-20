@@ -67,11 +67,29 @@ describe('EditorEventos', () => {
 
     expect(title.textContent).toContain('Crear evento');
     expect(form.controls.estadoEditorial.value).toBe('draft');
+    expect(form.controls.destacado.disabled).toBeTrue();
     expect(form.contains('precio')).toBeFalse();
     expect(fixture.nativeElement.querySelector('.publication-layout')).not.toBeNull();
     expect(imageInput.getAttribute('aria-required')).toBe('true');
     expect(visibleStartDate.getAttribute('aria-describedby')).toContain('timezone-help');
     expect(fixture.nativeElement.querySelector('label[for="fecha-inicio-visible"]')).not.toBeNull();
+  });
+
+  it('solo permite destacar eventos publicados', () => {
+    const form = (component as any).eventForm;
+    expect(fixture.nativeElement.querySelector('.editor-toggle')).toBeNull();
+
+    form.controls.estadoEditorial.setValue('published');
+    fixture.detectChanges();
+    expect(form.controls.destacado.enabled).toBeTrue();
+    expect(fixture.nativeElement.querySelector('.editor-toggle')).not.toBeNull();
+
+    form.controls.destacado.setValue(true);
+    form.controls.estadoEditorial.setValue('draft');
+    fixture.detectChanges();
+    expect(form.controls.destacado.value).toBeFalse();
+    expect(form.controls.destacado.disabled).toBeTrue();
+    expect(fixture.nativeElement.querySelector('.editor-toggle')).toBeNull();
   });
 
   it('rechaza una fecha final que no sea posterior al inicio', () => {

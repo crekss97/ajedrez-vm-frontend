@@ -4,58 +4,23 @@
 }
 
 .subpage-heading {
-  padding: 1.2rem 0 0.1rem;
+  padding: 0.5rem 0 0.1rem;
 }
 
 .subpage-heading__row {
   display: flex;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
-  gap: 2rem;
-}
-
-.subpage-heading__copy {
-  display: grid;
-  gap: 0.45rem;
-  max-width: 46rem;
-}
-
-.subpage-eyebrow {
-  color: var(--accent-primary-strong) !important;
-  font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.back-link {
-  display: inline-block;
-  margin-bottom: 1.2rem;
-  color: var(--accent-primary-strong);
-  font-size: 0.8rem;
-  font-weight: 800;
-  text-decoration: none;
-}
-
-.back-link:hover {
-  text-decoration: underline;
+  gap: 1rem;
 }
 
 .subpage-heading h1 {
   margin: 0;
   color: var(--text-main);
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(2.2rem, 5vw, 3.35rem);
+  font-size: clamp(2rem, 4vw, 2.8rem);
   letter-spacing: -0.055em;
   line-height: 0.98;
-}
-
-.subpage-heading p,
-.form-section__heading p,
-.publication-settings__intro p {
-  margin: 0;
-  color: var(--text-muted);
-  line-height: 1.55;
 }
 
 .form-hint {
@@ -85,41 +50,12 @@
   box-shadow: var(--shadow-soft);
 }
 
-.form-section__heading {
-  display: flex;
-  align-items: start;
-  gap: 0.85rem;
-}
-
-.form-section__heading > div {
-  display: grid;
-  gap: 0.25rem;
-}
-
-.form-section__heading h2 {
+.form-section__title {
   margin: 0;
   color: var(--text-main);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.5rem;
   letter-spacing: -0.04em;
-}
-
-.form-section__heading p {
-  font-size: 0.82rem;
-}
-
-.section-marker {
-  display: grid;
-  flex: 0 0 auto;
-  width: 2.1rem;
-  height: 2.1rem;
-  place-items: center;
-  border-radius: 0.58rem;
-  background: var(--text-main);
-  color: var(--surface-bg);
-  font-size: 0.68rem;
-  font-weight: 900;
-  letter-spacing: 0.04em;
 }
 
 .editor-fields {
@@ -358,31 +294,6 @@
   background: rgba(255, 255, 255, 0.74);
 }
 
-.publication-settings__intro {
-  display: grid;
-  gap: 0.3rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-soft);
-}
-
-.publication-settings__intro > span {
-  color: var(--accent-primary-strong);
-  font-size: 0.7rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.publication-settings__intro > strong {
-  color: var(--text-main);
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1.45rem;
-}
-
-.publication-settings__intro p {
-  font-size: 0.8rem;
-}
-
 .editor-toggle {
   display: flex;
   align-items: flex-start;
@@ -506,15 +417,6 @@
 }
 
 @media (max-width: 420px) {
-  .form-section__heading {
-    gap: 0.65rem;
-  }
-
-  .section-marker {
-    width: 1.9rem;
-    height: 1.9rem;
-  }
-
   .form-actions__buttons {
     display: grid;
     grid-template-columns: 1fr;

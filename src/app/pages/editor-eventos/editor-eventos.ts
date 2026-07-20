@@ -1,7 +1,8 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FlatpickrDefaultsInterface, FlatpickrDirective, provideFlatpickrDefaults } from 'angularx-flatpickr';
 import { Spanish } from 'flatpickr/dist/l10n/es.js';
 import { QuillEditorComponent } from 'ngx-quill';
@@ -110,7 +111,7 @@ function toEventInstant(value: string): string {
 @Component({
   selector: 'app-editor-eventos',
   standalone: true,
-  imports: [A11yModule, ReactiveFormsModule, RouterLink, QuillEditorComponent, FlatpickrDirective],
+  imports: [A11yModule, ReactiveFormsModule, QuillEditorComponent, FlatpickrDirective],
   providers: [provideFlatpickrDefaults()],
   templateUrl: './editor-eventos.html',
   styleUrl: './editor-eventos.css',
@@ -199,6 +200,10 @@ export class EditorEventos {
       this.imageSelectionId++;
       this.revokeImagePreview();
     });
+    this.eventForm.controls.estadoEditorial.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status) => this.syncFeaturedControl(status));
+    this.syncFeaturedControl(this.eventForm.controls.estadoEditorial.value);
     this.loadEditingEvent();
   }
 
@@ -448,6 +453,7 @@ export class EditorEventos {
       fechaFin: event.fechaFin ? toBuenosAiresInput(event.fechaFin) : '',
       tags: event.tags.join(', '),
     });
+    this.syncFeaturedControl(event.estadoEditorial);
   }
 
   private loadEditingEvent(): void {
@@ -481,7 +487,18 @@ export class EditorEventos {
     this.attachments.set([]);
     this.pendingAttachments.set([]);
     this.eventForm.reset({ titulo: '', slug: '', categoria: '', descripcionCorta: '', descripcionLarga: '', fechaInicio: '', fechaFin: '', ubicacion: '', organizador: '', imagenUrl: '', destacado: false, modalidad: 'Presencial', tags: 'torneo, magistral, comunidad', estadoEditorial: 'draft' });
+    this.syncFeaturedControl('draft');
     this.syncRichEditorAccessibility();
+  }
+
+  private syncFeaturedControl(status: EventoEstadoEditorial): void {
+    const featured = this.eventForm.controls.destacado;
+    if (status === 'draft') {
+      featured.setValue(false, { emitEvent: false });
+      featured.disable({ emitEvent: false });
+      return;
+    }
+    featured.enable({ emitEvent: false });
   }
 
   private focusFirstInvalidControl(): void {
