@@ -2,7 +2,6 @@
   <header class="subpage-heading">
     <div class="subpage-heading__row">
       <h1>{{ editingEvent() ? 'Editar evento' : 'Crear evento' }}</h1>
-      <span class="form-hint"><strong aria-hidden="true">*</strong> Campo obligatorio</span>
     </div>
   </header>
 
@@ -12,18 +11,17 @@
       <div class="editor-fields editor-fields--three">
         <div class="field" [class.field-invalid]="hasError('titulo')">
           <label for="titulo">Título <b aria-hidden="true">*</b></label>
-          <input id="titulo" type="text" formControlName="titulo" placeholder="Festival de ajedrez abierto" required aria-required="true" aria-describedby="titulo-help titulo-error" [attr.aria-invalid]="hasError('titulo') || null" />
-          <small id="titulo-help">Mínimo 6 caracteres.</small>
+          <input id="titulo" type="text" formControlName="titulo" required aria-required="true" aria-describedby="titulo-error" [attr.aria-invalid]="hasError('titulo') || null" />
           @if (hasError('titulo')) { <small id="titulo-error" class="field-error">{{ errorMessage('titulo') }}</small> }
         </div>
         <div class="field" [class.field-invalid]="hasError('categoria')">
           <label for="categoria">Categoría <b aria-hidden="true">*</b></label>
-          <input id="categoria" type="text" formControlName="categoria" placeholder="Torneo, capacitación, blitz" required aria-required="true" aria-describedby="categoria-error" [attr.aria-invalid]="hasError('categoria') || null" />
+          <input id="categoria" type="text" formControlName="categoria" required aria-required="true" aria-describedby="categoria-error" [attr.aria-invalid]="hasError('categoria') || null" />
           @if (hasError('categoria')) { <small id="categoria-error" class="field-error">{{ errorMessage('categoria') }}</small> }
         </div>
         <div class="field">
           <label for="slug">Slug <em>opcional</em></label>
-          <input id="slug" type="text" formControlName="slug" placeholder="festival-ajedrez-abierto" aria-describedby="slug-help" />
+          <input id="slug" type="text" formControlName="slug" aria-describedby="slug-help" />
           <small id="slug-help">Se genera desde el título si lo dejás vacío.</small>
         </div>
       </div>
@@ -34,12 +32,12 @@
       <div class="editor-fields editor-fields--three">
         <div class="field" [class.field-invalid]="hasError('organizador')">
           <label for="organizador">Organizador <b aria-hidden="true">*</b></label>
-          <input id="organizador" type="text" formControlName="organizador" placeholder="Club Ajedrez VM" required aria-required="true" aria-describedby="organizador-error" [attr.aria-invalid]="hasError('organizador') || null" />
+          <input id="organizador" type="text" formControlName="organizador" required aria-required="true" aria-describedby="organizador-error" [attr.aria-invalid]="hasError('organizador') || null" />
           @if (hasError('organizador')) { <small id="organizador-error" class="field-error">{{ errorMessage('organizador') }}</small> }
         </div>
         <div class="field" [class.field-invalid]="hasError('ubicacion')">
           <label for="ubicacion">Ubicación <b aria-hidden="true">*</b></label>
-          <input id="ubicacion" type="text" formControlName="ubicacion" placeholder="Buenos Aires, Argentina" required aria-required="true" aria-describedby="ubicacion-error" [attr.aria-invalid]="hasError('ubicacion') || null" />
+          <input id="ubicacion" type="text" formControlName="ubicacion" required aria-required="true" aria-describedby="ubicacion-error" [attr.aria-invalid]="hasError('ubicacion') || null" />
           @if (hasError('ubicacion')) { <small id="ubicacion-error" class="field-error">{{ errorMessage('ubicacion') }}</small> }
         </div>
         <div class="field" [class.field-invalid]="hasError('modalidad')">
@@ -55,7 +53,7 @@
           <label for="fecha-inicio-visible">Fecha de inicio <b aria-hidden="true">*</b></label>
           <div class="date-control">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
-            <input id="fecha-inicio" type="text" mwlFlatpickr [options]="dateTimeOptions" formControlName="fechaInicio" placeholder="Elegí fecha y hora" required aria-required="true" aria-describedby="timezone-help fecha-inicio-error" [attr.aria-invalid]="hasError('fechaInicio') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
+            <input id="fecha-inicio" type="text" mwlFlatpickr [options]="dateTimeOptions" formControlName="fechaInicio" required aria-required="true" aria-describedby="timezone-help fecha-inicio-error" [attr.aria-invalid]="hasError('fechaInicio') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
           </div>
           <small id="timezone-help">Horario de Buenos Aires (UTC-3).</small>
           @if (hasError('fechaInicio')) { <small id="fecha-inicio-error" class="field-error">{{ errorMessage('fechaInicio') }}</small> }
@@ -64,7 +62,7 @@
           <label for="fecha-fin-visible">Fecha de fin <em>opcional</em></label>
           <div class="date-control">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
-            <input id="fecha-fin" type="text" mwlFlatpickr [options]="dateTimeOptions" formControlName="fechaFin" placeholder="Elegí fecha y hora" aria-describedby="fecha-fin-help fecha-fin-error" [attr.aria-invalid]="hasError('fechaFin') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
+            <input id="fecha-fin" type="text" mwlFlatpickr [options]="dateTimeOptions" [minDate]="eventForm.controls.fechaInicio.value || 'today'" formControlName="fechaFin" aria-describedby="fecha-fin-help fecha-fin-error" [attr.aria-invalid]="hasError('fechaFin') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
           </div>
           <small id="fecha-fin-help">Debe ser posterior a la fecha de inicio.</small>
           @if (hasError('fechaFin')) { <small id="fecha-fin-error" class="field-error">{{ errorMessage('fechaFin') }}</small> }
@@ -77,13 +75,13 @@
       <div class="editor-fields">
         <div class="field" [class.field-invalid]="hasError('descripcionCorta')">
           <label for="descripcion-corta">Descripción corta <b aria-hidden="true">*</b></label>
-          <textarea id="descripcion-corta" formControlName="descripcionCorta" rows="3" minlength="20" maxlength="180" placeholder="Resumen para la home y tarjetas" required aria-required="true" aria-describedby="descripcion-corta-help descripcion-corta-error" [attr.aria-invalid]="hasError('descripcionCorta') || null"></textarea>
+          <textarea id="descripcion-corta" formControlName="descripcionCorta" rows="3" minlength="20" maxlength="180" required aria-required="true" aria-describedby="descripcion-corta-help descripcion-corta-error" [attr.aria-invalid]="hasError('descripcionCorta') || null"></textarea>
           <small id="descripcion-corta-help">Entre {{ minShortDescription }} y {{ maxShortDescription }} caracteres. {{ eventForm.controls.descripcionCorta.value.length }}/{{ maxShortDescription }}</small>
           @if (hasError('descripcionCorta')) { <small id="descripcion-corta-error" class="field-error">{{ errorMessage('descripcionCorta') }}</small> }
         </div>
         <div class="field" [class.field-invalid]="hasError('descripcionLarga')">
           <span id="descripcion-larga-label" class="field-label">Descripción larga <b aria-hidden="true">*</b></span>
-          <quill-editor class="rich-editor" [class.rich-editor--invalid]="hasError('descripcionLarga')" formControlName="descripcionLarga" [modules]="quillModules" format="html" [required]="true" placeholder="Escribí el reglamento, programa, invitados, premios o dinámica..." (onEditorCreated)="configureEditorAccessibility($event)"></quill-editor>
+          <quill-editor class="rich-editor" [class.rich-editor--invalid]="hasError('descripcionLarga')" formControlName="descripcionLarga" [modules]="quillModules" format="html" [required]="true" (onEditorCreated)="configureEditorAccessibility($event)"></quill-editor>
           <small id="descripcion-larga-help">Podés pegar texto con formato y crear listas. Los PDF aparecerán al final del evento.</small>
           @if (hasError('descripcionLarga')) { <small id="descripcion-larga-error" class="field-error">{{ errorMessage('descripcionLarga') }}</small> }
         </div>
@@ -131,7 +129,7 @@
         <div class="publication-settings">
           <div class="field">
             <label for="tags">Etiquetas <em>opcional</em></label>
-            <input id="tags" type="text" formControlName="tags" placeholder="torneo, juvenil, fide" aria-describedby="tags-help" />
+            <input id="tags" type="text" formControlName="tags" aria-describedby="tags-help" />
             <small id="tags-help">Separalas con comas para facilitar la lectura.</small>
           </div>
           <div class="field" [class.field-invalid]="hasError('estadoEditorial')">

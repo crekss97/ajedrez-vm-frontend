@@ -23,13 +23,6 @@
   line-height: 0.98;
 }
 
-.form-hint {
-  flex: 0 0 auto;
-  color: var(--text-muted);
-  font-size: 0.78rem;
-}
-
-.form-hint strong,
 .field label b,
 .field-label b {
   color: var(--accent-primary-strong);

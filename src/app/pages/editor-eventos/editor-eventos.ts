@@ -93,6 +93,17 @@ const buenosAiresDateTimeValidator: ValidatorFn = (
   return value === '' || isValidBuenosAiresDateTime(value) ? null : { fechaInvalida: true };
 };
 
+const futureEventDateValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  const value = control.value;
+  if (value === '' || !isValidBuenosAiresDateTime(value)) {
+    return null;
+  }
+  const today = toBuenosAiresInput(new Date().toISOString()).slice(0, 10);
+  return value.slice(0, 10) >= today ? null : { fechaAnterior: true };
+};
+
 const eventDateRangeValidator: ValidatorFn = (
   control: AbstractControl,
 ): ValidationErrors | null => {
@@ -170,6 +181,7 @@ export class EditorEventos {
     minuteIncrement: 15,
     allowInput: true,
     disableMobile: true,
+    minDate: 'today',
     locale: Spanish,
     ariaDateFormat: 'j \u0064\u0065 F \u0064\u0065 Y, H:i',
   };
@@ -186,7 +198,7 @@ export class EditorEventos {
     slug: [''], categoria: ['', Validators.required],
     descripcionCorta: ['', [Validators.required, Validators.minLength(this.minShortDescription), Validators.maxLength(this.maxShortDescription)]],
     descripcionLarga: ['', Validators.required],
-    fechaInicio: ['', [Validators.required, buenosAiresDateTimeValidator]],
+    fechaInicio: ['', [Validators.required, buenosAiresDateTimeValidator, futureEventDateValidator]],
     fechaFin: ['', buenosAiresDateTimeValidator], ubicacion: ['', Validators.required],
     organizador: ['', Validators.required],
     imagenUrl: ['', Validators.required],
@@ -434,6 +446,9 @@ export class EditorEventos {
     }
     if (control.errors['fechaInvalida']) {
       return 'Ingresá una fecha y hora válidas.';
+    }
+    if (control.errors['fechaAnterior']) {
+      return 'La fecha de inicio no puede ser anterior a hoy.';
     }
     return 'Revisá este campo.';
   }

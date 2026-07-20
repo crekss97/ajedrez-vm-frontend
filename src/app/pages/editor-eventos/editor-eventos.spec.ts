@@ -70,9 +70,14 @@ describe('EditorEventos', () => {
     expect(form.controls.destacado.disabled).toBeTrue();
     expect(form.contains('precio')).toBeFalse();
     expect(fixture.nativeElement.querySelector('.publication-layout')).not.toBeNull();
+    const generatedPlaceholders = Array.from(
+      fixture.nativeElement.querySelectorAll('[placeholder]') as NodeListOf<HTMLElement>,
+    );
+    expect(generatedPlaceholders.every((element) => element.getAttribute('placeholder') === '')).toBeTrue();
     expect(imageInput.getAttribute('aria-required')).toBe('true');
     expect(visibleStartDate.getAttribute('aria-describedby')).toContain('timezone-help');
     expect(fixture.nativeElement.querySelector('label[for="fecha-inicio-visible"]')).not.toBeNull();
+    expect((component as any).dateTimeOptions.minDate).toBe('today');
   });
 
   it('solo permite destacar eventos publicados', () => {
@@ -108,6 +113,18 @@ describe('EditorEventos', () => {
 
     form.controls.fechaFin.setValue('2026-08-10T19:00');
     expect(form.hasError('fechaFinAnterior')).toBeFalse();
+  });
+
+  it('rechaza fechas de inicio anteriores al día actual', () => {
+    const form = (component as any).eventForm;
+    form.controls.fechaInicio.setValue('2020-01-01T10:00');
+    form.controls.fechaInicio.markAsTouched();
+    fixture.detectChanges();
+
+    expect(form.controls.fechaInicio.hasError('fechaAnterior')).toBeTrue();
+    expect(fixture.nativeElement.querySelector('#fecha-inicio-error')?.textContent).toContain(
+      'anterior a hoy',
+    );
   });
 
   it('envía las fechas como instantes de Buenos Aires y no incluye precio', () => {
