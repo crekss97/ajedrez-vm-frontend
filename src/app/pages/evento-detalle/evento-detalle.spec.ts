@@ -28,7 +28,6 @@ describe('EventoDetalle', () => {
     imagenUrl: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
     destacado: true,
     modalidad: 'Presencial',
-    precio: 'Gratis',
     tags: ['juvenil', 'ritmo-rapido'],
     views: 12,
     linksExternos: [
@@ -80,7 +79,6 @@ describe('EventoDetalle', () => {
     expect(fixture.nativeElement.querySelector('.important-facts')).toBeNull();
     expect(contenido).not.toContain('Club Central');
     expect(contenido).not.toContain('Presencial');
-    expect(contenido).not.toContain('Gratis');
     expect(aside.textContent).not.toContain('Etiquetas');
     expect(aside.getAttribute('aria-label')).toBe('Información del evento');
     expect(fixture.nativeElement.querySelector('.tag-list')?.textContent).toContain('#juvenil');

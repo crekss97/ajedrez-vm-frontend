@@ -31,7 +31,6 @@ describe('Home', () => {
     imagenUrl: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
     destacado: true,
     modalidad: 'Presencial',
-    precio: 'Gratis',
     tags: [],
     views: 12,
     estadoEditorial: 'published',
