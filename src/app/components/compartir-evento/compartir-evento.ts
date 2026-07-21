@@ -13,18 +13,35 @@ export class CompartirEvento {
 
   readonly slug = input.required<string>();
   readonly titulo = input.required<string>();
+  readonly actualizadoEn = input<string>();
 
-  protected readonly url = computed(() => this.compartirService.urlEvento(this.slug()));
-  protected readonly urlWhatsApp = computed(() =>
-    this.compartirService.urlWhatsApp(this.slug(), this.titulo()),
+  protected readonly url = computed(() =>
+    this.compartirService.urlEvento(this.slug(), this.actualizadoEn()),
   );
-  protected readonly urlFacebook = computed(() => this.compartirService.urlFacebook(this.slug()));
+  protected readonly urlWhatsApp = computed(() =>
+    this.compartirService.urlWhatsApp(this.slug(), this.titulo(), this.actualizadoEn()),
+  );
+  protected readonly urlFacebook = computed(() =>
+    this.compartirService.urlFacebook(this.slug(), this.actualizadoEn()),
+  );
   protected readonly urlTwitter = computed(() =>
-    this.compartirService.urlTwitter(this.slug(), this.titulo()),
+    this.compartirService.urlTwitter(this.slug(), this.titulo(), this.actualizadoEn()),
   );
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
-  protected readonly mostrarUrlManual = signal(false);
+
+  protected abrir(dialog: HTMLDialogElement): void {
+    this.limpiarEstado();
+    if (!dialog.open) dialog.showModal();
+  }
+
+  protected cerrar(dialog: HTMLDialogElement): void {
+    if (dialog.open) dialog.close();
+  }
+
+  protected cerrarDesdeFondo(event: MouseEvent, dialog: HTMLDialogElement): void {
+    if (event.target === dialog) this.cerrar(dialog);
+  }
 
   protected async copiar(): Promise<void> {
     this.limpiarEstado();
@@ -33,7 +50,6 @@ export class CompartirEvento {
       this.mensaje.set('Enlace copiado.');
     } catch {
       this.error.set('No se pudo copiar el enlace. Seleccionalo y copialo manualmente.');
-      this.mostrarUrlManual.set(true);
     }
   }
 
@@ -44,6 +60,5 @@ export class CompartirEvento {
   private limpiarEstado(): void {
     this.mensaje.set('');
     this.error.set('');
-    this.mostrarUrlManual.set(false);
   }
 }

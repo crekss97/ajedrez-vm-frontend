@@ -34,6 +34,7 @@
                   <app-compartir-evento
                     [slug]="event.slug"
                     [titulo]="event.titulo"
+                    [actualizadoEn]="event.actualizadoEn"
                   />
                 }
                 <a [routerLink]="['/editor/eventos', event.id, 'editar']">Editar</a>

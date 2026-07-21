@@ -25,7 +25,7 @@ describe('EventoDetalle', () => {
     fechaFin: '2026-08-10T22:00:00.000Z',
     ubicacion: 'Club Central',
     organizador: 'Ajedrez VM',
-    imagenUrl: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+    imagenUrl: '/api/uploads/imagen',
     destacado: true,
     modalidad: 'Presencial',
     tags: ['juvenil', 'ritmo-rapido'],
@@ -192,12 +192,12 @@ describe('EventoDetalle', () => {
 
     const description = fixture.nativeElement.querySelector('.event-intro__content > p');
     const share = fixture.nativeElement.querySelector('app-compartir-evento');
-    const shareMenu = share.querySelector('.share-menu') as HTMLDetailsElement;
+    const shareDialog = share.querySelector('.share-dialog') as HTMLDialogElement;
     const canonical = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement;
 
     expect(description.nextElementSibling).toBe(share);
-    expect(share.querySelector('.share-trigger').textContent).toContain('Compartir evento');
-    expect(shareMenu.open).toBeFalse();
+    expect(share.querySelector('.share-trigger').textContent).toContain('Compartir');
+    expect(shareDialog.open).toBeFalse();
     expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content')).toBe(
       'Primera fecha del circuito.',
     );
@@ -205,9 +205,12 @@ describe('EventoDetalle', () => {
       'Torneo Apertura | Ajedrez VM',
     );
     expect(document.head.querySelector('meta[property="og:image"]')?.getAttribute('content')).toContain(
-      '/api/social/events/torneo-apertura/image',
+      '/api/uploads/imagen',
     );
-    expect(document.head.querySelector('meta[property="og:image:width"]')?.getAttribute('content')).toBe('1200');
+    expect(document.head.querySelector('meta[property="og:image:alt"]')?.getAttribute('content')).toBe(
+      'Afiche principal de Torneo Apertura',
+    );
+    expect(document.head.querySelector('meta[property="og:image:width"]')).toBeNull();
     expect(document.head.querySelector('meta[name="twitter:card"]')?.getAttribute('content')).toBe(
       'summary_large_image',
     );
