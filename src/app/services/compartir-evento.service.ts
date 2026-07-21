@@ -6,7 +6,7 @@ export class CompartirEventoService {
   private readonly document = inject(DOCUMENT);
 
   urlEvento(slug: string, version?: string): string {
-    const origin = this.document.location?.origin ?? 'https://ajedrez-vm-frontend.vercel.app';
+    const origin = this.document.location?.origin ?? 'https://ajedrezvm.com.ar';
     const url = new URL(`/eventos/${encodeURIComponent(slug)}`, origin);
     if (version) url.searchParams.set('v', version);
     return url.toString();
