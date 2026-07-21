@@ -64,27 +64,12 @@
 }
 
 .share-dialog__header {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-soft);
-}
-
-.share-dialog__header::after {
-  position: absolute;
-  bottom: -0.2rem;
-  left: 0;
-  width: 2.4rem;
-  height: 0.35rem;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--accent-primary) 0 0.4rem,
-    var(--accent-warm) 0.4rem 0.8rem
-  );
-  content: '';
 }
 
 .share-dialog__header h2 {
@@ -141,35 +126,38 @@
 
 .share-network__icon {
   display: grid;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   place-items: center;
-  border-radius: 50%;
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  border: 1px solid;
+  border-radius: 0.8rem;
+  background: var(--surface-soft);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .share-network:hover .share-network__icon {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 0.55rem 1.1rem rgba(20, 45, 61, 0.16);
+  box-shadow: 0 0.45rem 0.9rem rgba(20, 45, 61, 0.14);
   transform: translateY(-2px);
 }
 
 .share-network__icon svg {
-  width: 1.65rem;
-  height: 1.65rem;
+  width: 1.45rem;
+  height: 1.45rem;
 }
 
 .share-network--whatsapp .share-network__icon {
-  background: #25d366;
+  border-color: rgba(37, 211, 102, 0.42);
+  color: #1aa653;
 }
 
 .share-network--facebook .share-network__icon {
-  background: #1877f2;
+  border-color: rgba(24, 119, 242, 0.38);
+  color: #1877f2;
 }
 
 .share-network--x .share-network__icon {
-  background: #111;
+  border-color: rgba(17, 17, 17, 0.28);
+  color: #111;
 }
 
 .share-link {
@@ -257,8 +245,8 @@
   }
 
   .share-network__icon {
-    width: 3.15rem;
-    height: 3.15rem;
+    width: 2.6rem;
+    height: 2.6rem;
   }
 
   .share-link__field {
