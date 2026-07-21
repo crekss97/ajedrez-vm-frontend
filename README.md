@@ -53,14 +53,18 @@ El proyecto ya tiene configuración para SPA y proxy de API en [`vercel.json`](v
 
 1. Crea un proyecto de Vercel apuntando a esta carpeta.
 2. Mantén `NG_APP_API_URL=/api` o no definas la variable.
-3. Verifica que el callback Google sea la URL `/api/auth/google/callback` de este frontend.
-4. Despliega o vuelve a desplegar.
+3. Configura `ajedrezvm.com.ar` como dominio principal del proyecto y conserva el proxy `/api`.
+4. Verifica que el callback Google sea `https://ajedrezvm.com.ar/api/auth/google/callback`.
+5. Despliega o vuelve a desplegar.
 
 Ejemplo:
 
 ```env
 NG_APP_API_URL=/api
 ```
+
+El dominio público usa el mismo origen para la aplicación, la API y las cookies OAuth. No apuntes
+`NG_APP_API_URL` directamente al dominio del backend.
 
 ## Conexión con el backend desplegado
 

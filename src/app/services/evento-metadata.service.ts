@@ -41,7 +41,7 @@ export class EventoMetadataService {
   restablecerDetalle(): void {
     const url = new URL(
       '/',
-      this.document.location?.origin ?? 'https://ajedrez-vm-frontend.vercel.app',
+      this.document.location?.origin ?? 'https://ajedrezvm.com.ar',
     ).toString();
 
     this.title.setTitle(TITULO_PREDETERMINADO);
@@ -66,14 +66,14 @@ export class EventoMetadataService {
   }
 
   private urlEvento(slug: string): string {
-    const origin = this.document.location?.origin ?? 'https://ajedrez-vm-frontend.vercel.app';
+    const origin = this.document.location?.origin ?? 'https://ajedrezvm.com.ar';
     return new URL(`/eventos/${encodeURIComponent(slug)}`, origin).toString();
   }
 
   private urlImagenPrincipal(evento: Evento): string {
     const url = new URL(
       evento.imagenUrl,
-      this.document.location?.origin ?? 'https://ajedrez-vm-frontend.vercel.app',
+      this.document.location?.origin ?? 'https://ajedrezvm.com.ar',
     );
     if (evento.actualizadoEn) url.searchParams.set('v', evento.actualizadoEn);
     return url.toString();
