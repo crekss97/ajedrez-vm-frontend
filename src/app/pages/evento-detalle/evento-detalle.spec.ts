@@ -192,10 +192,12 @@ describe('EventoDetalle', () => {
 
     const description = fixture.nativeElement.querySelector('.event-intro__content > p');
     const share = fixture.nativeElement.querySelector('app-compartir-evento');
+    const shareMenu = share.querySelector('.share-menu') as HTMLDetailsElement;
     const canonical = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement;
 
     expect(description.nextElementSibling).toBe(share);
-    expect(share.textContent).toContain('Copiar enlace');
+    expect(share.querySelector('.share-trigger').textContent).toContain('Compartir evento');
+    expect(shareMenu.open).toBeFalse();
     expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content')).toBe(
       'Primera fecha del circuito.',
     );

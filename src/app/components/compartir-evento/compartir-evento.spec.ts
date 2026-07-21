@@ -9,9 +9,15 @@ describe('CompartirEvento', () => {
   beforeEach(async () => {
     service = jasmine.createSpyObj<CompartirEventoService>('CompartirEventoService', [
       'urlEvento',
+      'urlWhatsApp',
+      'urlFacebook',
+      'urlTwitter',
       'copiar',
     ]);
     service.urlEvento.and.returnValue('https://ajedrez.test/eventos/apertura');
+    service.urlWhatsApp.and.returnValue('https://wa.me/?text=Torneo%20Apertura%20https%3A%2F%2Fajedrez.test%2Feventos%2Fapertura');
+    service.urlFacebook.and.returnValue('https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fajedrez.test%2Feventos%2Fapertura');
+    service.urlTwitter.and.returnValue('https://twitter.com/intent/tweet?text=Torneo%20Apertura&url=https%3A%2F%2Fajedrez.test%2Feventos%2Fapertura');
     service.copiar.and.resolveTo();
 
     await TestBed.configureTestingModule({
@@ -25,15 +31,20 @@ describe('CompartirEvento', () => {
     fixture.detectChanges();
   });
 
-  it('copia el enlace sin abrir opciones de redes sociales', async () => {
-    const trigger = fixture.nativeElement.querySelector('.share-trigger') as HTMLButtonElement;
+  it('copia el enlace desde la bandeja de opciones', async () => {
+    const menu = fixture.nativeElement.querySelector('.share-menu') as HTMLDetailsElement;
+    const trigger = fixture.nativeElement.querySelector('.share-trigger') as HTMLElement;
+    const copy = fixture.nativeElement.querySelector('.share-choice--copy') as HTMLButtonElement;
 
-    expect(trigger.textContent).toContain('Copiar enlace');
-    expect(trigger.getAttribute('aria-label')).toBe('Copiar enlace de Torneo Apertura');
-    expect(fixture.nativeElement.querySelector('dialog')).toBeNull();
-    expect(fixture.nativeElement.querySelectorAll('a').length).toBe(0);
+    expect(trigger.textContent).toContain('Compartir evento');
+    expect(menu.open).toBeFalse();
 
     trigger.click();
+    expect(menu.open).toBeTrue();
+
+    expect(copy.textContent).toContain('Copiar');
+    expect(copy.getAttribute('aria-label')).toBe('Copiar enlace de Torneo Apertura');
+    copy.click();
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -46,7 +57,7 @@ describe('CompartirEvento', () => {
   it('revela un enlace seleccionable cuando falla el portapapeles', async () => {
     service.copiar.and.rejectWith(new Error('Sin permiso'));
 
-    (fixture.nativeElement.querySelector('.share-trigger') as HTMLButtonElement).click();
+    (fixture.nativeElement.querySelector('.share-choice--copy') as HTMLButtonElement).click();
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -56,5 +67,30 @@ describe('CompartirEvento', () => {
     );
     expect(manual.readOnly).toBeTrue();
     expect(manual.value).toBe('https://ajedrez.test/eventos/apertura');
+  });
+
+  it('muestra enlaces a WhatsApp, Facebook y X', () => {
+    const anchors = fixture.nativeElement.querySelectorAll('.share-choice--social') as NodeListOf<HTMLAnchorElement>;
+
+    expect(anchors.length).toBe(3);
+    expect(anchors[0].getAttribute('href')).toBe(
+      service.urlWhatsApp('apertura', 'Torneo Apertura'),
+    );
+    expect(anchors[0].getAttribute('aria-label')).toBe('Compartir Torneo Apertura en WhatsApp');
+    expect(anchors[1].getAttribute('href')).toBe(service.urlFacebook('apertura'));
+    expect(anchors[1].getAttribute('aria-label')).toBe('Compartir Torneo Apertura en Facebook');
+    expect(anchors[2].getAttribute('href')).toBe(
+      service.urlTwitter('apertura', 'Torneo Apertura'),
+    );
+    expect(anchors[2].getAttribute('aria-label')).toBe('Compartir Torneo Apertura en X');
+  });
+
+  it('abre redes sociales en nueva ventana con noopener', () => {
+    const anchors = fixture.nativeElement.querySelectorAll('.share-choice--social') as NodeListOf<HTMLAnchorElement>;
+
+    for (const a of anchors) {
+      expect(a.target).toBe('_blank');
+      expect(a.rel).toBe('noopener noreferrer');
+    }
   });
 });
