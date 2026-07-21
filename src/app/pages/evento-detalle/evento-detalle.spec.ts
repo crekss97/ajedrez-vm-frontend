@@ -177,13 +177,39 @@ describe('EventoDetalle', () => {
 
     expect(carga.textContent).toContain('Cargando detalle del evento');
     expect(carga.getAttribute('aria-live')).toBe('polite');
-    expect(title.getTitle()).toBe('Detalle del evento | Ajedrez VM');
+    expect(title.getTitle()).toBe('Ajedrez VM');
 
     respuesta$.next(crearEvento({ titulo: 'Abierto de Invierno' }));
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('[role="status"]')).toBeNull();
     expect(title.getTitle()).toBe('Abierto de Invierno | Ajedrez VM');
+  });
+
+  it('muestra compartir bajo la descripción y publica metadatos del evento', () => {
+    respuesta$.next(crearEvento());
+    fixture.detectChanges();
+
+    const description = fixture.nativeElement.querySelector('.event-intro__content > p');
+    const share = fixture.nativeElement.querySelector('app-compartir-evento');
+    const canonical = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+
+    expect(description.nextElementSibling).toBe(share);
+    expect(share.textContent).toContain('Copiar enlace');
+    expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content')).toBe(
+      'Primera fecha del circuito.',
+    );
+    expect(document.head.querySelector('meta[property="og:title"]')?.getAttribute('content')).toBe(
+      'Torneo Apertura | Ajedrez VM',
+    );
+    expect(document.head.querySelector('meta[property="og:image"]')?.getAttribute('content')).toContain(
+      '/api/social/events/torneo-apertura/image',
+    );
+    expect(document.head.querySelector('meta[property="og:image:width"]')?.getAttribute('content')).toBe('1200');
+    expect(document.head.querySelector('meta[name="twitter:card"]')?.getAttribute('content')).toBe(
+      'summary_large_image',
+    );
+    expect(new URL(canonical.href).pathname).toBe('/eventos/torneo-apertura');
   });
 
   it('anuncia el error y conserva un título seguro', () => {
@@ -193,7 +219,8 @@ describe('EventoDetalle', () => {
     expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(
       'No se pudo cargar este evento',
     );
-    expect(title.getTitle()).toBe('Detalle del evento | Ajedrez VM');
+    expect(title.getTitle()).toBe('Ajedrez VM');
+    expect(document.head.querySelector('meta[property="og:image"]')).toBeNull();
   });
 
   it('registra una consulta una sola vez después de una carga exitosa', () => {

@@ -1,0 +1,22 @@
+<button
+  type="button"
+  class="share-trigger"
+  [attr.aria-label]="'Copiar enlace de ' + titulo()"
+  (click)="copiar()"
+>
+  <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/></svg>
+  Copiar enlace
+</button>
+
+@if (mensaje()) {
+  <p class="share-feedback" role="status" aria-live="polite">{{ mensaje() }}</p>
+}
+@if (error()) {
+  <p class="share-feedback share-feedback--error" role="alert">{{ error() }}</p>
+}
+@if (mostrarUrlManual()) {
+  <label class="share-manual">
+    Enlace del evento
+    <input #manualUrl type="text" readonly [value]="url()" (focus)="seleccionarUrl(manualUrl)" (click)="seleccionarUrl(manualUrl)" />
+  </label>
+}
