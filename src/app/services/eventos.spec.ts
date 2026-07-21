@@ -39,4 +39,24 @@ describe('EventosService', () => {
 
     request.flush({ views: 13 });
   });
+
+  it('obtiene un evento por su endpoint directo y normaliza sus medios', () => {
+    let resultado: any;
+    service.getEvento('abierto / verano').subscribe((event) => (resultado = event));
+
+    const request = httpTesting.expectOne('/api/events/abierto%20%2F%20verano');
+    request.flush({
+      id: 7,
+      slug: 'abierto-verano',
+      titulo: 'Abierto de verano',
+      imagenUrl: '/api/uploads/imagen',
+      adjuntos: [{ id: '1', nombre: 'Bases', url: '/api/uploads/bases', tipo: 'application/pdf' }],
+    });
+
+    expect(resultado.fuente).toBe('api');
+    expect(resultado.estadoEditorial).toBe('published');
+    expect(resultado.linksExternos).toEqual([]);
+    expect(resultado.imagenUrl).toBe(`${window.location.origin}/api/uploads/imagen`);
+    expect(resultado.adjuntos[0].url).toBe(`${window.location.origin}/api/uploads/bases`);
+  });
 });

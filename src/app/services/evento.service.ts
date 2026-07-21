@@ -1,7 +1,7 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { API_URL } from '../core/config/api.config';
 import { OMITIR_CARGADOR_GLOBAL } from '../core/interceptors/app-loading.interceptor';
 import { Evento } from '../models/evento';
@@ -26,16 +26,13 @@ export class EventosService {
   }
 
   getEvento(slug: string): Observable<Evento> {
-    return this.getEventos().pipe(
-      map((events) => events.find((event) => event.slug === slug)),
-      switchMap((event) =>
-        event ? of(event) : throwError(() => new Error('Evento no encontrado.')),
-      ),
+    return this.http.get<Evento>(`${this.apiUrl}/${encodeURIComponent(slug)}`).pipe(
+      map((event) => this.toPublicEvent(event)),
     );
   }
 
   registrarConsulta(slug: string): Observable<{ views: number }> {
-    return this.http.post<{ views: number }>(`${this.apiUrl}/${slug}/view`, {}, {
+    return this.http.post<{ views: number }>(`${this.apiUrl}/${encodeURIComponent(slug)}/view`, {}, {
       context: new HttpContext().set(OMITIR_CARGADOR_GLOBAL, true),
     });
   }

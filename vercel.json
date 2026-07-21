@@ -6,6 +6,10 @@
       "destination": "https://ajedrez-vm-backend.vercel.app/api/:path*"
     },
     {
+      "source": "/eventos/:slug",
+      "destination": "https://ajedrez-vm-backend.vercel.app/api/social/events/:slug"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

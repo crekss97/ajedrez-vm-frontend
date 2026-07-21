@@ -22,7 +22,6 @@ export interface EventoEditorInput {
   imagenUrl: string;
   destacado: boolean;
   modalidad: EventoModalidad;
-  precio: string;
   tags: string[];
   linksExternos: EventoLinkExterno[];
   adjuntos: EventoAdjunto[];

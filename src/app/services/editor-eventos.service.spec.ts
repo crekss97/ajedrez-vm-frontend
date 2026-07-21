@@ -19,7 +19,6 @@ describe('EditorEventosService', () => {
     imagenUrl: '',
     destacado: false,
     modalidad: 'Online',
-    precio: 'Gratis',
     tags: ['prueba'],
     linksExternos: [],
     adjuntos: [],

@@ -1,88 +1,146 @@
 <section class="editor-subpage">
-  <div class="subpage-heading">
-    <a class="back-link" routerLink="/editor/eventos">← Volver a la biblioteca</a>
+  <header class="subpage-heading">
     <div class="subpage-heading__row">
-      <div>
-        <h2>{{ editingEvent() ? 'Editar evento' : 'Crear evento' }}</h2>
-      </div>
-      <span class="form-hint"><strong>*</strong> Campo obligatorio</span>
+      <h1>{{ editingEvent() ? 'Editar evento' : 'Crear evento' }}</h1>
     </div>
-  </div>
+  </header>
 
   <form class="event-form" [formGroup]="eventForm" (ngSubmit)="saveEvent()" novalidate>
-    <section class="form-section">
-      <h3 class="form-section__title">Datos del evento</h3>
+    <section class="form-section" aria-labelledby="datos-evento-title">
+      <h2 class="form-section__title" id="datos-evento-title">Datos del evento</h2>
       <div class="editor-fields editor-fields--three">
-        <label class="field" [class.field-invalid]="hasError('titulo')">
-          <span>Título <b aria-hidden="true">*</b></span>
-          <input type="text" formControlName="titulo" placeholder="Festival de ajedrez abierto" [attr.aria-invalid]="hasError('titulo')" />
-          <small>Mínimo 6 caracteres.</small>
-          @if (hasError('titulo')) { <small class="field-error">{{ errorMessage('titulo') }}</small> }
-        </label>
-        <label class="field" [class.field-invalid]="hasError('categoria')">
-          <span>Categoría <b aria-hidden="true">*</b></span>
-          <input type="text" formControlName="categoria" placeholder="Torneo, capacitación, blitz" [attr.aria-invalid]="hasError('categoria')" />
-          @if (hasError('categoria')) { <small class="field-error">{{ errorMessage('categoria') }}</small> }
-        </label>
-        <label class="field"><span>Slug <em>opcional</em></span><input type="text" formControlName="slug" placeholder="festival-ajedrez-abierto" /></label>
+        <div class="field" [class.field-invalid]="hasError('titulo')">
+          <label for="titulo">Título <b aria-hidden="true">*</b></label>
+          <input id="titulo" type="text" formControlName="titulo" required aria-required="true" aria-describedby="titulo-error" [attr.aria-invalid]="hasError('titulo') || null" />
+          @if (hasError('titulo')) { <small id="titulo-error" class="field-error">{{ errorMessage('titulo') }}</small> }
+        </div>
+        <div class="field" [class.field-invalid]="hasError('categoria')">
+          <label for="categoria">Categoría <b aria-hidden="true">*</b></label>
+          <input id="categoria" type="text" formControlName="categoria" required aria-required="true" aria-describedby="categoria-error" [attr.aria-invalid]="hasError('categoria') || null" />
+          @if (hasError('categoria')) { <small id="categoria-error" class="field-error">{{ errorMessage('categoria') }}</small> }
+        </div>
+        <div class="field">
+          <label for="slug">Slug <em>opcional</em></label>
+          <input id="slug" type="text" formControlName="slug" />
+        </div>
       </div>
     </section>
 
-    <section class="form-section">
-      <h3 class="form-section__title">Fechas y ubicación</h3>
+    <section class="form-section" aria-labelledby="agenda-title">
+      <h2 class="form-section__title" id="agenda-title">Agenda y ubicación</h2>
       <div class="editor-fields editor-fields--three">
-        <label class="field" [class.field-invalid]="hasError('organizador')"><span>Organizador <b aria-hidden="true">*</b></span><input type="text" formControlName="organizador" placeholder="Club Ajedrez VM" [attr.aria-invalid]="hasError('organizador')" />@if (hasError('organizador')) { <small class="field-error">{{ errorMessage('organizador') }}</small> }</label>
-        <label class="field" [class.field-invalid]="hasError('ubicacion')"><span>Ubicación <b aria-hidden="true">*</b></span><input type="text" formControlName="ubicacion" placeholder="Buenos Aires, Argentina" [attr.aria-invalid]="hasError('ubicacion')" />@if (hasError('ubicacion')) { <small class="field-error">{{ errorMessage('ubicacion') }}</small> }</label>
-        <label class="field" [class.field-invalid]="hasError('modalidad')"><span>Modalidad <b aria-hidden="true">*</b></span><select formControlName="modalidad" [attr.aria-invalid]="hasError('modalidad')"><option value="Presencial">Presencial</option><option value="Online">Online</option><option value="Hibrido">Híbrido</option></select>@if (hasError('modalidad')) { <small class="field-error">{{ errorMessage('modalidad') }}</small> }</label>
-        <label class="field" [class.field-invalid]="hasError('fechaInicio')"><span>Fecha de inicio <b aria-hidden="true">*</b></span><input type="text" mwlFlatpickr [options]="dateTimeOptions" formControlName="fechaInicio" placeholder="Elegí fecha y hora" [attr.aria-invalid]="hasError('fechaInicio')" />@if (hasError('fechaInicio')) { <small class="field-error">{{ errorMessage('fechaInicio') }}</small> }</label>
-        <label class="field"><span>Fecha de fin <em>opcional</em></span><input type="text" mwlFlatpickr [options]="dateTimeOptions" formControlName="fechaFin" placeholder="Elegí fecha y hora" /></label>
-        <label class="field" [class.field-invalid]="hasError('precio')"><span>Precio <b aria-hidden="true">*</b></span><input type="text" formControlName="precio" placeholder="Entrada libre" [attr.aria-invalid]="hasError('precio')" />@if (hasError('precio')) { <small class="field-error">{{ errorMessage('precio') }}</small> }</label>
+        <div class="field" [class.field-invalid]="hasError('organizador')">
+          <label for="organizador">Organizador <b aria-hidden="true">*</b></label>
+          <input id="organizador" type="text" formControlName="organizador" required aria-required="true" aria-describedby="organizador-error" [attr.aria-invalid]="hasError('organizador') || null" />
+          @if (hasError('organizador')) { <small id="organizador-error" class="field-error">{{ errorMessage('organizador') }}</small> }
+        </div>
+        <div class="field" [class.field-invalid]="hasError('ubicacion')">
+          <label for="ubicacion">Ubicación <b aria-hidden="true">*</b></label>
+          <input id="ubicacion" type="text" formControlName="ubicacion" required aria-required="true" aria-describedby="ubicacion-error" [attr.aria-invalid]="hasError('ubicacion') || null" />
+          @if (hasError('ubicacion')) { <small id="ubicacion-error" class="field-error">{{ errorMessage('ubicacion') }}</small> }
+        </div>
+        <div class="field" [class.field-invalid]="hasError('modalidad')">
+          <label for="modalidad">Modalidad <b aria-hidden="true">*</b></label>
+          <select id="modalidad" formControlName="modalidad" required aria-required="true" aria-describedby="modalidad-error" [attr.aria-invalid]="hasError('modalidad') || null">
+            <option value="Presencial">Presencial</option>
+            <option value="Online">Online</option>
+            <option value="Hibrido">Híbrido</option>
+          </select>
+          @if (hasError('modalidad')) { <small id="modalidad-error" class="field-error">{{ errorMessage('modalidad') }}</small> }
+        </div>
+        <div class="field field--date" [class.field-invalid]="hasError('fechaInicio')">
+          <label for="fecha-inicio-visible">Fecha de inicio <b aria-hidden="true">*</b></label>
+          <div class="date-control">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
+            <input id="fecha-inicio" type="text" mwlFlatpickr [options]="dateTimeOptions" formControlName="fechaInicio" required aria-required="true" aria-describedby="fecha-inicio-error" [attr.aria-invalid]="hasError('fechaInicio') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
+          </div>
+          @if (hasError('fechaInicio')) { <small id="fecha-inicio-error" class="field-error">{{ errorMessage('fechaInicio') }}</small> }
+        </div>
+        <div class="field field--date" [class.field-invalid]="hasError('fechaFin')">
+          <label for="fecha-fin-visible">Fecha de fin <em>opcional</em></label>
+          <div class="date-control">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
+            <input id="fecha-fin" type="text" mwlFlatpickr [options]="dateTimeOptions" [minDate]="eventForm.controls.fechaInicio.value || 'today'" formControlName="fechaFin" aria-describedby="fecha-fin-error" [attr.aria-invalid]="hasError('fechaFin') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
+          </div>
+          @if (hasError('fechaFin')) { <small id="fecha-fin-error" class="field-error">{{ errorMessage('fechaFin') }}</small> }
+        </div>
       </div>
     </section>
 
-    <section class="form-section">
-      <h3 class="form-section__title">Descripción</h3>
+    <section class="form-section" aria-labelledby="descripcion-title">
+      <h2 class="form-section__title" id="descripcion-title">Descripción</h2>
       <div class="editor-fields">
-        <label class="field" [class.field-invalid]="hasError('descripcionCorta')"><span>Descripción corta <b aria-hidden="true">*</b></span><textarea formControlName="descripcionCorta" rows="3" minlength="20" maxlength="180" placeholder="Resumen para la home y tarjetas" [attr.aria-invalid]="hasError('descripcionCorta')"></textarea><small>Entre {{ minShortDescription }} y {{ maxShortDescription }} caracteres. {{ eventForm.controls.descripcionCorta.value.length }}/{{ maxShortDescription }}</small>@if (hasError('descripcionCorta')) { <small class="field-error">{{ errorMessage('descripcionCorta') }}</small> }</label>
+        <div class="field" [class.field-invalid]="hasError('descripcionCorta')">
+          <label for="descripcion-corta">Descripción corta <b aria-hidden="true">*</b></label>
+          <textarea id="descripcion-corta" formControlName="descripcionCorta" rows="3" minlength="20" maxlength="180" required aria-required="true" aria-describedby="descripcion-corta-error" [attr.aria-invalid]="hasError('descripcionCorta') || null"></textarea>
+          @if (hasError('descripcionCorta')) { <small id="descripcion-corta-error" class="field-error">{{ errorMessage('descripcionCorta') }}</small> }
+        </div>
         <div class="field" [class.field-invalid]="hasError('descripcionLarga')">
-          <span>Descripción larga <b aria-hidden="true">*</b></span>
-          <quill-editor class="rich-editor" [class.rich-editor--invalid]="hasError('descripcionLarga')" formControlName="descripcionLarga" [modules]="quillModules" format="html" placeholder="Escribí el reglamento, programa, invitados, premios o dinámica..."></quill-editor>
-          <small>Podés pegar texto con formato y crear listas. Los PDF aparecerán al final del evento.</small>
-          @if (hasError('descripcionLarga')) { <small class="field-error">{{ errorMessage('descripcionLarga') }}</small> }
+          <span id="descripcion-larga-label" class="field-label">Descripción larga <b aria-hidden="true">*</b></span>
+          <quill-editor class="rich-editor" [class.rich-editor--invalid]="hasError('descripcionLarga')" formControlName="descripcionLarga" [modules]="quillModules" format="html" [required]="true" (onEditorCreated)="configureEditorAccessibility($event)"></quill-editor>
+          @if (hasError('descripcionLarga')) { <small id="descripcion-larga-error" class="field-error">{{ errorMessage('descripcionLarga') }}</small> }
         </div>
         <div class="attachment-upload">
-          <div><strong>Archivos del evento</strong><small>Se guardarán junto con el evento al confirmar.</small></div>
-          <label class="upload-button"><input class="file-input" type="file" accept="application/pdf,.pdf" (change)="selectAttachment($event)" [disabled]="saving()" /><span>Seleccionar PDF</span></label>
+          <div><strong>Archivos del evento</strong><small id="pdf-help">Hasta 5 PDF.</small></div>
+          <label class="upload-button" for="pdf-input"><input id="pdf-input" class="file-input" type="file" accept="application/pdf,.pdf" aria-describedby="pdf-help attachment-error" (change)="selectAttachment($event)" [disabled]="saving()" /><span>Seleccionar PDF</span></label>
         </div>
         @if (attachmentRows().length) {
-          <div class="attachment-list" aria-label="Archivos adjuntos">
+          <div class="attachment-list" role="list" aria-label="Archivos adjuntos">
             @for (attachment of attachmentRows(); track attachment.id) {
-              <div class="attachment-row"><span aria-hidden="true">📎</span><span>{{ attachment.nombre }}{{ attachment.pending ? ' (nuevo)' : '' }}</span><button type="button" (click)="removeAttachment(attachment.id, attachment.pending)" aria-label="Quitar archivo">×</button></div>
+              <div class="attachment-row" role="listitem"><span aria-hidden="true">📎</span><span>{{ attachment.nombre }}{{ attachment.pending ? ' (nuevo)' : '' }}</span><button type="button" (click)="removeAttachment(attachment.id, attachment.pending)" [attr.aria-label]="'Quitar ' + attachment.nombre">×</button></div>
             }
           </div>
         }
+        @if (attachmentError()) { <p id="attachment-error" class="form-error" role="alert">{{ attachmentError() }}</p> }
       </div>
     </section>
 
-    <section class="form-section">
-      <h3 class="form-section__title">Publicación</h3>
-      <div class="editor-fields editor-fields--three">
-        <div class="field" [class.field-invalid]="hasError('imagenUrl') || imageError()">
-          <span>Imagen principal <b aria-hidden="true">*</b></span>
+    <section class="form-section form-section--publication" aria-labelledby="publicacion-title">
+      <h2 class="form-section__title" id="publicacion-title">Publicación</h2>
+      <div class="publication-layout">
+        <div class="field publication-poster" [class.field-invalid]="hasError('imagenUrl') || imageError()">
+          <span id="imagen-label" class="field-label">Imagen principal <b aria-hidden="true">*</b></span>
           <input type="hidden" formControlName="imagenUrl" />
-          <label class="upload-dropzone"><input class="file-input" type="file" accept="image/jpeg,image/png,image/webp" (change)="selectImage($event)" [disabled]="saving()" /><span class="upload-dropzone__icon" aria-hidden="true">＋</span><strong>Elegir imagen</strong><small>JPG, PNG o WebP · máximo 2 MiB · lado menor desde 800 px</small><small>Recomendado: 1080 × 1080 px · imagen y PDF: 4 MiB en total</small></label>
-          @if (imagePreview()) { <img class="upload-preview" [src]="imagePreview()" alt="Vista previa de la imagen principal" /> }
-          @if (imageFileName()) { <small class="selected-file">Archivo seleccionado: <strong>{{ imageFileName() }}</strong></small> }
+          <div class="poster-workspace">
+            @if (imagePreview()) {
+              <img class="upload-preview" [src]="imagePreview()" alt="Vista previa de la imagen principal" />
+            } @else {
+              <div class="poster-placeholder" aria-hidden="true"><span>AVM</span><small>Vista previa del afiche</small></div>
+            }
+            <label class="upload-dropzone" for="imagen-input">
+              <input id="imagen-input" class="file-input" type="file" accept="image/jpeg,image/png,image/webp" aria-labelledby="imagen-label" aria-describedby="imagen-status imagen-error imagen-required-error" aria-required="true" [attr.aria-invalid]="(hasError('imagenUrl') || !!imageError()) || null" (change)="selectImage($event)" [disabled]="saving()" />
+              <span class="upload-dropzone__icon" aria-hidden="true">＋</span>
+              <strong>{{ imagePreview() ? 'Cambiar imagen' : 'Elegir imagen' }}</strong>
+            </label>
+          </div>
+          @if (imageFileName()) { <small id="imagen-status" class="selected-file">Archivo seleccionado: <strong>{{ imageFileName() }}</strong></small> }
           @if (validatingImage()) { <small role="status">Validando imagen...</small> }
           @if (imageWarning()) { <small class="field-warning" role="status">{{ imageWarning() }}</small> }
-          @if (imageError()) { <small class="field-error" role="alert">{{ imageError() }}</small> }
-          @if (hasError('imagenUrl')) { <small class="field-error">{{ errorMessage('imagenUrl') }}</small> }
+          @if (imageError()) { <small id="imagen-error" class="field-error" role="alert">{{ imageError() }}</small> }
+          @if (hasError('imagenUrl')) { <small id="imagen-required-error" class="field-error">{{ errorMessage('imagenUrl') }}</small> }
         </div>
-        <label class="field"><span>Etiquetas <em>opcional</em></span><input type="text" formControlName="tags" placeholder="torneo, juvenil, fide" /></label>
-        <label class="field" [class.field-invalid]="hasError('estadoEditorial')"><span>Estado <b aria-hidden="true">*</b></span><select formControlName="estadoEditorial" [attr.aria-invalid]="hasError('estadoEditorial')"><option value="published">Publicado</option><option value="draft">Borrador</option></select>@if (hasError('estadoEditorial')) { <small class="field-error">{{ errorMessage('estadoEditorial') }}</small> }</label>
+
+        <div class="publication-settings">
+          <div class="field">
+            <label for="tags">Etiquetas <em>opcional</em></label>
+            <input id="tags" type="text" formControlName="tags" />
+          </div>
+          <div class="field" [class.field-invalid]="hasError('estadoEditorial')">
+            <label for="estado-editorial">Estado <b aria-hidden="true">*</b></label>
+            <select id="estado-editorial" formControlName="estadoEditorial" required aria-required="true" aria-describedby="estado-error" [attr.aria-invalid]="hasError('estadoEditorial') || null">
+              <option value="draft">Borrador</option>
+              <option value="published">Publicado</option>
+            </select>
+            @if (hasError('estadoEditorial')) { <small id="estado-error" class="field-error">{{ errorMessage('estadoEditorial') }}</small> }
+          </div>
+          @if (eventForm.controls.estadoEditorial.value === 'published') {
+            <label class="editor-toggle">
+              <input type="checkbox" formControlName="destacado" />
+              <span>Mostrar como destacado</span>
+            </label>
+          }
+        </div>
       </div>
-      <label class="editor-toggle"><input type="checkbox" formControlName="destacado" /><span>Mostrar en eventos destacados</span></label>
-      @if (attachmentError()) { <p class="form-error" role="alert">{{ attachmentError() }}</p> }
     </section>
 
     <div class="form-actions">
@@ -92,6 +150,13 @@
   </form>
 
   @if (createdEvent(); as event) {
-    <div class="modal-backdrop" role="presentation"><section class="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-title"><span class="success-modal__mark" aria-hidden="true">✓</span><h3 id="success-title">El evento ya está guardado</h3><p><strong>{{ event.titulo }}</strong> se creó correctamente. Volvé al resumen para revisar la actividad editorial.</p><button class="editor-submit" type="button" (click)="closeCreatedModal()">Ir al resumen</button></section></div>
+    <div class="modal-backdrop" role="presentation" (keydown.escape)="closeCreatedModal()">
+      <section class="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-title" aria-describedby="success-description" cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
+        <span class="success-modal__mark" aria-hidden="true">✓</span>
+        <h2 id="success-title">El evento ya está guardado</h2>
+        <p id="success-description"><strong>{{ event.titulo }}</strong> se creó como {{ event.estadoEditorial === 'draft' ? 'borrador' : 'publicado' }}. Volvé al resumen para revisar la actividad editorial.</p>
+        <button class="editor-submit" type="button" (click)="closeCreatedModal()">Ir al resumen</button>
+      </section>
+    </div>
   }
 </section>
