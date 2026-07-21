@@ -18,6 +18,7 @@
 .event-intro__content { min-width: 0; }
 .event-intro__content h1 { max-width: 15ch; margin: 0.8rem 0 0; color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2.2rem, 5vw, 4rem); letter-spacing: -0.055em; line-height: 0.94; overflow-wrap: anywhere; word-break: break-word; }
 .event-intro__content p { max-width: 62ch; margin: 1rem 0 0; color: var(--text-soft); line-height: 1.65; overflow-wrap: anywhere; word-break: break-word; }
+.event-intro__content app-compartir-evento { margin-top: 1rem; }
 .badge { display: inline-flex; width: fit-content; max-width: 100%; padding: 0.35rem 0.7rem; border-radius: 999px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; overflow-wrap: anywhere; word-break: break-word; }
 .badge { background: var(--accent-primary); color: #fff6ec; }
 .panel-label, .detail-list dt { color: var(--text-muted); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }

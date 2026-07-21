@@ -30,6 +30,12 @@
                 <small>{{ event.categoria }} · {{ event.fechaInicio | date: 'mediumDate' }} · {{ event.views }} consultas</small>
               </div>
               <div class="event-row__actions">
+                @if (event.estadoEditorial === 'published') {
+                  <app-compartir-evento
+                    [slug]="event.slug"
+                    [titulo]="event.titulo"
+                  />
+                }
                 <a [routerLink]="['/editor/eventos', event.id, 'editar']">Editar</a>
                 <button type="button" (click)="deleteEvent(event.id, event.titulo)">Eliminar</button>
               </div>

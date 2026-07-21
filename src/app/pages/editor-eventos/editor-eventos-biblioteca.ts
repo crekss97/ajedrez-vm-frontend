@@ -1,13 +1,14 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CompartirEvento } from '../../components/compartir-evento/compartir-evento';
 import { EditorLoading } from '../../components/editor-loading/editor-loading';
 import { EditorEventosService } from '../../services/editor-eventos.service';
 
 @Component({
   selector: 'app-editor-eventos-biblioteca',
   standalone: true,
-  imports: [AsyncPipe, DatePipe, RouterLink, EditorLoading],
+  imports: [AsyncPipe, DatePipe, RouterLink, EditorLoading, CompartirEvento],
   templateUrl: './editor-eventos-biblioteca.html',
   styleUrl: './editor-eventos-biblioteca.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -32,6 +32,10 @@
           <span class="badge">{{ evento.categoria }}</span>
           <h1>{{ evento.titulo }}</h1>
           <p>{{ evento.descripcionCorta }}</p>
+          <app-compartir-evento
+            [slug]="evento.slug"
+            [titulo]="evento.titulo"
+          />
         </div>
       </section>
 
