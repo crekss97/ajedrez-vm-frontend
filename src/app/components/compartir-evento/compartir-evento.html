@@ -1,12 +1,47 @@
-<button
-  type="button"
-  class="share-trigger"
-  [attr.aria-label]="'Copiar enlace de ' + titulo()"
-  (click)="copiar()"
->
-  <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/></svg>
-  Copiar enlace
-</button>
+<div class="share-options">
+  <button
+    type="button"
+    class="share-trigger"
+    [attr.aria-label]="'Copiar enlace de ' + titulo()"
+    (click)="copiar()"
+  >
+    <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/></svg>
+    Copiar enlace
+  </button>
+
+  <a
+    class="share-trigger share-trigger--social"
+    [href]="urlWhatsApp"
+    target="_blank"
+    rel="noopener noreferrer"
+    [attr.aria-label]="'Compartir ' + titulo() + ' en WhatsApp'"
+  >
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 2.13.62 4.12 1.78 5.84L2.5 21.5l4.86-1.28A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm-.13 3.66a7.4 7.4 0 0 1 5.8 2.84 7.34 7.34 0 0 1 1.1 6.08 7.36 7.36 0 0 1-4.95 4.95 7.4 7.4 0 0 1-6.08-1.1 7.34 7.34 0 0 1-2.85-5.8c0-3.94 3.13-7.08 6.98-7.08v.11z"/><path d="M16.7 14.5c-.22.65-1.28 1.2-1.84 1.28-.47.07-1.07.1-1.73-.2-.45-.2-.96-.52-1.51-1.06a5.8 5.8 0 0 1-1.06-1.5c-.29-.66-.26-1.26-.19-1.73.08-.56.63-1.62 1.28-1.84.06-.02.12-.03.18-.01.12.04.26.24.4.52.13.28.33.75.43 1 .04.09.04.18-.02.28a.8.8 0 0 1-.16.22l-.28.23c-.19.15-.19.29-.14.41.3.66.8 1.23 1.18 1.54.2.17.4.36.62.5.15.1.3.14.42.06l.36-.26c.18-.13.32-.17.43-.14.12.04.27.17.43.37.27.32.38.52.49.68.08.14.15.27.12.4z"/></svg>
+    WhatsApp
+  </a>
+
+  <a
+    class="share-trigger share-trigger--social"
+    [href]="urlFacebook"
+    target="_blank"
+    rel="noopener noreferrer"
+    [attr.aria-label]="'Compartir ' + titulo() + ' en Facebook'"
+  >
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M13.7 21v-8h2.7l.4-3h-3.1V8.1c0-.87.24-1.46 1.55-1.46H16.9V3.96c-.29-.04-1.28-.12-2.43-.12-2.4 0-4.04 1.46-4.04 4.15V10H7.7v3h2.73v8h3.27Z"/></svg>
+    Facebook
+  </a>
+
+  <a
+    class="share-trigger share-trigger--social"
+    [href]="urlTwitter"
+    target="_blank"
+    rel="noopener noreferrer"
+    [attr.aria-label]="'Compartir ' + titulo() + ' en X'"
+  >
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    X
+  </a>
+</div>
 
 @if (mensaje()) {
   <p class="share-feedback" role="status" aria-live="polite">{{ mensaje() }}</p>
