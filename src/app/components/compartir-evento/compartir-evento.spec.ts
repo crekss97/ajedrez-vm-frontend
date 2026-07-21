@@ -31,14 +31,20 @@ describe('CompartirEvento', () => {
     fixture.detectChanges();
   });
 
-  it('copia el enlace al portapapeles', async () => {
-    const trigger = fixture.nativeElement.querySelector('.share-trigger') as HTMLButtonElement;
+  it('copia el enlace desde la bandeja de opciones', async () => {
+    const menu = fixture.nativeElement.querySelector('.share-menu') as HTMLDetailsElement;
+    const trigger = fixture.nativeElement.querySelector('.share-trigger') as HTMLElement;
+    const copy = fixture.nativeElement.querySelector('.share-choice--copy') as HTMLButtonElement;
 
-    expect(trigger.textContent).toContain('Copiar enlace');
-    expect(trigger.getAttribute('aria-label')).toBe('Copiar enlace de Torneo Apertura');
-    expect(fixture.nativeElement.querySelector('dialog')).toBeNull();
+    expect(trigger.textContent).toContain('Compartir evento');
+    expect(menu.open).toBeFalse();
 
     trigger.click();
+    expect(menu.open).toBeTrue();
+
+    expect(copy.textContent).toContain('Copiar');
+    expect(copy.getAttribute('aria-label')).toBe('Copiar enlace de Torneo Apertura');
+    copy.click();
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -51,7 +57,7 @@ describe('CompartirEvento', () => {
   it('revela un enlace seleccionable cuando falla el portapapeles', async () => {
     service.copiar.and.rejectWith(new Error('Sin permiso'));
 
-    (fixture.nativeElement.querySelector('.share-trigger') as HTMLButtonElement).click();
+    (fixture.nativeElement.querySelector('.share-choice--copy') as HTMLButtonElement).click();
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -64,19 +70,23 @@ describe('CompartirEvento', () => {
   });
 
   it('muestra enlaces a WhatsApp, Facebook y X', () => {
-    const anchors = fixture.nativeElement.querySelectorAll('.share-trigger--social') as NodeListOf<HTMLAnchorElement>;
+    const anchors = fixture.nativeElement.querySelectorAll('.share-choice--social') as NodeListOf<HTMLAnchorElement>;
 
     expect(anchors.length).toBe(3);
-    expect(anchors[0].getAttribute('href')).toContain('https://wa.me/?text=');
+    expect(anchors[0].getAttribute('href')).toBe(
+      service.urlWhatsApp('apertura', 'Torneo Apertura'),
+    );
     expect(anchors[0].getAttribute('aria-label')).toBe('Compartir Torneo Apertura en WhatsApp');
-    expect(anchors[1].getAttribute('href')).toContain('https://www.facebook.com/sharer/sharer.php?u=');
+    expect(anchors[1].getAttribute('href')).toBe(service.urlFacebook('apertura'));
     expect(anchors[1].getAttribute('aria-label')).toBe('Compartir Torneo Apertura en Facebook');
-    expect(anchors[2].getAttribute('href')).toContain('https://twitter.com/intent/tweet?text=');
+    expect(anchors[2].getAttribute('href')).toBe(
+      service.urlTwitter('apertura', 'Torneo Apertura'),
+    );
     expect(anchors[2].getAttribute('aria-label')).toBe('Compartir Torneo Apertura en X');
   });
 
   it('abre redes sociales en nueva ventana con noopener', () => {
-    const anchors = fixture.nativeElement.querySelectorAll('.share-trigger--social') as NodeListOf<HTMLAnchorElement>;
+    const anchors = fixture.nativeElement.querySelectorAll('.share-choice--social') as NodeListOf<HTMLAnchorElement>;
 
     for (const a of anchors) {
       expect(a.target).toBe('_blank');
