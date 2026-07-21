@@ -5,23 +5,25 @@ import { Injectable, inject } from '@angular/core';
 export class CompartirEventoService {
   private readonly document = inject(DOCUMENT);
 
-  urlEvento(slug: string): string {
+  urlEvento(slug: string, version?: string): string {
     const origin = this.document.location?.origin ?? 'https://ajedrez-vm-frontend.vercel.app';
-    return new URL(`/eventos/${encodeURIComponent(slug)}`, origin).toString();
+    const url = new URL(`/eventos/${encodeURIComponent(slug)}`, origin);
+    if (version) url.searchParams.set('v', version);
+    return url.toString();
   }
 
-  urlWhatsApp(slug: string, titulo: string): string {
-    const url = this.urlEvento(slug);
+  urlWhatsApp(slug: string, titulo: string, version?: string): string {
+    const url = this.urlEvento(slug, version);
     return `https://wa.me/?text=${encodeURIComponent(`${titulo} ${url}`)}`;
   }
 
-  urlFacebook(slug: string): string {
-    const url = this.urlEvento(slug);
+  urlFacebook(slug: string, version?: string): string {
+    const url = this.urlEvento(slug, version);
     return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
   }
 
-  urlTwitter(slug: string, titulo: string): string {
-    const url = this.urlEvento(slug);
+  urlTwitter(slug: string, titulo: string, version?: string): string {
+    const url = this.urlEvento(slug, version);
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(titulo)}&url=${encodeURIComponent(url)}`;
   }
 

@@ -15,7 +15,7 @@ export class EventoMetadataService {
   actualizar(evento: Evento): void {
     const titulo = `${evento.titulo} | Ajedrez VM`;
     const url = this.urlEvento(evento.slug);
-    const imagen = this.urlImagenSocial(evento);
+    const imagen = this.urlImagenPrincipal(evento);
 
     this.title.setTitle(titulo);
     this.actualizarDescripcion(evento.descripcionCorta);
@@ -27,15 +27,15 @@ export class EventoMetadataService {
     this.actualizarMeta('property', 'og:description', evento.descripcionCorta);
     this.actualizarMeta('property', 'og:url', url);
     this.actualizarMeta('property', 'og:image', imagen);
-    this.actualizarMeta('property', 'og:image:width', '1200');
-    this.actualizarMeta('property', 'og:image:height', '630');
-    this.actualizarMeta('property', 'og:image:type', 'image/jpeg');
-    this.actualizarMeta('property', 'og:image:alt', `Tarjeta de ${evento.titulo}`);
+    this.meta.removeTag('property="og:image:width"');
+    this.meta.removeTag('property="og:image:height"');
+    this.meta.removeTag('property="og:image:type"');
+    this.actualizarMeta('property', 'og:image:alt', `Afiche principal de ${evento.titulo}`);
     this.actualizarMeta('name', 'twitter:card', 'summary_large_image');
     this.actualizarMeta('name', 'twitter:title', titulo);
     this.actualizarMeta('name', 'twitter:description', evento.descripcionCorta);
     this.actualizarMeta('name', 'twitter:image', imagen);
-    this.actualizarMeta('name', 'twitter:image:alt', `Tarjeta de ${evento.titulo}`);
+    this.actualizarMeta('name', 'twitter:image:alt', `Afiche principal de ${evento.titulo}`);
   }
 
   restablecerDetalle(): void {
@@ -70,9 +70,9 @@ export class EventoMetadataService {
     return new URL(`/eventos/${encodeURIComponent(slug)}`, origin).toString();
   }
 
-  private urlImagenSocial(evento: Evento): string {
+  private urlImagenPrincipal(evento: Evento): string {
     const url = new URL(
-      `/api/social/events/${encodeURIComponent(evento.slug)}/image`,
+      evento.imagenUrl,
       this.document.location?.origin ?? 'https://ajedrez-vm-frontend.vercel.app',
     );
     if (evento.actualizadoEn) url.searchParams.set('v', evento.actualizadoEn);
