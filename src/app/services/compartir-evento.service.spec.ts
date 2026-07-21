@@ -15,6 +15,26 @@ describe('CompartirEventoService', () => {
     );
   });
 
+  it('construye la URL de WhatsApp con titulo y url', () => {
+    const url = service.urlWhatsApp('apertura', 'Torneo Apertura');
+    expect(url).toContain('https://wa.me/?text=');
+    expect(url).toContain(encodeURIComponent('Torneo Apertura'));
+    expect(url).toContain(encodeURIComponent(`${window.location.origin}/eventos/apertura`));
+  });
+
+  it('construye la URL de Facebook con la url del evento', () => {
+    const url = service.urlFacebook('apertura');
+    expect(url).toContain('https://www.facebook.com/sharer/sharer.php?u=');
+    expect(url).toContain(encodeURIComponent(`${window.location.origin}/eventos/apertura`));
+  });
+
+  it('construye la URL de X con titulo y url del evento', () => {
+    const url = service.urlTwitter('apertura', 'Torneo Apertura');
+    expect(url).toContain('https://twitter.com/intent/tweet?text=');
+    expect(url).toContain(encodeURIComponent('Torneo Apertura'));
+    expect(url).toContain(encodeURIComponent(`${window.location.origin}/eventos/apertura`));
+  });
+
   it('delega la copia en navigator.clipboard', async () => {
     const clipboard = { writeText: jasmine.createSpy().and.resolveTo() };
     const descriptor = Object.getOwnPropertyDescriptor(navigator, 'clipboard');

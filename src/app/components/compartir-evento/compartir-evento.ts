@@ -15,6 +15,13 @@ export class CompartirEvento {
   readonly titulo = input.required<string>();
 
   protected readonly url = computed(() => this.compartirService.urlEvento(this.slug()));
+  protected readonly urlWhatsApp = computed(() =>
+    this.compartirService.urlWhatsApp(this.slug(), this.titulo()),
+  );
+  protected readonly urlFacebook = computed(() => this.compartirService.urlFacebook(this.slug()));
+  protected readonly urlTwitter = computed(() =>
+    this.compartirService.urlTwitter(this.slug(), this.titulo()),
+  );
   protected readonly mensaje = signal('');
   protected readonly error = signal('');
   protected readonly mostrarUrlManual = signal(false);
