@@ -31,10 +31,20 @@ describe('EventosService', () => {
 
   it('registra consultas sin activar el cargador global', () => {
     const loading = TestBed.inject(AppLoadingService);
-    service.registrarConsulta('torneo-apertura').subscribe();
+    service.registrarConsulta(
+      'torneo-apertura',
+      3_000,
+      '550e8400-e29b-41d4-a716-446655440000',
+      '550e8400-e29b-41d4-a716-446655440001',
+    ).subscribe();
 
     const request = httpTesting.expectOne('/api/events/torneo-apertura/view');
     expect(request.request.context.get(OMITIR_CARGADOR_GLOBAL)).toBeTrue();
+    expect(request.request.headers.get('Idempotency-Key')).toBe('550e8400-e29b-41d4-a716-446655440001');
+    expect(request.request.body).toEqual({
+      visitorId: '550e8400-e29b-41d4-a716-446655440000',
+      visibleDurationMs: 3_000,
+    });
     expect(loading.cargando()).toBeFalse();
 
     request.flush({ views: 13 });
