@@ -2,10 +2,11 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { catchError, EMPTY, map, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, map, of, startWith, switchMap, tap } from 'rxjs';
 import { CompartirEvento } from '../../components/compartir-evento/compartir-evento';
 import { EventosService } from '../../services/evento.service';
 import { EventoMetadataService } from '../../services/evento-metadata.service';
+import { RegistroVisitaService } from '../../services/registro-visita.service';
 import { Evento } from '../../models/evento';
 
 @Component({
@@ -20,13 +21,17 @@ export class EventoDetalle {
   private readonly route = inject(ActivatedRoute);
   private readonly eventosService = inject(EventosService);
   private readonly metadata = inject(EventoMetadataService);
+  private readonly registroVisita = inject(RegistroVisitaService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly hasError = signal(false);
+  private cancelarRegistroVisita: () => void = () => undefined;
 
   protected readonly evento = toSignal(
     this.route.paramMap.pipe(
       map((params) => params.get('slug') ?? ''),
       tap(() => {
+        this.cancelarRegistroVisita();
+        this.cancelarRegistroVisita = () => undefined;
         this.hasError.set(false);
         this.metadata.restablecerDetalle();
       }),
@@ -34,10 +39,11 @@ export class EventoDetalle {
         this.eventosService.getEvento(slug).pipe(
           tap((evento) => {
             this.metadata.actualizar(evento);
-            this.eventosService
-              .registrarConsulta(slug)
-              .pipe(catchError(() => EMPTY))
-              .subscribe();
+            try {
+              this.cancelarRegistroVisita = this.registroVisita.programar(evento.slug);
+            } catch {
+              this.cancelarRegistroVisita = () => undefined;
+            }
           }),
           catchError(() => {
             this.hasError.set(true);
@@ -54,7 +60,10 @@ export class EventoDetalle {
   protected readonly mostrarError = this.hasError.asReadonly();
 
   constructor() {
-    this.destroyRef.onDestroy(() => this.metadata.restablecerDetalle());
+    this.destroyRef.onDestroy(() => {
+      this.cancelarRegistroVisita();
+      this.metadata.restablecerDetalle();
+    });
   }
 
   protected abrirAfiche(dialog: HTMLDialogElement): void {
