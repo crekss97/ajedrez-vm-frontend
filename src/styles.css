@@ -17,9 +17,32 @@
   --accent-primary: #e4573f;
   --accent-primary-strong: #b83d35;
   --accent-warm: #e6bd55;
+  --accent-warm-strong: #8d6b12;
   --accent-lime: #b9d47a;
   background-color: var(--page-bg);
   color: var(--text-main);
+}
+
+.editor-featured-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  width: fit-content;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid rgba(141, 107, 18, 0.34);
+  border-radius: 999px;
+  background: rgba(230, 189, 85, 0.2);
+  color: var(--text-main);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.editor-featured-badge__mark {
+  color: var(--accent-warm-strong);
+  font-size: 0.78rem;
+  line-height: 1;
 }
 
 * {

@@ -20,7 +20,7 @@ describe('EditorEventosBiblioteca', () => {
     ubicacion: 'Club Central',
     organizador: 'Ajedrez VM',
     imagenUrl: '/api/uploads/1',
-    destacado: false,
+    destacado: true,
     modalidad: 'Presencial',
     tags: [],
     views: 4,
@@ -36,6 +36,7 @@ describe('EditorEventosBiblioteca', () => {
     id: 2,
     slug: 'torneo-borrador',
     titulo: 'Torneo borrador',
+    destacado: false,
     estadoEditorial: 'draft',
   };
 
@@ -56,12 +57,14 @@ describe('EditorEventosBiblioteca', () => {
     fixture.detectChanges();
   });
 
-  it('solo permite compartir eventos publicados y conserva editar y eliminar', () => {
+  it('identifica destacados y conserva las acciones editoriales', () => {
     const rows = Array.from(fixture.nativeElement.querySelectorAll('.event-row')) as HTMLElement[];
     const publishedActions = rows[0].querySelector('.event-row__actions') as HTMLElement;
     const draftActions = rows[1].querySelector('.event-row__actions') as HTMLElement;
 
     expect(rows.length).toBe(2);
+    expect(rows[0].querySelector('.editor-featured-badge')).not.toBeNull();
+    expect(rows[1].querySelector('.editor-featured-badge')).toBeNull();
     expect(publishedActions.querySelector('app-compartir-evento')).not.toBeNull();
     expect(draftActions.querySelector('app-compartir-evento')).toBeNull();
     for (const actions of [publishedActions, draftActions]) {

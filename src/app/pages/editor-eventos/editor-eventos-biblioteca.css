@@ -10,6 +10,7 @@
 .event-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; border: 1px solid transparent; border-radius: 0.8rem; background: var(--surface-soft); }
 .event-row:hover { border-color: var(--border-soft); }
 .event-row__main { display: grid; gap: 0.25rem; min-width: 0; }
+.event-row__labels { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
 .event-row__main h3 { margin: 0; overflow: hidden; font-family: inherit; font-size: 1rem; letter-spacing: 0; text-overflow: ellipsis; white-space: nowrap; }
 .event-row__main small { color: var(--text-muted); font-size: 0.76rem; }
 .event-status { width: fit-content; padding: 0.25rem 0.5rem; border-radius: 999px; background: rgba(70, 109, 152, 0.14); color: var(--accent-primary-strong); font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }

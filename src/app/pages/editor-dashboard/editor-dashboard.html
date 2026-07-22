@@ -37,7 +37,15 @@
           <div class="activity-list">
             @for (draft of drafts.slice(0, 4); track draft.id) {
               <article class="activity-item">
-                <span class="activity-item__status">{{ draft.estadoEditorial === 'published' ? 'Publicado' : 'Borrador' }}</span>
+                <div class="activity-item__labels">
+                  <span class="activity-item__status">{{ draft.estadoEditorial === 'published' ? 'Publicado' : 'Borrador' }}</span>
+                  @if (draft.destacado) {
+                    <span class="editor-featured-badge">
+                      <span class="editor-featured-badge__mark" aria-hidden="true">★</span>
+                      Destacado
+                    </span>
+                  }
+                </div>
                 <strong>{{ draft.titulo }}</strong>
                 <small>{{ draft.ubicacion }} · {{ draft.actualizadoEn | date: 'mediumDate' }}</small>
               </article>
