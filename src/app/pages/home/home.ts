@@ -85,8 +85,7 @@ export class Home {
   protected readonly mostrarErrorPuzzle = this.errorPuzzle.asReadonly();
 
   protected readonly eventosDestacados = computed(() => {
-    const destacados = this.eventos().filter((evento) => evento.destacado);
-    return destacados.length ? destacados : this.eventos().slice(0, 1);
+    return this.eventos().filter((evento) => evento.destacado === true);
   });
 
   protected readonly activeSlideIndexNormalized = computed(() => {
