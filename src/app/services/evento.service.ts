@@ -1,4 +1,4 @@
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -31,10 +31,20 @@ export class EventosService {
     );
   }
 
-  registrarConsulta(slug: string): Observable<{ views: number }> {
-    return this.http.post<{ views: number }>(`${this.apiUrl}/${encodeURIComponent(slug)}/view`, {}, {
-      context: new HttpContext().set(OMITIR_CARGADOR_GLOBAL, true),
-    });
+  registrarConsulta(
+    slug: string,
+    visibleDurationMs: number,
+    visitorId: string,
+    requestId: string,
+  ): Observable<{ views: number }> {
+    return this.http.post<{ views: number }>(
+      `${this.apiUrl}/${encodeURIComponent(slug)}/view`,
+      { visitorId, visibleDurationMs },
+      {
+        headers: new HttpHeaders({ 'Idempotency-Key': requestId }),
+        context: new HttpContext().set(OMITIR_CARGADOR_GLOBAL, true),
+      },
+    );
   }
 
   private toPublicEvent(event: Evento): Evento {

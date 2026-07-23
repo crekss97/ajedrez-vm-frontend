@@ -25,7 +25,15 @@
           @for (event of events; track event.id) {
             <article class="event-row">
               <div class="event-row__main">
-                <span class="event-status" [class.event-status--draft]="event.estadoEditorial === 'draft'">{{ event.estadoEditorial === 'published' ? 'Publicado' : 'Borrador' }}</span>
+                <div class="event-row__labels">
+                  <span class="event-status" [class.event-status--draft]="event.estadoEditorial === 'draft'">{{ event.estadoEditorial === 'published' ? 'Publicado' : 'Borrador' }}</span>
+                  @if (event.destacado) {
+                    <span class="editor-featured-badge">
+                      <span class="editor-featured-badge__mark" aria-hidden="true">★</span>
+                      Destacado
+                    </span>
+                  }
+                </div>
                 <h3>{{ event.titulo }}</h3>
                 <small>{{ event.categoria }} · {{ event.fechaInicio | date: 'mediumDate' }} · {{ event.views }} consultas</small>
               </div>

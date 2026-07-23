@@ -87,6 +87,35 @@ describe('Home', () => {
     expect(fixture.nativeElement.querySelector('[role="status"]')).toBeNull();
   });
 
+  it('no muestra el carrusel cuando no hay eventos destacados', () => {
+    eventos$.next([
+      crearEvento({ id: 1, slug: 'evento-comun', destacado: false }),
+      crearEvento({ id: 2, slug: 'otro-evento-comun', destacado: false }),
+    ]);
+    links$.next([]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.featured-carousel')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('.event-card').length).toBe(2);
+  });
+
+  it('muestra en el carrusel solo los eventos destacados', () => {
+    eventos$.next([
+      crearEvento({ id: 1, slug: 'evento-comun', titulo: 'Evento comun', destacado: false }),
+      crearEvento({ id: 2, slug: 'evento-destacado', titulo: 'Evento destacado', destacado: true }),
+    ]);
+    links$.next([]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.featured-details h1')?.textContent).toContain(
+      'Evento destacado',
+    );
+    expect(fixture.nativeElement.querySelector('.featured-details h1')?.textContent).not.toContain(
+      'Evento comun',
+    );
+    expect(fixture.nativeElement.querySelector('.featured-controls')).toBeNull();
+  });
+
   it('carga eventos una sola vez y no presenta entradas populares', () => {
     eventos$.next([
       crearEvento({ id: 1, slug: 'menos-visto', titulo: 'Menos visto', views: 2 }),

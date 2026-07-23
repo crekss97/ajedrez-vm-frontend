@@ -5,11 +5,13 @@ import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
 
 import { Evento } from '../../models/evento';
 import { EventosService } from '../../services/evento.service';
+import { RegistroVisitaService } from '../../services/registro-visita.service';
 import { EventoDetalle } from './evento-detalle';
 
 describe('EventoDetalle', () => {
   let fixture: ComponentFixture<EventoDetalle>;
   let eventosService: jasmine.SpyObj<EventosService>;
+  let registroVisitaService: jasmine.SpyObj<RegistroVisitaService>;
   let paramMap$: BehaviorSubject<ParamMap>;
   let respuesta$: Subject<Evento>;
   let title: Title;
@@ -43,12 +45,10 @@ describe('EventoDetalle', () => {
   beforeEach(async () => {
     paramMap$ = new BehaviorSubject(convertToParamMap({ slug: 'torneo-apertura' }));
     respuesta$ = new Subject<Evento>();
-    eventosService = jasmine.createSpyObj<EventosService>('EventosService', [
-      'getEvento',
-      'registrarConsulta',
-    ]);
+    eventosService = jasmine.createSpyObj<EventosService>('EventosService', ['getEvento']);
     eventosService.getEvento.and.returnValue(respuesta$.asObservable());
-    eventosService.registrarConsulta.and.returnValue(of({ views: 13 }));
+    registroVisitaService = jasmine.createSpyObj<RegistroVisitaService>('RegistroVisitaService', ['programar']);
+    registroVisitaService.programar.and.returnValue(() => undefined);
 
     await TestBed.configureTestingModule({
       imports: [EventoDetalle],
@@ -56,6 +56,7 @@ describe('EventoDetalle', () => {
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { paramMap: paramMap$.asObservable() } },
         { provide: EventosService, useValue: eventosService },
+        { provide: RegistroVisitaService, useValue: registroVisitaService },
       ],
     }).compileComponents();
 
@@ -228,20 +229,17 @@ describe('EventoDetalle', () => {
     expect(document.head.querySelector('meta[property="og:image"]')).toBeNull();
   });
 
-  it('registra una consulta una sola vez después de una carga exitosa', () => {
-    expect(eventosService.registrarConsulta).not.toHaveBeenCalled();
+  it('programa una visita después de una carga exitosa', () => {
+    expect(registroVisitaService.programar).not.toHaveBeenCalled();
 
     respuesta$.next(crearEvento());
     fixture.detectChanges();
 
-    expect(eventosService.registrarConsulta).toHaveBeenCalledOnceWith('torneo-apertura');
+    expect(registroVisitaService.programar).toHaveBeenCalledOnceWith('torneo-apertura');
   });
 
-  it('mantiene el evento visible si falla el registro de la consulta', () => {
-    eventosService.registrarConsulta.and.returnValue(
-      throwError(() => new Error('No se pudo registrar')),
-    );
-
+  it('mantiene el evento visible aunque el registro quede programado como operación secundaria', () => {
+    registroVisitaService.programar.and.throwError('No se pudo programar');
     respuesta$.next(crearEvento());
     fixture.detectChanges();
 
