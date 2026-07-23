@@ -11,6 +11,7 @@ pueden ingresar los correos habilitados previamente en Neon.
 - `npm start`
 - `npm run build`
 - `npm test`
+- `npm run verify:integration-config`
 
 ## Desarrollo local
 
@@ -45,6 +46,9 @@ npm run build
 Si no defines la variable, el build usa `/api`. `npm start` aplica `proxy.conf.json` hacia
 `http://localhost:3000`; en producción, `vercel.json` reescribe `/api/*` al backend.
 
+`npm run verify:integration-config` comprueba que el proxy local, los rewrites de Vercel y el
+runtime config conserven el contrato de mismo origen.
+
 ## Despliegue en Vercel
 
 El proyecto ya tiene configuración para SPA y proxy de API en [`vercel.json`](vercel.json).
@@ -78,6 +82,13 @@ Para que el frontend se conecte correctamente:
 No apuntes `NG_APP_API_URL` directamente al dominio del backend: el inicio OAuth, el callback y las
 peticiones autenticadas deben atravesar el mismo dominio del frontend para compartir las cookies
 `HttpOnly` correctamente.
+
+### Ventana y rollback
+
+Despliega el backend antes que el frontend y verifica `/api/health`, `/api/events`, un detalle
+publicado, la ruta social y el rewrite local/producción. Si el smoke falla, vuelve al deployment
+anterior del frontend y conserva `NG_APP_API_URL=/api`; el backend puede revertirse al deployment
+anterior sin eliminar las tablas de visitas ni sus contadores agregados.
 
 ## Git y archivos `.env`
 
