@@ -1,23 +1,101 @@
 <section class="editor-subpage">
-  <div class="subpage-heading"><h2>Métricas</h2></div>
-  @if (metrics(); as metrics) {
+  <div class="subpage-heading">
+    <p class="subpage-kicker">Rendimiento editorial</p>
+    <h2>Métricas</h2>
+    <p class="subpage-description">Vistas aceptadas y visitantes únicos en la zona horaria de Buenos Aires.</p>
+  </div>
+
+  <form class="metrics-filters" (submit)="applyFilters($event)" novalidate>
+    <div class="metrics-filter-heading">
+      <div>
+        <span class="metrics-filter-label">Período</span>
+        <strong>{{ periodLabel() }}</strong>
+      </div>
+      <span class="metrics-timezone">America/Argentina/Buenos_Aires</span>
+    </div>
+    <div class="metrics-presets" role="group" aria-label="Períodos rápidos">
+      <button type="button" [class.is-active]="isPresetActive(7)" (click)="setPreset(7)">7 días</button>
+      <button type="button" [class.is-active]="isPresetActive(30)" (click)="setPreset(30)">30 días</button>
+      <button type="button" [class.is-active]="isPresetActive(90)" (click)="setPreset(90)">90 días</button>
+    </div>
+    <div class="metrics-date-fields">
+      <label for="metricas-desde">
+        Desde
+        <input id="metricas-desde" type="date" [value]="draftRange().desde" [max]="today" (input)="updateDate('desde', $event)" [attr.aria-invalid]="rangeError() ? 'true' : null" aria-describedby="metricas-rango-error" />
+      </label>
+      <label for="metricas-hasta">
+        Hasta
+        <input id="metricas-hasta" type="date" [value]="draftRange().hasta" [max]="today" (input)="updateDate('hasta', $event)" [attr.aria-invalid]="rangeError() ? 'true' : null" aria-describedby="metricas-rango-error" />
+      </label>
+      <button class="metrics-apply" type="submit" [disabled]="!!rangeError() || loading()">Aplicar período</button>
+    </div>
+    @if (rangeError(); as rangeError) {
+      <p id="metricas-rango-error" class="metrics-error" role="alert">{{ rangeError }}</p>
+    } @else {
+      <p id="metricas-rango-error" class="metrics-help">Máximo 90 días. Las visitas se agrupan según Buenos Aires.</p>
+    }
+  </form>
+
+  @if (loading()) {
+    <section class="metrics-loading"><app-editor-loading message="Calculando métricas..." /></section>
+  } @else if (error(); as error) {
+    <section class="metrics-error-card" role="alert">
+      <strong>{{ error }}</strong>
+      <button type="button" (click)="retry()">Reintentar</button>
+    </section>
+  } @else if (metrics(); as metrics) {
     <div class="metrics-overview">
-      <article><span>Vistas totales</span><strong>{{ metrics.totalViews }}</strong></article>
-      <article><span>Promedio por evento</span><strong>{{ metrics.averageViews }}</strong></article>
-      <article><span>Publicados</span><strong>{{ metrics.publishedEvents }}</strong></article>
+      <article><span>Vistas del período</span><strong>{{ metrics.totalViews }}</strong><small>{{ metrics.dias }} días analizados</small></article>
+      <article><span>Visitantes únicos</span><strong>{{ metrics.uniqueViews }}</strong><small>Identidades distintas</small></article>
+      <article><span>Promedio por evento</span><strong>{{ metrics.averageViews }}</strong><small>Vistas del período</small></article>
+      <article><span>Publicados</span><strong>{{ metrics.publishedEvents }}</strong><small>{{ metrics.draftEvents }} borradores</small></article>
     </div>
+
     <div class="charts-grid">
-      <section class="chart-card chart-card--wide">
-        <div class="metrics-table-heading"><h3>Vistas por evento</h3></div>
-        <div class="chart-frame"><canvas baseChart [data]="viewsChartData()" [options]="viewsChartOptions" type="bar"></canvas></div>
+      <section class="chart-card chart-card--wide" aria-labelledby="daily-chart-title">
+        <div class="metrics-table-heading"><div><h3 id="daily-chart-title">Visitas por día</h3><p class="chart-description" id="daily-chart-description">La línea roja muestra vistas y la azul visitantes únicos.</p></div></div>
+        <div class="chart-frame"><canvas baseChart [data]="dailyChartData()" [options]="dailyChartOptions" type="line" role="img" aria-labelledby="daily-chart-title" aria-describedby="daily-chart-description"></canvas></div>
       </section>
-      <section class="chart-card">
-        <div class="metrics-table-heading"><h3>Distribución editorial</h3></div>
-        <div class="chart-frame chart-frame--donut"><canvas baseChart [data]="statusChartData()" [options]="statusChartOptions" type="doughnut"></canvas></div>
+      <section class="chart-card" aria-labelledby="status-chart-title">
+        <div class="metrics-table-heading"><h3 id="status-chart-title">Distribución editorial</h3></div>
+        <div class="chart-frame chart-frame--donut"><canvas baseChart [data]="statusChartData()" [options]="statusChartOptions" type="doughnut" role="img" aria-labelledby="status-chart-title"></canvas></div>
       </section>
     </div>
-    <section class="metrics-table-card" aria-label="Eventos ordenados por cantidad de vistas">
-      @if (!metrics.eventsByViews.length) { <p class="editor-empty">Todavía no hay datos para mostrar.</p> } @else { <div class="metrics-table">@for (event of metrics.eventsByViews; track event.id; let index = $index) { <div class="metrics-row"><b>0{{ index + 1 }}</b><strong>{{ event.titulo }}</strong><span>{{ event.views }} vistas</span></div> }</div> }
+
+    <div class="charts-grid charts-grid--secondary">
+      <section class="chart-card chart-card--wide" aria-labelledby="events-chart-title">
+        <div class="metrics-table-heading"><div><h3 id="events-chart-title">Eventos más vistos</h3><p class="chart-description" id="events-chart-description">Se muestran los diez eventos con más vistas en el período.</p></div></div>
+        <div class="chart-frame"><canvas baseChart [data]="eventsChartData()" [options]="eventsChartOptions" type="bar" role="img" aria-labelledby="events-chart-title" aria-describedby="events-chart-description"></canvas></div>
+      </section>
+      <section class="metrics-table-card metrics-table-card--note">
+        <span class="metrics-filter-label">Lectura rápida</span>
+        <strong>{{ metrics.totalViews }} vistas de {{ metrics.uniqueViews }} visitantes únicos</strong>
+        <p>Una misma identidad puede generar varias vistas aceptadas en distintos momentos y eventos.</p>
+      </section>
+    </div>
+
+    <section class="metrics-table-card" aria-label="Eventos ordenados por vistas del período">
+      <div class="metrics-table-heading"><div><h3>Detalle por evento</h3><p class="chart-description">Los borradores se muestran separados y no se exponen en la parte pública.</p></div></div>
+      @if (!metrics.eventsByViews.length) {
+        <p class="editor-empty">Todavía no hay eventos para mostrar.</p>
+      } @else {
+        <div class="metrics-table-wrapper">
+          <table class="metrics-table">
+            <caption class="visually-hidden">Eventos ordenados por vistas y visitantes únicos</caption>
+            <thead><tr><th scope="col">Evento</th><th scope="col">Estado</th><th scope="col">Vistas</th><th scope="col">Únicos</th></tr></thead>
+            <tbody>
+              @for (event of metrics.eventsByViews; track event.id) {
+                <tr>
+                  <th scope="row">{{ event.titulo }}</th>
+                  <td><span class="editorial-status" [class.editorial-status--draft]="event.estadoEditorial === 'draft'">{{ event.estadoEditorial === 'published' ? 'Publicado' : 'Borrador' }}</span></td>
+                  <td>{{ event.views }}</td>
+                  <td>{{ event.uniqueViews }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
     </section>
   } @else {
     <section class="metrics-loading"><app-editor-loading message="Calculando métricas..." /></section>

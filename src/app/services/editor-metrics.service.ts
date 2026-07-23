@@ -1,34 +1,35 @@
 import { Injectable, inject } from '@angular/core';
-import { map, Observable, shareReplay } from 'rxjs';
-import { EditorMetrics } from '../models/editor-metrics';
-import { EditorEventosService } from './editor-eventos.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, shareReplay } from 'rxjs';
+import { addBuenosAiresDays, getTodayBuenosAires } from '../core/fechas-buenos-aires';
+import { API_URL } from '../core/config/api.config';
+import { EditorMetrics, EditorMetricsRange } from '../models/editor-metrics';
+
+export const DEFAULT_METRICS_DAYS = 30;
+export const MAX_METRICS_DAYS = 90;
 
 @Injectable({
   providedIn: 'root',
 })
 export class EditorMetricsService {
-  private readonly editorEventosService = inject(EditorEventosService);
+  private readonly http = inject(HttpClient);
+  private readonly metricsUrl = `${API_URL}/editor/visitas/resumen`;
 
-  getMetrics(): Observable<EditorMetrics> {
-    return this.editorEventosService.drafts$.pipe(
-      map((events) => {
-        const publishedEvents = events.filter((event) => event.estadoEditorial !== 'draft');
-        const totalViews = events.reduce((total, event) => total + event.views, 0);
-        const eventsByViews = [...events]
-          .sort((first, second) => second.views - first.views)
-          .map(({ id, titulo, views }) => ({ id, titulo, views }));
+  getMetrics(range: EditorMetricsRange = this.getDefaultRange()): Observable<EditorMetrics> {
+    const params = new HttpParams()
+      .set('desde', range.desde)
+      .set('hasta', range.hasta);
 
-        return {
-          totalEvents: events.length,
-          publishedEvents: publishedEvents.length,
-          draftEvents: events.filter((event) => event.estadoEditorial === 'draft').length,
-          featuredEvents: events.filter((event) => event.destacado).length,
-          totalViews,
-          averageViews: events.length ? Math.round(totalViews / events.length) : 0,
-          eventsByViews,
-        };
-      }),
+    return this.http.get<EditorMetrics>(this.metricsUrl, { params }).pipe(
       shareReplay({ bufferSize: 1, refCount: true }),
     );
+  }
+
+  getDefaultRange(days = DEFAULT_METRICS_DAYS): EditorMetricsRange {
+    const hasta = getTodayBuenosAires();
+    return {
+      desde: addBuenosAiresDays(hasta, 1 - days),
+      hasta,
+    };
   }
 }

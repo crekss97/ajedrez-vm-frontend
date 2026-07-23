@@ -1,21 +1,28 @@
 <section class="dashboard-page">
   <div class="dashboard-heading">
     <a class="dashboard-primary" routerLink="/editor/eventos/nuevo">+ Crear evento</a>
+    <a class="dashboard-secondary" routerLink="/editor/metricas">Ver métricas</a>
   </div>
 
-  @if (metrics$ | async; as metrics) {
+  @if (metricsError()) {
+    <section class="dashboard-error" role="alert">
+      <strong>No se pudo cargar el resumen de visitas.</strong>
+      <a routerLink="/editor/metricas">Abrir métricas para reintentar</a>
+    </section>
+  } @else if (metrics$ | async; as metrics) {
     <div class="metric-grid">
       <article class="metric-card metric-card--featured">
         <span>Publicados</span><strong>{{ metrics.publishedEvents }}</strong>
       </article>
       <article class="metric-card">
-        <span>Consultas</span><strong>{{ metrics.totalViews }}</strong>
+        <span>Vistas del período</span><strong>{{ metrics.totalViews }}</strong>
+        <small>Últimos {{ metrics.dias }} días</small>
+      </article>
+      <article class="metric-card">
+        <span>Visitantes únicos</span><strong>{{ metrics.uniqueViews }}</strong>
       </article>
       <article class="metric-card">
         <span>Borradores</span><strong>{{ metrics.draftEvents }}</strong>
-      </article>
-      <article class="metric-card">
-        <span>Destacados</span><strong>{{ metrics.featuredEvents }}</strong>
       </article>
     </div>
   } @else {
