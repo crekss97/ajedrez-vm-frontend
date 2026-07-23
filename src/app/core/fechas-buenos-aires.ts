@@ -1,4 +1,5 @@
 export const ZONA_HORARIA_BUENOS_AIRES = 'America/Argentina/Buenos_Aires';
+const FECHA_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 const buenosAiresDateTimeFormatter = new Intl.DateTimeFormat('en-GB', {
   timeZone: ZONA_HORARIA_BUENOS_AIRES,
@@ -64,6 +65,58 @@ export function isValidBuenosAiresDateTime(value: unknown): value is string {
   return !Number.isNaN(instant.getTime()) && toBuenosAiresInput(instant.toISOString()) === value;
 }
 
+export function isValidBuenosAiresDate(value: unknown): value is string {
+  if (typeof value !== 'string' || !FECHA_PATTERN.test(value)) {
+    return false;
+  }
+
+  const date = dateInputToUtc(value);
+  return date !== null;
+}
+
+export function addBuenosAiresDays(value: string, days: number): string {
+  const date = dateInputToUtc(value);
+  if (!date) {
+    return '';
+  }
+
+  date.setUTCDate(date.getUTCDate() + days);
+  return formatDateInput(date);
+}
+
+export function diasEntreFechasBuenosAires(desde: string, hasta: string): number {
+  const inicio = dateInputToUtc(desde);
+  const fin = dateInputToUtc(hasta);
+  if (!inicio || !fin) {
+    return 0;
+  }
+
+  return Math.floor((fin.getTime() - inicio.getTime()) / (24 * 60 * 60 * 1_000)) + 1;
+}
+
 export function getTodayBuenosAires(): string {
   return toBuenosAiresInput(new Date().toISOString()).slice(0, 10);
+}
+
+function dateInputToUtc(value: string): Date | null {
+  if (!FECHA_PATTERN.test(value)) {
+    return null;
+  }
+
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(0);
+  date.setUTCFullYear(year, month - 1, day);
+  date.setUTCHours(0, 0, 0, 0);
+
+  return date.getUTCFullYear() === year
+    && date.getUTCMonth() === month - 1
+    && date.getUTCDate() === day
+    ? date
+    : null;
+}
+
+function formatDateInput(date: Date): string {
+  return [date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate()]
+    .map((part, index) => index === 0 ? String(part).padStart(4, '0') : String(part).padStart(2, '0'))
+    .join('-');
 }
