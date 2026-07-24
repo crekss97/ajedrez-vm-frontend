@@ -55,9 +55,10 @@ describe('EditorDashboard', () => {
        featuredEvents: 1,
        totalViews: 12,
        uniqueViews: 4,
-       averageViews: 6,
-       viewsByDay: [],
-       eventsByViews: [],
+        averageViews: 6,
+        viewsByDay: [],
+        viewsByCountry: [],
+        eventsByViews: [],
     }));
 
     await TestBed.configureTestingModule({

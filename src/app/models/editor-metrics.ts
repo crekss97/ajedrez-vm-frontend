@@ -12,6 +12,12 @@ export interface EditorMetricDay {
   uniqueViews: number;
 }
 
+export interface EditorMetricCountry {
+  countryCode: string | null;
+  views: number;
+  uniqueViews: number;
+}
+
 export interface EditorMetricsRange {
   desde: string;
   hasta: string;
@@ -30,5 +36,6 @@ export interface EditorMetrics {
   uniqueViews: number;
   averageViews: number;
   viewsByDay: EditorMetricDay[];
+  viewsByCountry: EditorMetricCountry[];
   eventsByViews: EditorMetricEvent[];
 }

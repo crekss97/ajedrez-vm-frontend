@@ -1,13 +1,11 @@
 .editor-subpage { display: grid; gap: 1rem; }
 .subpage-heading { padding: 1.2rem 0 0.3rem; }
 .subpage-heading h2 { margin: 0; color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.05em; }
-.subpage-kicker, .metrics-filter-label { margin: 0 0 0.35rem; color: var(--accent-primary-strong); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
-.subpage-description { max-width: 42rem; margin: 0.55rem 0 0; color: var(--text-muted); }
+.metrics-filter-label { margin: 0 0 0.35rem; color: var(--accent-primary-strong); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
 .metrics-filters, .metrics-overview article, .metrics-table-card, .chart-card, .metrics-error-card { border: 1px solid var(--border-soft); border-radius: 1.05rem; background: rgba(255, 253, 248, 0.88); box-shadow: var(--shadow-soft); }
 .metrics-filters { display: grid; gap: 1rem; padding: 1.1rem 1.25rem; }
 .metrics-filter-heading { display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
 .metrics-filter-heading strong { display: block; color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: 1.35rem; }
-.metrics-timezone { color: var(--text-muted); font-size: 0.75rem; }
 .metrics-presets { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 .metrics-presets button, .metrics-error-card button { padding: 0.55rem 0.8rem; border: 1px solid var(--border-soft); border-radius: 999px; background: transparent; color: var(--text-main); cursor: pointer; font: inherit; font-size: 0.78rem; font-weight: 800; }
 .metrics-presets button:hover, .metrics-presets button:focus-visible { border-color: var(--accent-primary); }
@@ -18,14 +16,13 @@
 .metrics-date-fields input[aria-invalid='true'] { border-color: var(--accent-primary); }
 .metrics-apply { min-height: 2.65rem; padding: 0.55rem 1rem; border: 0; border-radius: 0.65rem; background: var(--text-main); color: #fffaf1; cursor: pointer; font: inherit; font-weight: 800; white-space: nowrap; }
 .metrics-apply:disabled { cursor: not-allowed; opacity: 0.5; }
-.metrics-help, .metrics-error { margin: 0; font-size: 0.78rem; }
-.metrics-help { color: var(--text-muted); }
+.metrics-error { margin: 0; font-size: 0.78rem; }
 .metrics-error { color: var(--accent-primary-strong); font-weight: 800; }
 .metrics-overview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
 .metrics-overview article { display: grid; gap: 0.45rem; min-height: 145px; padding: 1.15rem; }
 .metrics-overview span { color: var(--text-muted); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 .metrics-overview strong { color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: 2.55rem; line-height: 1; }
-.metrics-overview small, .metrics-table-card--note p { color: var(--text-muted); font-size: 0.78rem; }
+.metrics-overview small { color: var(--text-muted); font-size: 0.78rem; }
 .charts-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr); gap: 1rem; }
 .charts-grid--secondary { grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr); }
 .chart-card { min-width: 0; padding: 1.25rem; }
@@ -35,9 +32,6 @@
 .metrics-table-heading h3 { margin: 0; color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: 1.6rem; letter-spacing: -0.04em; }
 .chart-description { margin: 0.35rem 0 0; color: var(--text-muted); font-size: 0.78rem; }
 .metrics-table-card { min-width: 0; padding: 1.25rem; }
-.metrics-table-card--note { display: grid; align-content: center; gap: 0.7rem; }
-.metrics-table-card--note strong { color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: 1.55rem; line-height: 1.1; }
-.metrics-table-card--note p { margin: 0; line-height: 1.5; }
 .metrics-table-wrapper { overflow-x: auto; }
 .metrics-table { width: 100%; border-collapse: collapse; color: var(--text-main); font-size: 0.85rem; }
 .metrics-table th, .metrics-table td { padding: 0.8rem 0.65rem; border-bottom: 1px solid var(--border-soft); text-align: left; }
