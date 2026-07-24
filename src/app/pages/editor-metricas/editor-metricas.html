@@ -1,8 +1,6 @@
 <section class="editor-subpage">
   <div class="subpage-heading">
-    <p class="subpage-kicker">Rendimiento editorial</p>
     <h2>Métricas</h2>
-    <p class="subpage-description">Vistas aceptadas y visitantes únicos en la zona horaria de Buenos Aires.</p>
   </div>
 
   <form class="metrics-filters" (submit)="applyFilters($event)" novalidate>
@@ -11,7 +9,6 @@
         <span class="metrics-filter-label">Período</span>
         <strong>{{ periodLabel() }}</strong>
       </div>
-      <span class="metrics-timezone">America/Argentina/Buenos_Aires</span>
     </div>
     <div class="metrics-presets" role="group" aria-label="Períodos rápidos">
       <button type="button" [class.is-active]="isPresetActive(7)" (click)="setPreset(7)">7 días</button>
@@ -21,18 +18,16 @@
     <div class="metrics-date-fields">
       <label for="metricas-desde">
         Desde
-        <input id="metricas-desde" type="date" [value]="draftRange().desde" [max]="today" (input)="updateDate('desde', $event)" [attr.aria-invalid]="rangeError() ? 'true' : null" aria-describedby="metricas-rango-error" />
+        <input id="metricas-desde" type="date" [value]="draftRange().desde" [max]="today" (input)="updateDate('desde', $event)" [attr.aria-invalid]="rangeError() ? 'true' : null" [attr.aria-describedby]="rangeError() ? 'metricas-rango-error' : null" />
       </label>
       <label for="metricas-hasta">
         Hasta
-        <input id="metricas-hasta" type="date" [value]="draftRange().hasta" [max]="today" (input)="updateDate('hasta', $event)" [attr.aria-invalid]="rangeError() ? 'true' : null" aria-describedby="metricas-rango-error" />
+        <input id="metricas-hasta" type="date" [value]="draftRange().hasta" [max]="today" (input)="updateDate('hasta', $event)" [attr.aria-invalid]="rangeError() ? 'true' : null" [attr.aria-describedby]="rangeError() ? 'metricas-rango-error' : null" />
       </label>
       <button class="metrics-apply" type="submit" [disabled]="!!rangeError() || loading()">Aplicar período</button>
     </div>
     @if (rangeError(); as rangeError) {
       <p id="metricas-rango-error" class="metrics-error" role="alert">{{ rangeError }}</p>
-    } @else {
-      <p id="metricas-rango-error" class="metrics-help">Máximo 90 días. Las visitas se agrupan según Buenos Aires.</p>
     }
   </form>
 
@@ -64,18 +59,35 @@
 
     <div class="charts-grid charts-grid--secondary">
       <section class="chart-card chart-card--wide" aria-labelledby="events-chart-title">
-        <div class="metrics-table-heading"><div><h3 id="events-chart-title">Eventos más vistos</h3><p class="chart-description" id="events-chart-description">Se muestran los diez eventos con más vistas en el período.</p></div></div>
-        <div class="chart-frame"><canvas baseChart [data]="eventsChartData()" [options]="eventsChartOptions" type="bar" role="img" aria-labelledby="events-chart-title" aria-describedby="events-chart-description"></canvas></div>
+        <div class="metrics-table-heading"><h3 id="events-chart-title">Eventos más vistos</h3></div>
+        <div class="chart-frame"><canvas baseChart [data]="eventsChartData()" [options]="eventsChartOptions" type="bar" role="img" aria-labelledby="events-chart-title"></canvas></div>
       </section>
-      <section class="metrics-table-card metrics-table-card--note">
-        <span class="metrics-filter-label">Lectura rápida</span>
-        <strong>{{ metrics.totalViews }} vistas de {{ metrics.uniqueViews }} visitantes únicos</strong>
-        <p>Una misma identidad puede generar varias vistas aceptadas en distintos momentos y eventos.</p>
+      <section class="metrics-table-card" aria-labelledby="countries-title">
+        <div class="metrics-table-heading"><h3 id="countries-title">Países de visitantes</h3></div>
+        @if (!metrics.viewsByCountry.length) {
+          <p class="editor-empty">Todavía no hay países identificados.</p>
+        } @else {
+          <div class="metrics-table-wrapper metrics-country-table-wrapper">
+            <table class="metrics-table">
+              <caption class="visually-hidden">Visitas agrupadas por país</caption>
+              <thead><tr><th scope="col">País</th><th scope="col">Vistas</th><th scope="col">Únicos</th></tr></thead>
+              <tbody>
+                @for (country of metrics.viewsByCountry; track country.countryCode ?? 'unknown') {
+                  <tr>
+                    <th scope="row">{{ countryName(country.countryCode) }}</th>
+                    <td>{{ country.views }}</td>
+                    <td>{{ country.uniqueViews }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
       </section>
     </div>
 
     <section class="metrics-table-card" aria-label="Eventos ordenados por vistas del período">
-      <div class="metrics-table-heading"><div><h3>Detalle por evento</h3><p class="chart-description">Los borradores se muestran separados y no se exponen en la parte pública.</p></div></div>
+      <div class="metrics-table-heading"><h3>Detalle por evento</h3></div>
       @if (!metrics.eventsByViews.length) {
         <p class="editor-empty">Todavía no hay eventos para mostrar.</p>
       } @else {

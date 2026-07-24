@@ -34,6 +34,7 @@ export class EditorMetricas {
   private readonly metricsService = inject(EditorMetricsService);
   private readonly initialRange = this.metricsService.getDefaultRange();
   private readonly rangeSubject = new BehaviorSubject<EditorMetricsRange>(this.initialRange);
+  private readonly countryNames = new Intl.DisplayNames(['es-AR'], { type: 'region' });
 
   protected readonly today = getTodayBuenosAires();
   protected readonly loading = signal(true);
@@ -72,6 +73,7 @@ export class EditorMetricas {
     uniqueViews: 0,
     averageViews: 0,
     viewsByDay: [],
+    viewsByCountry: [],
     eventsByViews: [],
   };
 
@@ -200,6 +202,14 @@ export class EditorMetricas {
 
   protected retry(): void {
     this.rangeSubject.next(this.appliedRange());
+  }
+
+  protected countryName(countryCode: string | null): string {
+    if (!countryCode) {
+      return 'País no identificado';
+    }
+
+    return this.countryNames.of(countryCode) ?? countryCode;
   }
 
   private applyRange(range: EditorMetricsRange): void {

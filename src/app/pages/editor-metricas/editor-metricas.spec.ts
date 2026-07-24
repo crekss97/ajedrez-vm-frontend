@@ -32,13 +32,14 @@ describe('EditorMetricas', () => {
       draftEvents: 1,
       featuredEvents: 1,
       totalViews: 4,
-      uniqueViews: 3,
-      averageViews: 2,
-      viewsByDay: [
-        { fecha: '2026-07-01', views: 3, uniqueViews: 2 },
-        { fecha: '2026-07-02', views: 1, uniqueViews: 1 },
-      ],
-      eventsByViews: [{
+       uniqueViews: 3,
+       averageViews: 2,
+       viewsByDay: [
+         { fecha: '2026-07-01', views: 3, uniqueViews: 2 },
+         { fecha: '2026-07-02', views: 1, uniqueViews: 1 },
+       ],
+       viewsByCountry: [{ countryCode: 'AR', views: 4, uniqueViews: 3 }],
+       eventsByViews: [{
         id: 1,
         titulo: 'Torneo Apertura',
         estadoEditorial: 'published',
@@ -51,6 +52,11 @@ describe('EditorMetricas', () => {
     expect(fixture.nativeElement.textContent).toContain('Vistas del período');
     expect(fixture.nativeElement.textContent).toContain('Visitantes únicos');
     expect(fixture.nativeElement.textContent).toContain('Torneo Apertura');
+    expect(fixture.nativeElement.textContent).toContain('Argentina');
+    expect(fixture.nativeElement.textContent).toContain('Países de visitantes');
+    expect(fixture.nativeElement.textContent).not.toContain('Rendimiento editorial');
+    expect(fixture.nativeElement.textContent).not.toContain('Lectura rápida');
+    expect(fixture.nativeElement.textContent).not.toContain('America/Argentina/Buenos_Aires');
     expect(fixture.nativeElement.querySelector('table')).not.toBeNull();
     expect(fixture.nativeElement.querySelectorAll('canvas[role="img"]').length).toBe(3);
   });
@@ -76,10 +82,11 @@ describe('EditorMetricas', () => {
       draftEvents: 0,
       featuredEvents: 0,
       totalViews: 0,
-      uniqueViews: 0,
-      averageViews: 0,
-      viewsByDay: [],
-      eventsByViews: [],
+       uniqueViews: 0,
+       averageViews: 0,
+       viewsByDay: [],
+       viewsByCountry: [],
+       eventsByViews: [],
     });
     fixture.detectChanges();
 
