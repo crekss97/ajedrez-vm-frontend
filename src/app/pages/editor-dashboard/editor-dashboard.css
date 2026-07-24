@@ -1,12 +1,14 @@
 .dashboard-page { display: grid; gap: 1rem; }
-.dashboard-heading { display: flex; justify-content: flex-end; padding: 1.4rem 0 0.5rem; }
+.dashboard-heading { display: flex; justify-content: flex-end; align-items: center; gap: 0.65rem; padding: 1.4rem 0 0.5rem; }
 .dashboard-panel h3 { margin: 0; color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; letter-spacing: -0.04em; }
 .dashboard-primary { padding: 0.9rem 1.1rem; border-radius: 999px; background: var(--accent-primary); color: #fffaf1; font-weight: 800; text-decoration: none; white-space: nowrap; }
+.dashboard-secondary { padding: 0.85rem 1.05rem; border: 1px solid var(--border-soft); border-radius: 999px; color: var(--accent-primary-strong); font-weight: 800; text-decoration: none; white-space: nowrap; }
 .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
 .metric-card, .dashboard-panel { border: 1px solid var(--border-soft); border-radius: 1.05rem; background: rgba(255, 253, 248, 0.84); box-shadow: var(--shadow-soft); }
 .metric-card { display: grid; gap: 0.55rem; min-height: 155px; padding: 1.15rem; }
 .metric-card span { color: var(--text-muted); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
 .metric-card strong { color: var(--text-main); font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2rem, 4vw, 3rem); line-height: 1; }
+.metric-card small { color: var(--text-muted); font-size: 0.75rem; }
 .metric-card--featured { background: var(--text-main); color: var(--surface-bg); }
 .metric-card--featured span { color: rgba(255, 253, 248, 0.68); }
 .metric-card--featured strong { color: var(--surface-bg); }
@@ -21,5 +23,7 @@
 .activity-item strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .activity-item small { color: var(--text-muted); }
 .dashboard-empty { color: var(--text-soft); }
+.dashboard-error { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 1.2rem; border: 1px solid rgba(177, 57, 42, 0.25); border-radius: 1rem; background: rgba(177, 57, 42, 0.08); color: var(--accent-primary-strong); }
+.dashboard-error a { color: inherit; font-weight: 800; }
 @media (max-width: 850px) { .metric-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .dashboard-heading { justify-content: flex-start; } .metric-grid { grid-template-columns: 1fr; } .activity-item { grid-template-columns: 1fr; gap: 0.3rem; } }
+@media (max-width: 560px) { .dashboard-heading { justify-content: flex-start; flex-wrap: wrap; } .metric-grid { grid-template-columns: 1fr; } .activity-item { grid-template-columns: 1fr; gap: 0.3rem; } .dashboard-error { display: grid; } }
