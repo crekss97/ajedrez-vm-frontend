@@ -97,6 +97,10 @@ export class App {
     this.profileMenuOpen.set(false);
   }
 
+  protected scrollToTop(): void {
+    window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
+  }
+
   @HostListener('document:click', ['$event'])
   protected closeProfileMenuWhenClickingOutside(event: MouseEvent): void {
     const target = event.target as HTMLElement | null;

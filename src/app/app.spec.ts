@@ -82,6 +82,21 @@ describe('App', () => {
     expect(footer.querySelector('.site-footer__socials')).not.toBeNull();
   });
 
+  it('sube al inicio al abrir solicitudes desde el footer', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const scrollTo = spyOn(window, 'scrollTo');
+
+    (fixture.nativeElement.querySelector('.site-footer__nav a') as HTMLAnchorElement).click();
+
+    expect(scrollTo).toHaveBeenCalled();
+    expect((scrollTo.calls.mostRecent().args as unknown[])[0]).toEqual({
+      left: 0,
+      top: 0,
+      behavior: 'instant',
+    });
+  });
+
   it('muestra un unico tablero global de 3 por 3 durante la carga', fakeAsync(() => {
     const fixture = TestBed.createComponent(App);
     const loading = TestBed.inject(AppLoadingService);
