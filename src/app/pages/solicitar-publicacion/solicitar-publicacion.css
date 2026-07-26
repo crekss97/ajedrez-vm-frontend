@@ -74,14 +74,6 @@
   content: '';
 }
 
-.publication-card__eyebrow {
-  color: var(--accent-warm);
-  font-size: 0.68rem;
-  font-weight: 900;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
 .publication-card h1 {
   max-width: 8ch;
   margin: 0.55rem 0 0;
@@ -112,14 +104,6 @@
 
 .publication-card > .form-message,
 .publication-card > form { grid-column: 2; min-width: 0; }
-
-.form-lead {
-  max-width: 58ch;
-  margin: 0 0 2rem;
-  color: rgba(245, 240, 228, 0.68);
-  font-size: 0.82rem;
-  line-height: 1.6;
-}
 
 .text-fields {
   display: grid;
@@ -202,19 +186,23 @@
 .form-message {
   display: flex;
   align-items: start;
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
   gap: 0.7rem;
-  margin: 0 0 1.25rem;
-  padding: 0.8rem 0.9rem;
-  border: 1px solid;
+  margin: 0 0 1rem;
+  padding: 0.55rem 0.75rem;
+  border: 0;
+  border-left: 3px solid;
   border-radius: 0.2rem;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   line-height: 1.45;
 }
 
 .form-message p { margin: 0; }
 .form-message--success { border-color: rgba(185, 212, 122, 0.45); background: rgba(185, 212, 122, 0.12); color: #f5f0e4; }
 .form-message--error { border-color: rgba(255, 122, 103, 0.55); background: rgba(228, 87, 63, 0.14); color: #ffd1c6; }
-.form-message__mark { display: grid; flex: 0 0 1.35rem; width: 1.35rem; height: 1.35rem; place-items: center; border-radius: 50%; background: var(--accent-warm); color: var(--text-main); font-weight: 900; }
+.form-message__mark { display: grid; flex: 0 0 1.15rem; width: 1.15rem; height: 1.15rem; place-items: center; border-radius: 50%; background: var(--accent-warm); color: var(--text-main); font-size: 0.72rem; font-weight: 900; }
 .form-message--error .form-message__mark { background: var(--accent-primary); color: #fffaf1; }
 
 .form-footer {
@@ -237,18 +225,16 @@
   border: 0;
   border-radius: 0.2rem;
   background: var(--accent-warm);
-  box-shadow: 0.35rem 0.35rem 0 var(--accent-primary);
   color: var(--text-main);
   font: inherit;
   font-size: 0.82rem;
   font-weight: 900;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .submit-button:hover {
   background: #f0cd73;
-  box-shadow: 0.5rem 0.5rem 0 var(--accent-primary);
   transform: translate(-0.1rem, -0.1rem);
 }
 

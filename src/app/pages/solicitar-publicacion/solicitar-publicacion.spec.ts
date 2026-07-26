@@ -58,6 +58,9 @@ describe('SolicitarPublicacion', () => {
     expect(content).not.toContain('Las bases');
     expect(content).not.toContain('Tu próxima partida');
     expect(content).not.toContain('El envío no publica el torneo automáticamente.');
+    expect(content).not.toContain('Todos los campos son necesarios.');
+    expect(content).not.toContain('Solicitud pública');
+    expect(fixture.nativeElement.querySelectorAll('small').length).toBe(0);
     expect(fixture.nativeElement.querySelector('.publication-intro')).toBeNull();
     expect(fixture.nativeElement.querySelector('.form-footer p')).toBeNull();
   });
@@ -89,7 +92,7 @@ describe('SolicitarPublicacion', () => {
 
     expect(form.controls.imagen.value).toBeNull();
     expect(form.controls.pdf.value).toBeNull();
-    expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent).toContain('Recibimos');
+    expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent).toContain('Tu solicitud fue enviada.');
   });
 
   it('rechaza un archivo con extensión PDF que no tiene firma PDF', async () => {

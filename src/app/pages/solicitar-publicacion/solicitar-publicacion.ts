@@ -200,7 +200,7 @@ export class SolicitarPublicacion {
     ).pipe(finalize(() => this.submitting.set(false))).subscribe({
       next: () => {
         this.resetFormAfterSuccess();
-        this.successMessage.set('Recibimos tu solicitud. Vamos a revisar los datos del torneo.');
+        this.successMessage.set('Tu solicitud fue enviada.');
         queueMicrotask(() => {
           this.host.nativeElement.querySelector<HTMLElement>('#solicitud-success')?.focus();
         });
@@ -233,8 +233,8 @@ export class SolicitarPublicacion {
     return 'Revisá este campo.';
   }
 
-  protected describedBy(controlName: string, hintId: string): string {
-    const ids = [hintId];
+  protected describedBy(controlName: string, ...descriptionIds: string[]): string {
+    const ids = descriptionIds.filter(Boolean);
     if (this.hasError(controlName)) {
       ids.push(`${controlName}-error`);
     }
