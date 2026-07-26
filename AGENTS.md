@@ -52,4 +52,5 @@
 
 - Mantener los contratos de `src/app/models`, especialmente `Evento`, al cambiar servicios o formularios.
 - No editar manualmente `public/runtime-config.js` para configurar entornos: se sobrescribe durante `npm run build`; usa `NG_APP_API_URL`.
+- Toda navegación interna con `routerLink` debe comenzar arriba de la vista. El scroll se centraliza en `App` y en la configuración del router; no agregar handlers de scroll aislados a enlaces individuales.
 - Después de cambios de aplicación, ejecutar al menos `npm run build`; si se modifican servicios, guards o componentes con pruebas, ejecutar también `npm test`.

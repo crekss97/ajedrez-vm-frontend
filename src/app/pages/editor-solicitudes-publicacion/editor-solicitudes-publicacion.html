@@ -1,16 +1,17 @@
 <section class="editor-subpage requests-page" aria-labelledby="requests-title">
-  <div class="subpage-heading requests-heading">
-    <div>
-      <span class="requests-eyebrow">Entrada editorial</span>
+  <header class="subpage-heading requests-heading">
+    <div class="requests-heading__title">
       <h2 id="requests-title">Solicitudes de publicación</h2>
-      <p>Datos y materiales enviados por quienes organizan torneos.</p>
     </div>
-    <span
+    <div
       class="requests-count"
       role="status"
       [attr.aria-label]="'Cantidad de solicitudes: ' + solicitudes().length"
-    >{{ solicitudes().length }}</span>
-  </div>
+    >
+      <strong>{{ solicitudes().length }}</strong>
+      <span>{{ solicitudes().length === 1 ? 'solicitud' : 'solicitudes' }}</span>
+    </div>
+  </header>
 
   @if (loading()) {
     <section class="requests-card requests-loading"><app-editor-loading message="Cargando solicitudes..." /></section>
@@ -30,18 +31,22 @@
       @for (solicitud of solicitudes(); track solicitud.id) {
         <article class="request-card">
           <div class="request-card__image">
-            @if (solicitud.imagenUrl && !imageIsBroken(solicitud.id)) {
-              <img
-                [src]="solicitud.imagenUrl"
-                [alt]="'Portada de ' + solicitud.nombreTorneo"
-                loading="lazy"
-                decoding="async"
-                referrerpolicy="no-referrer"
-                (error)="markImageAsBroken(solicitud.id)"
-              />
+            @if (imagePreviewUrl(solicitud.id); as imageUrl) {
+              <button
+                type="button"
+                class="request-card__image-button"
+                [attr.aria-label]="'Ampliar portada de ' + solicitud.nombreTorneo"
+                (click)="openImagePreview(solicitud, imageDialog)"
+              >
+                <img [src]="imageUrl" [alt]="'Portada de ' + solicitud.nombreTorneo" />
+                <span class="request-card__image-action" aria-hidden="true">Ampliar</span>
+              </button>
+            } @else if (imageIsLoading(solicitud.id)) {
+              <span class="request-card__image-state">Cargando portada...</span>
             } @else {
-              <span aria-hidden="true">♞</span>
-              <small>Sin vista previa</small>
+              <span class="request-card__image-state">
+                {{ imageIsBroken(solicitud.id) ? 'No se pudo cargar' : 'Sin portada' }}
+              </span>
             }
           </div>
 
@@ -61,16 +66,53 @@
                 <dd>{{ solicitud.email }}</dd>
               </div>
             </dl>
-            @if (solicitud.pdfUrl) {
-              <a class="request-pdf" [href]="solicitud.pdfUrl" target="_blank" rel="noopener noreferrer">
-                Abrir PDF <span aria-hidden="true">↗</span>
-              </a>
-            } @else {
-              <span class="request-pdf request-pdf--unavailable">PDF no disponible</span>
-            }
+            <div class="request-card__actions">
+              @if (imagePreviewUrl(solicitud.id)) {
+                <button
+                  type="button"
+                  class="request-action request-action--primary"
+                  (click)="downloadImage(solicitud)"
+                >
+                  Descargar imagen <span aria-hidden="true">↓</span>
+                </button>
+              }
+              @if (solicitud.pdfUrl) {
+                <a class="request-action request-action--pdf" [href]="solicitud.pdfUrl" target="_blank" rel="noopener noreferrer">
+                  Abrir PDF <span aria-hidden="true">↗</span>
+                </a>
+              } @else {
+                <span class="request-action request-action--unavailable">PDF no disponible</span>
+              }
+            </div>
           </div>
         </article>
       }
     </div>
   }
+
+  <dialog
+    #imageDialog
+    class="request-lightbox"
+    [attr.aria-label]="'Portada ampliada de ' + previewImageLabel()"
+    (click)="closeImagePreviewFromBackdrop($event, imageDialog)"
+  >
+    @if (previewImage(); as preview) {
+      <div class="request-lightbox__content">
+        <button
+          type="button"
+          class="request-lightbox__close"
+          aria-label="Cerrar imagen ampliada"
+          (click)="closeImagePreview(imageDialog)"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+        <img [src]="preview.url" [alt]="'Portada de ' + preview.solicitud.nombreTorneo" />
+        <div class="request-lightbox__actions">
+          <button type="button" class="request-action request-action--primary" (click)="downloadImage(preview.solicitud)">
+            Descargar imagen <span aria-hidden="true">↓</span>
+          </button>
+        </div>
+      </div>
+    }
+  </dialog>
 </section>

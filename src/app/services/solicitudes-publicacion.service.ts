@@ -52,6 +52,13 @@ export class SolicitudesPublicacionService {
     );
   }
 
+  getArchivo(url: string): Observable<Blob> {
+    return this.http.get(url, {
+      context: new HttpContext().set(OMITIR_CARGADOR_GLOBAL, true),
+      responseType: 'blob',
+    });
+  }
+
   private toSolicitud(solicitud: SolicitudPublicacionApi): SolicitudPublicacion {
     return {
       id: solicitud.id,

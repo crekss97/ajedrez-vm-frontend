@@ -79,6 +79,10 @@ export class App {
         event instanceof NavigationCancel ||
         event instanceof NavigationError
       ) {
+        if (event instanceof NavigationEnd) {
+          this.scrollToTop();
+        }
+
         this.finalizarNavegacion?.();
         this.finalizarNavegacion = undefined;
       }

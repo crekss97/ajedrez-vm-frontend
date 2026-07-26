@@ -74,4 +74,19 @@ describe('SolicitudesPublicacionService', () => {
     expect(solicitudes[0].imagenUrl).toContain('/api/editor/solicitudes-publicacion/7/archivos/imagen');
     expect(solicitudes[0].pdfUrl).toBe('');
   });
+
+  it('lee un archivo editorial como blob sin activar el cargador global', () => {
+    let file: Blob | undefined;
+
+    service.getArchivo('/api/editor/solicitudes-publicacion/7/archivos/imagen').subscribe((response) => {
+      file = response;
+    });
+
+    const request = httpTesting.expectOne('/api/editor/solicitudes-publicacion/7/archivos/imagen');
+    expect(request.request.responseType).toBe('blob');
+    expect(request.request.context.get(OMITIR_CARGADOR_GLOBAL)).toBeTrue();
+    request.flush(new Blob(['imagen'], { type: 'image/jpeg' }));
+
+    expect(file?.type).toBe('image/jpeg');
+  });
 });

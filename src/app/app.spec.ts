@@ -97,6 +97,22 @@ describe('App', () => {
     });
   });
 
+  it('sube al inicio después de cualquier navegación interna', () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    const eventosRouter = router.events as Subject<NavigationStart | NavigationEnd>;
+    const scrollTo = spyOn(window, 'scrollTo');
+    fixture.detectChanges();
+
+    eventosRouter.next(new NavigationEnd(1, '/solicitar-publicacion', '/solicitar-publicacion'));
+
+    expect((scrollTo.calls.mostRecent().args as unknown[])[0]).toEqual({
+      left: 0,
+      top: 0,
+      behavior: 'instant',
+    });
+  });
+
   it('muestra un unico tablero global de 3 por 3 durante la carga', fakeAsync(() => {
     const fixture = TestBed.createComponent(App);
     const loading = TestBed.inject(AppLoadingService);

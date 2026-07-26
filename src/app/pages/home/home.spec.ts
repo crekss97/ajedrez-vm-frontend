@@ -79,10 +79,13 @@ describe('Home', () => {
   it('ofrece una CTA accesible para solicitar la publicación de un torneo', () => {
     const cta = fixture.nativeElement.querySelector('.publication-cta') as HTMLElement;
     const link = cta.querySelector('a') as HTMLAnchorElement;
+    const aside = fixture.nativeElement.querySelector('aside') as HTMLElement;
+    const puzzle = aside.querySelector('.home-sidebar__puzzle') as HTMLElement;
 
     expect(cta.querySelector('h2')?.textContent).toContain('próxima partida');
     expect(link.getAttribute('href')).toBe('/solicitar-publicacion');
     expect(link.textContent).toContain('Solicitar publicación');
+    expect(puzzle.compareDocumentPosition(cta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('muestra el estado vacio solo despues de una respuesta exitosa sin eventos', () => {
