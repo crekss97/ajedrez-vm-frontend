@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { PuzzleDiario } from '../../models/puzzle-diario';
 import { BarraLateralHomeComponent } from './barra-lateral-home';
 
@@ -15,7 +16,10 @@ describe('BarraLateralHomeComponent', () => {
   };
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [BarraLateralHomeComponent] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [BarraLateralHomeComponent],
+      providers: [provideRouter([])],
+    }).compileComponents();
     fixture = TestBed.createComponent(BarraLateralHomeComponent);
     fixture.componentRef.setInput('links', [
       { id: '1', titulo: 'Federacion regional', url: 'https://example.com', createdAt: '' },
@@ -24,7 +28,7 @@ describe('BarraLateralHomeComponent', () => {
     fixture.detectChanges();
   });
 
-  it('renderiza un solo aside con enlaces antes del puzzle y sin populares', () => {
+  it('renderiza un solo aside con enlaces, puzzle y convocatoria en ese orden', () => {
     const aside = fixture.nativeElement.querySelectorAll('aside');
     const secciones = fixture.nativeElement.querySelectorAll('.home-sidebar__section');
 
@@ -32,6 +36,9 @@ describe('BarraLateralHomeComponent', () => {
     expect(aside[0].getAttribute('aria-label')).toBe('Contenido destacado');
     expect(secciones[0].textContent).toContain('Federacion regional');
     expect(secciones[1].textContent).toContain('Puzzle del dia');
+    expect(secciones[2].classList).toContain('publication-cta');
+    expect(secciones[2].textContent).toContain('Hagamos lugar a tu próxima partida');
+    expect(secciones[2].querySelector('a')?.getAttribute('href')).toBe('/solicitar-publicacion');
     expect(fixture.nativeElement.textContent).not.toContain('Entradas populares');
     expect(fixture.nativeElement.textContent).not.toContain('visitas');
   });

@@ -11,5 +11,18 @@
 .links-list strong { flex: 0 0 auto; color: var(--accent-primary-strong); font-size: 0.72rem; }
 .sidebar-feedback { margin: 0; padding: 0.8rem; border-radius: 0.7rem; background: var(--surface-soft); color: var(--text-soft); font-size: 0.82rem; line-height: 1.45; }
 .sidebar-feedback--error { background: #eef6fb; color: #365d78; }
-@media (min-width: 700px) and (max-width: 1139px) { .home-sidebar { grid-template-columns: minmax(13rem, 0.72fr) minmax(0, 1.28fr); align-items: start; } .home-sidebar__section + .home-sidebar__section { border-top: 0; border-left: 1px solid var(--border-soft); } }
-@media (prefers-reduced-motion: reduce) { .links-list a { transition: none; } }
+.publication-cta { position: relative; overflow: hidden; gap: 0.85rem; border-top: 0; background: var(--text-main); color: var(--surface-bg); }
+.publication-cta::before { position: absolute; inset: 0 auto 0 0; width: 0.28rem; background: var(--accent-warm); content: ''; }
+.publication-cta__copy { display: grid; gap: 0.8rem; padding-left: 0.45rem; }
+.publication-cta__eyebrow { color: var(--accent-warm); font-size: 0.63rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.publication-cta h2 { margin: 0; color: var(--surface-bg); font-family: Georgia, 'Times New Roman', serif; font-size: clamp(1.45rem, 2vw, 1.8rem); font-weight: 400; letter-spacing: -0.045em; line-height: 1; }
+.publication-cta p { margin: 0; color: rgba(255, 253, 248, 0.7); font-size: 0.77rem; line-height: 1.5; }
+.publication-cta__link { display: inline-flex; align-items: center; justify-content: space-between; gap: 0.7rem; width: fit-content; padding: 0.65rem 0.8rem; border-radius: 0.25rem; background: var(--accent-warm); color: var(--text-main); font-size: 0.72rem; font-weight: 900; text-decoration: none; transition: transform 0.2s ease, background 0.2s ease; }
+.publication-cta__link:hover { background: #f0cd73; transform: translateY(-1px); }
+.publication-cta__link:focus-visible { outline: 3px solid var(--surface-bg); outline-offset: 3px; }
+@media (min-width: 700px) and (max-width: 1139px) {
+  .home-sidebar { grid-template-columns: minmax(13rem, 0.72fr) minmax(0, 1.28fr); align-items: start; }
+  .home-sidebar__section + .home-sidebar__section { border-top: 0; border-left: 1px solid var(--border-soft); }
+  .home-sidebar__publication { grid-column: 1 / -1; border-top: 1px solid var(--border-soft); border-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .links-list a, .publication-cta__link { transition: none; } }

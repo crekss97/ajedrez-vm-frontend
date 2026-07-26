@@ -3,6 +3,7 @@ import { editorAuthGuard } from './guards/editor-auth.guard';
 import { EditorLogin } from './pages/editor-login/editor-login';
 import { EditorPanel } from './pages/editor-panel/editor-panel';
 import { Home } from './pages/home/home';
+import { SolicitarPublicacion } from './pages/solicitar-publicacion/solicitar-publicacion';
 
 export const routes: Routes = [
   { path: '', component: Home, title: 'Ajedrez VM' },
@@ -11,6 +12,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/evento-detalle/evento-detalle').then((m) => m.EventoDetalle),
     title: 'Detalle del evento',
   },
+  { path: 'solicitar-publicacion', component: SolicitarPublicacion, title: 'Solicitar publicación' },
   { path: 'login', component: EditorLogin, title: 'Ingreso editorial' },
   { path: 'editor/login', redirectTo: 'login', pathMatch: 'full' },
   {
@@ -38,6 +40,11 @@ export const routes: Routes = [
         path: 'eventos/:id/editar',
         loadComponent: () => import('./pages/editor-eventos/editor-eventos').then((m) => m.EditorEventos),
         title: 'Editar evento | Editor',
+      },
+      {
+        path: 'solicitudes',
+        loadComponent: () => import('./pages/editor-solicitudes-publicacion/editor-solicitudes-publicacion').then((m) => m.EditorSolicitudesPublicacion),
+        title: 'Solicitudes | Editor',
       },
       {
         path: 'enlaces',

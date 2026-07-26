@@ -65,6 +65,54 @@ describe('App', () => {
     ]);
   });
 
+  it('mantiene tres secciones, el acceso a solicitudes y el copyright', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const footer = fixture.nativeElement.querySelector('.site-footer') as HTMLElement;
+    const footerText = footer.textContent as string;
+
+    expect(footerText).toContain(`© ${new Date().getFullYear()} Ajedrez VM. Todos los derechos reservados.`);
+    expect(footerText).not.toContain('Una agenda viva');
+    expect(footerText).not.toContain('Eventos');
+    expect(footerText).not.toContain('Acceso editorial');
+    expect(footerText).not.toContain('Hecho para la comunidad ajedrecística');
+    expect(footer.querySelectorAll('.site-footer__inner > *').length).toBe(3);
+    expect(footer.querySelector('.site-footer__slot')).not.toBeNull();
+    expect(footer.querySelector('.site-footer__nav a')?.getAttribute('href')).toBe('/solicitar-publicacion');
+    expect(footer.querySelector('.site-footer__socials')).not.toBeNull();
+  });
+
+  it('sube al inicio al abrir solicitudes desde el footer', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const scrollTo = spyOn(window, 'scrollTo');
+
+    (fixture.nativeElement.querySelector('.site-footer__nav a') as HTMLAnchorElement).click();
+
+    expect(scrollTo).toHaveBeenCalled();
+    expect((scrollTo.calls.mostRecent().args as unknown[])[0]).toEqual({
+      left: 0,
+      top: 0,
+      behavior: 'instant',
+    });
+  });
+
+  it('sube al inicio después de cualquier navegación interna', () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    const eventosRouter = router.events as Subject<NavigationStart | NavigationEnd>;
+    const scrollTo = spyOn(window, 'scrollTo');
+    fixture.detectChanges();
+
+    eventosRouter.next(new NavigationEnd(1, '/solicitar-publicacion', '/solicitar-publicacion'));
+
+    expect((scrollTo.calls.mostRecent().args as unknown[])[0]).toEqual({
+      left: 0,
+      top: 0,
+      behavior: 'instant',
+    });
+  });
+
   it('muestra un unico tablero global de 3 por 3 durante la carga', fakeAsync(() => {
     const fixture = TestBed.createComponent(App);
     const loading = TestBed.inject(AppLoadingService);

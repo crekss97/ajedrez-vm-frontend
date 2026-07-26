@@ -79,6 +79,10 @@ export class App {
         event instanceof NavigationCancel ||
         event instanceof NavigationError
       ) {
+        if (event instanceof NavigationEnd) {
+          this.scrollToTop();
+        }
+
         this.finalizarNavegacion?.();
         this.finalizarNavegacion = undefined;
       }
@@ -95,6 +99,10 @@ export class App {
 
   protected closeProfileMenu(): void {
     this.profileMenuOpen.set(false);
+  }
+
+  protected scrollToTop(): void {
+    window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
   }
 
   @HostListener('document:click', ['$event'])
