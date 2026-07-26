@@ -82,10 +82,10 @@ describe('Home', () => {
     const aside = fixture.nativeElement.querySelector('aside') as HTMLElement;
     const puzzle = aside.querySelector('.home-sidebar__puzzle') as HTMLElement;
 
-    expect(cta.querySelector('h2')?.textContent).toContain('próxima partida');
+    expect(cta.querySelector('h2')?.textContent).toContain('próximo evento');
     expect(link.getAttribute('href')).toBe('/solicitar-publicacion');
     expect(link.textContent).toContain('Solicitar publicación');
-    expect(puzzle.compareDocumentPosition(cta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(cta.compareDocumentPosition(puzzle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('muestra el estado vacio solo despues de una respuesta exitosa sin eventos', () => {

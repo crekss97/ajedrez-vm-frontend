@@ -18,15 +18,24 @@ describe('EditorSolicitudesPublicacion', () => {
     creadoEn: '2026-07-25T18:00:00.000Z',
     imagenUrl: '/api/editor/solicitudes-publicacion/9/archivos/imagen',
     pdfUrl: '/api/editor/solicitudes-publicacion/9/archivos/pdf',
+    notificacionCorreo: {
+      estado: 'enviada',
+      intentos: 1,
+      ultimoError: null,
+      ultimoIntentoEn: '2026-07-25T18:01:00.000Z',
+      enviadaEn: '2026-07-25T18:01:01.000Z',
+    },
   };
 
   beforeEach(async () => {
     service = jasmine.createSpyObj<SolicitudesPublicacionService>('SolicitudesPublicacionService', [
       'getSolicitudes',
       'getArchivo',
+      'reintentarNotificacion',
     ]);
     service.getSolicitudes.and.returnValue(of([solicitud]));
     service.getArchivo.and.returnValue(of(new Blob(['imagen'], { type: 'image/jpeg' })));
+    service.reintentarNotificacion.and.returnValue(of(solicitud.notificacionCorreo!));
     await TestBed.configureTestingModule({
       imports: [EditorSolicitudesPublicacion],
       providers: [provideRouter([]), { provide: SolicitudesPublicacionService, useValue: service }],
@@ -58,6 +67,31 @@ describe('EditorSolicitudesPublicacion', () => {
     expect(service.getArchivo).toHaveBeenCalledWith(solicitud.imagenUrl);
     expect(pdf.href).toContain('/api/editor/solicitudes-publicacion/9/archivos/pdf');
     expect(pdf.target).toBe('_blank');
+  });
+
+  it('muestra el fallo de correo y permite reintentar', () => {
+    const solicitudFallida: SolicitudPublicacion = {
+      ...solicitud,
+      notificacionCorreo: {
+        estado: 'fallida',
+        intentos: 3,
+        ultimoError: 'Resend: dominio no verificado',
+        ultimoIntentoEn: '2026-07-25T18:01:00.000Z',
+        enviadaEn: null,
+      },
+    };
+    service.getSolicitudes.and.returnValue(of([solicitudFallida]));
+    service.reintentarNotificacion.and.returnValue(of(solicitud.notificacionCorreo!));
+    fixture = TestBed.createComponent(EditorSolicitudesPublicacion);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Error al enviar');
+    expect(fixture.nativeElement.textContent).toContain('dominio no verificado');
+    (fixture.nativeElement.querySelector('.request-notification__retry') as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    expect(service.reintentarNotificacion).toHaveBeenCalledOnceWith(9);
+    expect(fixture.nativeElement.textContent).toContain('Correo enviado');
   });
 
   it('anuncia un error de carga y permite reintentar', () => {

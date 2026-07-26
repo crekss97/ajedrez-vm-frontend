@@ -66,6 +66,35 @@
                 <dd>{{ solicitud.email }}</dd>
               </div>
             </dl>
+            <div
+              class="request-notification"
+              [class.request-notification--sent]="solicitud.notificacionCorreo?.estado === 'enviada'"
+              [class.request-notification--failed]="solicitud.notificacionCorreo?.estado === 'fallida'"
+              [class.request-notification--pending]="solicitud.notificacionCorreo?.estado === 'pendiente' || solicitud.notificacionCorreo?.estado === 'procesando'"
+              role="status"
+              [attr.aria-label]="'Estado del correo: ' + notificationStatusLabel(solicitud.notificacionCorreo)"
+            >
+              <div class="request-notification__heading">
+                <span>Notificación interna</span>
+                <strong>{{ notificationStatusLabel(solicitud.notificacionCorreo) }}</strong>
+              </div>
+              @if (solicitud.notificacionCorreo?.ultimoError; as error) {
+                <p>Motivo: {{ error }}</p>
+              }
+              @if (notificationRetryError(solicitud.id); as retryError) {
+                <p>{{ retryError }}</p>
+              }
+              @if (notificationIsRetryable(solicitud.notificacionCorreo)) {
+                <button
+                  type="button"
+                  class="request-notification__retry"
+                  [disabled]="notificationIsRetrying(solicitud.id)"
+                  (click)="retryNotification(solicitud)"
+                >
+                  {{ notificationIsRetrying(solicitud.id) ? 'Reintentando…' : 'Reintentar envío' }}
+                </button>
+              }
+            </div>
             <div class="request-card__actions">
               @if (imagePreviewUrl(solicitud.id)) {
                 <button
