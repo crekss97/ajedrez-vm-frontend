@@ -134,7 +134,7 @@
   box-shadow: 0 2px 0 var(--accent-warm);
 }
 
-.field small, .file-section__description { color: rgba(245, 240, 228, 0.55); font-size: 0.72rem; line-height: 1.45; }
+.file-section__description { color: rgba(245, 240, 228, 0.55); font-size: 0.72rem; line-height: 1.45; }
 .field-invalid input { border-bottom-color: var(--accent-primary); }
 .field-error { color: #ffad9d; font-size: 0.74rem; font-weight: 800; line-height: 1.4; }
 
@@ -185,24 +185,23 @@
 
 .form-message {
   display: flex;
-  align-items: start;
-  justify-self: start;
-  width: fit-content;
-  max-width: 100%;
-  gap: 0.7rem;
-  margin: 0 0 1rem;
-  padding: 0.55rem 0.75rem;
+  align-items: center;
+  justify-self: stretch;
+  gap: 0.55rem;
+  margin: 0 0 1.15rem;
+  padding: 0.2rem 0 0.2rem 0.65rem;
   border: 0;
-  border-left: 3px solid;
-  border-radius: 0.2rem;
-  font-size: 0.78rem;
+  border-left: 2px solid;
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.76rem;
   line-height: 1.45;
 }
 
 .form-message p { margin: 0; }
-.form-message--success { border-color: rgba(185, 212, 122, 0.45); background: rgba(185, 212, 122, 0.12); color: #f5f0e4; }
-.form-message--error { border-color: rgba(255, 122, 103, 0.55); background: rgba(228, 87, 63, 0.14); color: #ffd1c6; }
-.form-message__mark { display: grid; flex: 0 0 1.15rem; width: 1.15rem; height: 1.15rem; place-items: center; border-radius: 50%; background: var(--accent-warm); color: var(--text-main); font-size: 0.72rem; font-weight: 900; }
+.form-message--success { border-color: var(--accent-lime); color: rgba(245, 240, 228, 0.86); }
+.form-message--error { border-color: var(--accent-primary); color: #ffad9d; }
+.form-message__mark { display: grid; flex: 0 0 1rem; width: 1rem; height: 1rem; place-items: center; border-radius: 50%; background: var(--accent-lime); color: var(--text-main); font-size: 0.62rem; font-weight: 900; }
 .form-message--error .form-message__mark { background: var(--accent-primary); color: #fffaf1; }
 
 .form-footer {

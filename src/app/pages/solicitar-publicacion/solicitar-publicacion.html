@@ -111,12 +111,12 @@
                   type="file"
                   accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
                   (change)="selectImage($event)"
-                   [attr.aria-invalid]="hasError('imagen') ? 'true' : 'false'"
-                   [attr.aria-describedby]="describedBy('imagen', 'files-description')"
-                 />
-               </label>
-               @if (imagePreviewUrl()) {
-                 <img class="image-preview" [src]="imagePreviewUrl()" alt="Vista previa de la portada elegida" />
+                  [attr.aria-invalid]="hasError('imagen') ? 'true' : 'false'"
+                  [attr.aria-describedby]="describedBy('imagen', 'files-description')"
+                />
+              </label>
+              @if (imagePreviewUrl()) {
+                <img class="image-preview" [src]="imagePreviewUrl()" alt="Vista previa de la portada elegida" />
               }
               @if (validatingImage()) {
                 <span class="file-status" role="status" aria-live="polite">Comprobando dimensiones…</span>
@@ -139,12 +139,12 @@
                   type="file"
                   accept="application/pdf,.pdf"
                   (change)="selectPdf($event)"
-                   [attr.aria-invalid]="hasError('pdf') ? 'true' : 'false'"
-                   [attr.aria-describedby]="describedBy('pdf', 'files-description')"
-                 />
-               </label>
-               @if (validatingPdf()) {
-                 <span class="file-status" role="status" aria-live="polite">Comprobando el PDF…</span>
+                  [attr.aria-invalid]="hasError('pdf') ? 'true' : 'false'"
+                  [attr.aria-describedby]="describedBy('pdf', 'files-description')"
+                />
+              </label>
+              @if (validatingPdf()) {
+                <span class="file-status" role="status" aria-live="polite">Comprobando el PDF…</span>
               }
               @if (hasError('pdf')) {
                 <span id="pdf-error" class="field-error" role="alert">{{ pdfError() || errorMessage('pdf') }}</span>

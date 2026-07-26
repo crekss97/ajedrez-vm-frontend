@@ -1,7 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { API_URL } from '../core/config/api.config';
+import { OMITIR_CARGADOR_GLOBAL } from '../core/interceptors/app-loading.interceptor';
 import {
   SolicitudPublicacion,
   SolicitudPublicacionInput,
@@ -41,6 +42,7 @@ export class SolicitudesPublicacionService {
 
     return this.http.post<{ message: string }>(this.publicUrl, formData, {
       headers: new HttpHeaders({ 'Idempotency-Key': globalThis.crypto.randomUUID() }),
+      context: new HttpContext().set(OMITIR_CARGADOR_GLOBAL, true),
     }).pipe(map(() => undefined));
   }
 

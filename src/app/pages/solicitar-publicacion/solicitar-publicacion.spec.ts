@@ -41,7 +41,7 @@ describe('SolicitarPublicacion', () => {
     await fixture.whenStable();
 
     const firstInput = fixture.nativeElement.querySelector('#solicitud-nombre') as HTMLInputElement;
-    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain('Revisá');
+    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain('Completá');
     expect(firstInput.getAttribute('aria-invalid')).toBe('true');
     expect(document.activeElement).toBe(firstInput);
     expect(service.createSolicitud).not.toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe('SolicitarPublicacion', () => {
 
     expect(form.controls.imagen.value).toBeNull();
     expect(form.controls.pdf.value).toBeNull();
-    expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent).toContain('Tu solicitud fue enviada.');
+    expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent).toContain('Solicitud enviada.');
   });
 
   it('rechaza un archivo con extensión PDF que no tiene firma PDF', async () => {

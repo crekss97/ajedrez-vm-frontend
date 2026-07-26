@@ -172,7 +172,7 @@ export class SolicitarPublicacion {
 
     if (this.solicitudForm.invalid) {
       this.solicitudForm.markAllAsTouched();
-      this.submitError.set('Revisá los campos marcados antes de enviar la solicitud.');
+      this.submitError.set('Completá los campos marcados.');
       this.focusFirstInvalidControl();
       return;
     }
@@ -182,7 +182,7 @@ export class SolicitarPublicacion {
     const pdf = value.pdf;
 
     if (!image || !pdf) {
-      this.submitError.set('Seleccioná la imagen y el PDF antes de enviar la solicitud.');
+      this.submitError.set('Seleccioná los dos archivos.');
       this.focusFirstInvalidControl();
       return;
     }
@@ -200,7 +200,7 @@ export class SolicitarPublicacion {
     ).pipe(finalize(() => this.submitting.set(false))).subscribe({
       next: () => {
         this.resetFormAfterSuccess();
-        this.successMessage.set('Tu solicitud fue enviada.');
+        this.successMessage.set('Solicitud enviada.');
         queueMicrotask(() => {
           this.host.nativeElement.querySelector<HTMLElement>('#solicitud-success')?.focus();
         });
@@ -222,7 +222,7 @@ export class SolicitarPublicacion {
       return '';
     }
     if (control.errors['required']) {
-      return 'Este campo es obligatorio.';
+      return 'Campo obligatorio.';
     }
     if (control.errors['email']) {
       return 'Ingresá un email válido.';

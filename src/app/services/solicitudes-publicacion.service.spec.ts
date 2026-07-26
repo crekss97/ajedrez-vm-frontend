@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { OMITIR_CARGADOR_GLOBAL } from '../core/interceptors/app-loading.interceptor';
 import { SolicitudPublicacion, SolicitudPublicacionInput } from '../models/solicitud-publicacion';
 import { SolicitudesPublicacionService } from './solicitudes-publicacion.service';
 
@@ -37,6 +38,7 @@ describe('SolicitudesPublicacionService', () => {
     const solicitudData = JSON.parse(String(formData.get('solicitud')));
 
     expect(request.request.method).toBe('POST');
+    expect(request.request.context.get(OMITIR_CARGADOR_GLOBAL)).toBeTrue();
     expect(request.request.headers.get('Idempotency-Key')).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
     );
