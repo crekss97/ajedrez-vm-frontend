@@ -65,6 +65,21 @@ describe('App', () => {
     ]);
   });
 
+  it('mantiene en el footer solo las redes y el año', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const footer = fixture.nativeElement.querySelector('.site-footer') as HTMLElement;
+    const footerText = footer.textContent as string;
+
+    expect(footerText).toContain(String(new Date().getFullYear()));
+    expect(footerText).not.toContain('Una agenda viva');
+    expect(footerText).not.toContain('Eventos');
+    expect(footerText).not.toContain('Acceso editorial');
+    expect(footerText).not.toContain('Hecho para la comunidad ajedrecística');
+    expect(footerText).not.toContain('Ajedrez VM');
+    expect(footer.querySelector('.site-footer__nav')).toBeNull();
+  });
+
   it('muestra un unico tablero global de 3 por 3 durante la carga', fakeAsync(() => {
     const fixture = TestBed.createComponent(App);
     const loading = TestBed.inject(AppLoadingService);

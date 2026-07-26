@@ -76,6 +76,15 @@ describe('Home', () => {
     expect(contenido).not.toContain('Entradas populares');
   });
 
+  it('ofrece una CTA accesible para solicitar la publicación de un torneo', () => {
+    const cta = fixture.nativeElement.querySelector('.publication-cta') as HTMLElement;
+    const link = cta.querySelector('a') as HTMLAnchorElement;
+
+    expect(cta.querySelector('h2')?.textContent).toContain('próxima partida');
+    expect(link.getAttribute('href')).toBe('/solicitar-publicacion');
+    expect(link.textContent).toContain('Solicitar publicación');
+  });
+
   it('muestra el estado vacio solo despues de una respuesta exitosa sin eventos', () => {
     eventos$.next([]);
     links$.next([]);
