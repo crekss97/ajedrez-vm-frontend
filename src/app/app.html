@@ -64,19 +64,13 @@
 
   <footer class="site-footer">
     <div class="site-footer__inner">
-      <div class="site-footer__brand">
-        <span class="site-brand__eyebrow">Ajedrez VM</span>
-        <p>Una agenda viva para encontrar tu próxima partida.</p>
-      </div>
-
-      <nav class="site-footer__nav" aria-label="Navegación del pie de página">
-        <a routerLink="/">Eventos</a>
-        <a routerLink="/login">Acceso editorial</a>
+      <div class="site-footer__slot" aria-hidden="true"></div>
+      <nav class="site-footer__nav" aria-label="Acciones del pie de página">
+        <a routerLink="/solicitar-publicacion" (click)="scrollToTop()">Solicitar publicación <span aria-hidden="true">↗</span></a>
       </nav>
-
       <div class="site-footer__socials">
         <span class="site-footer__label">Seguinos</span>
-        <div class="site-socials" aria-label="Redes sociales">
+        <div class="site-socials" role="group" aria-label="Redes sociales">
           @for (link of socialLinks; track link.label) {
             <a [href]="link.href" [attr.aria-label]="link.label" target="_blank" rel="noopener noreferrer">
               @switch (link.icon) {
@@ -98,7 +92,6 @@
     </div>
     <div class="site-footer__bottom">
       <span>© {{ currentYear }} Ajedrez VM. Todos los derechos reservados.</span>
-      <span>Hecho para la comunidad ajedrecística.</span>
     </div>
   </footer>
 </div>

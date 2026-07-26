@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { PuzzleDiario } from '../../models/puzzle-diario';
 import { SidebarLink } from '../../models/sidebar-link';
 import { TableroPuzzleComponent } from '../tablero-puzzle/tablero-puzzle';
@@ -6,7 +7,7 @@ import { TableroPuzzleComponent } from '../tablero-puzzle/tablero-puzzle';
 @Component({
   selector: 'app-barra-lateral-home',
   standalone: true,
-  imports: [TableroPuzzleComponent],
+  imports: [RouterLink, TableroPuzzleComponent],
   templateUrl: './barra-lateral-home.html',
   styleUrl: './barra-lateral-home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,0 +1,169 @@
+<main class="publication-page">
+  <section class="publication-layout" aria-labelledby="form-title">
+    <section class="publication-card" aria-labelledby="form-title">
+      <div class="publication-card__heading">
+        <div>
+          <h1 id="form-title">Contanos dónde se juega.</h1>
+        </div>
+        <a class="publication-card__back" routerLink="/">Volver a la agenda</a>
+      </div>
+
+      <form
+        [formGroup]="solicitudForm"
+        (ngSubmit)="submitSolicitud()"
+        novalidate
+        [attr.aria-busy]="submitting() ? 'true' : null"
+      >
+        @if (successMessage(); as success) {
+          <div id="solicitud-success" class="form-message form-message--success" role="status" aria-live="polite" tabindex="-1">
+            <span class="form-message__mark" aria-hidden="true">✓</span>
+            <p>{{ success }}</p>
+          </div>
+        }
+
+        @if (submitError(); as error) {
+          <div class="form-message form-message--error" role="alert">
+            <span class="form-message__mark" aria-hidden="true">!</span>
+            <p>{{ error }}</p>
+          </div>
+        }
+
+        <div class="text-fields">
+          <div class="field" [class.field-invalid]="hasError('nombre')">
+            <label for="solicitud-nombre">Nombre</label>
+            <input
+              id="solicitud-nombre"
+              type="text"
+              formControlName="nombre"
+              autocomplete="given-name"
+              maxlength="100"
+              [attr.aria-invalid]="hasError('nombre') ? 'true' : 'false'"
+              [attr.aria-describedby]="describedBy('nombre')"
+            />
+            @if (hasError('nombre')) {
+              <span id="nombre-error" class="field-error" role="alert">{{ errorMessage('nombre') }}</span>
+            }
+          </div>
+
+          <div class="field" [class.field-invalid]="hasError('apellido')">
+            <label for="solicitud-apellido">Apellido</label>
+            <input
+              id="solicitud-apellido"
+              type="text"
+              formControlName="apellido"
+              autocomplete="family-name"
+              maxlength="100"
+              [attr.aria-invalid]="hasError('apellido') ? 'true' : 'false'"
+              [attr.aria-describedby]="describedBy('apellido')"
+            />
+            @if (hasError('apellido')) {
+              <span id="apellido-error" class="field-error" role="alert">{{ errorMessage('apellido') }}</span>
+            }
+          </div>
+
+          <div class="field field--wide" [class.field-invalid]="hasError('email')">
+            <label for="solicitud-email">Email</label>
+            <input
+              id="solicitud-email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              inputmode="email"
+              maxlength="320"
+              [attr.aria-invalid]="hasError('email') ? 'true' : 'false'"
+              [attr.aria-describedby]="describedBy('email')"
+            />
+            @if (hasError('email')) {
+              <span id="email-error" class="field-error" role="alert">{{ errorMessage('email') }}</span>
+            }
+          </div>
+
+          <div class="field field--wide" [class.field-invalid]="hasError('nombreTorneo')">
+            <label for="solicitud-torneo">Nombre del torneo</label>
+            <input
+              id="solicitud-torneo"
+              type="text"
+              formControlName="nombreTorneo"
+              maxlength="200"
+              [attr.aria-invalid]="hasError('nombreTorneo') ? 'true' : 'false'"
+              [attr.aria-describedby]="describedBy('nombreTorneo')"
+            />
+            @if (hasError('nombreTorneo')) {
+              <span id="nombreTorneo-error" class="field-error" role="alert">{{ errorMessage('nombreTorneo') }}</span>
+            }
+          </div>
+        </div>
+
+        <fieldset class="file-section">
+          <legend>Archivos del torneo</legend>
+          <p id="files-description" class="file-section__description">
+            La imagen debe ser JPG, PNG o WebP de hasta 2 MiB. El PDF debe ser real y pesar hasta 2 MiB.
+          </p>
+
+          <div class="file-fields">
+            <div class="field file-field" [class.field-invalid]="hasError('imagen')">
+              <label class="file-picker" for="solicitud-imagen">
+                <span class="file-picker__heading"><strong>Imagen de portada</strong><span>Elegir imagen</span></span>
+                <span class="file-picker__name">{{ imageFileName() || 'Todavía no elegiste una imagen' }}</span>
+                <input
+                  id="solicitud-imagen"
+                  class="file-input"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                  (change)="selectImage($event)"
+                  [attr.aria-invalid]="hasError('imagen') ? 'true' : 'false'"
+                  [attr.aria-describedby]="describedBy('imagen', 'files-description')"
+                />
+              </label>
+              @if (imagePreviewUrl()) {
+                <img class="image-preview" [src]="imagePreviewUrl()" alt="Vista previa de la portada elegida" />
+              }
+              @if (validatingImage()) {
+                <span class="file-status" role="status" aria-live="polite">Comprobando dimensiones…</span>
+              }
+              @if (imageWarning()) {
+                <span id="imagen-warning" class="file-warning" role="status" aria-live="polite">{{ imageWarning() }}</span>
+              }
+              @if (hasError('imagen')) {
+                <span id="imagen-error" class="field-error" role="alert">{{ imageError() || errorMessage('imagen') }}</span>
+              }
+            </div>
+
+            <div class="field file-field" [class.field-invalid]="hasError('pdf')">
+              <label class="file-picker" for="solicitud-pdf">
+                <span class="file-picker__heading"><strong>PDF del torneo</strong><span>Elegir PDF</span></span>
+                <span class="file-picker__name">{{ pdfFileName() || 'Todavía no elegiste un PDF' }}</span>
+                <input
+                  id="solicitud-pdf"
+                  class="file-input"
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  (change)="selectPdf($event)"
+                  [attr.aria-invalid]="hasError('pdf') ? 'true' : 'false'"
+                  [attr.aria-describedby]="describedBy('pdf', 'files-description')"
+                />
+              </label>
+              @if (validatingPdf()) {
+                <span class="file-status" role="status" aria-live="polite">Comprobando el PDF…</span>
+              }
+              @if (hasError('pdf')) {
+                <span id="pdf-error" class="field-error" role="alert">{{ pdfError() || errorMessage('pdf') }}</span>
+              }
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="form-footer">
+          <button class="submit-button" type="submit" [disabled]="submitting() || validatingImage() || validatingPdf()">
+            @if (submitting()) {
+              <span class="submit-spinner" aria-hidden="true"></span>
+              Enviando solicitud…
+            } @else {
+              Enviar solicitud <span aria-hidden="true">↗</span>
+            }
+          </button>
+        </div>
+      </form>
+    </section>
+  </section>
+</main>
