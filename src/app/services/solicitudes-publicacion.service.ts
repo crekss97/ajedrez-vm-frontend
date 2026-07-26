@@ -4,6 +4,7 @@ import { Observable, map } from 'rxjs';
 import { API_URL } from '../core/config/api.config';
 import { OMITIR_CARGADOR_GLOBAL } from '../core/interceptors/app-loading.interceptor';
 import {
+  NotificacionCorreo,
   SolicitudPublicacion,
   SolicitudPublicacionInput,
 } from '../models/solicitud-publicacion';
@@ -20,6 +21,7 @@ interface SolicitudPublicacionApi {
   fecha?: string;
   fechaSolicitud?: string;
   createdAt?: string;
+  notificacionCorreo?: NotificacionCorreo | null;
 }
 
 const SOLICITUD_FILE_PATH_PATTERN = /^[1-9]\d*\/archivos\/(imagen|pdf)$/;
@@ -59,6 +61,14 @@ export class SolicitudesPublicacionService {
     });
   }
 
+  reintentarNotificacion(id: number): Observable<NotificacionCorreo> {
+    return this.http.post<NotificacionCorreo>(
+      `${this.editorUrl}/${id}/notificacion/reintentar`,
+      null,
+      { context: new HttpContext().set(OMITIR_CARGADOR_GLOBAL, true) },
+    );
+  }
+
   private toSolicitud(solicitud: SolicitudPublicacionApi): SolicitudPublicacion {
     return {
       id: solicitud.id,
@@ -66,11 +76,12 @@ export class SolicitudesPublicacionService {
       apellido: solicitud.apellido,
       email: solicitud.email,
       nombreTorneo: solicitud.nombreTorneo,
-      creadoEn: solicitud.creadoEn
-        ?? solicitud.fechaSolicitud
-        ?? solicitud.fecha
-        ?? solicitud.createdAt
-        ?? '',
+       creadoEn: solicitud.creadoEn
+         ?? solicitud.fechaSolicitud
+         ?? solicitud.fecha
+         ?? solicitud.createdAt
+         ?? '',
+       notificacionCorreo: solicitud.notificacionCorreo ?? null,
        imagenUrl: this.resolveSolicitudFileUrl(solicitud.imagenUrl),
        pdfUrl: this.resolveSolicitudFileUrl(solicitud.pdfUrl),
      };

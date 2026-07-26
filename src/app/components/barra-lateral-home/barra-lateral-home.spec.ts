@@ -28,17 +28,17 @@ describe('BarraLateralHomeComponent', () => {
     fixture.detectChanges();
   });
 
-  it('renderiza un solo aside con enlaces, puzzle y convocatoria en ese orden', () => {
+  it('renderiza un solo aside con enlaces, convocatoria y puzzle en ese orden', () => {
     const aside = fixture.nativeElement.querySelectorAll('aside');
     const secciones = fixture.nativeElement.querySelectorAll('.home-sidebar__section');
 
     expect(aside.length).toBe(1);
     expect(aside[0].getAttribute('aria-label')).toBe('Contenido destacado');
     expect(secciones[0].textContent).toContain('Federacion regional');
-    expect(secciones[1].textContent).toContain('Puzzle del dia');
-    expect(secciones[2].classList).toContain('publication-cta');
-    expect(secciones[2].textContent).toContain('Hagamos lugar a tu próxima partida');
-    expect(secciones[2].querySelector('a')?.getAttribute('href')).toBe('/solicitar-publicacion');
+    expect(secciones[1].classList).toContain('publication-cta');
+    expect(secciones[1].textContent).toContain('Hagamos lugar a tu próximo evento');
+    expect(secciones[1].querySelector('a')?.getAttribute('href')).toBe('/solicitar-publicacion');
+    expect(secciones[2].textContent).toContain('Puzzle del dia');
     expect(fixture.nativeElement.textContent).not.toContain('Entradas populares');
     expect(fixture.nativeElement.textContent).not.toContain('visitas');
   });
