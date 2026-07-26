@@ -47,6 +47,21 @@ describe('SolicitarPublicacion', () => {
     expect(service.createSolicitud).not.toHaveBeenCalled();
   });
 
+  it('mantiene el formulario sin textos promocionales adicionales', () => {
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).not.toContain('Para la cartelera');
+    expect(content).not.toContain('Poné tu torneo en el mapa.');
+    expect(content).not.toContain('Compartinos la información');
+    expect(content).not.toContain('Tus datos');
+    expect(content).not.toContain('La portada');
+    expect(content).not.toContain('Las bases');
+    expect(content).not.toContain('Tu próxima partida');
+    expect(content).not.toContain('El envío no publica el torneo automáticamente.');
+    expect(fixture.nativeElement.querySelector('.publication-intro')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.form-footer p')).toBeNull();
+  });
+
   it('conserva los File cuando falla el POST y los libera al confirmar', () => {
     const image = new File(['imagen'], 'portada.jpg', { type: 'image/jpeg' });
     const pdf = new File(['%PDF-1.7'], 'bases.pdf', { type: 'application/pdf' });

@@ -4,6 +4,7 @@ import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, provi
 import {
   PreloadAllModules,
   provideRouter,
+  withInMemoryScrolling,
   withPreloading,
 } from '@angular/router';
 
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
+      withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
       withPreloading(PreloadAllModules),
     ),
     provideHttpClient(withInterceptors([appLoadingInterceptor, apiCredentialsInterceptor])),

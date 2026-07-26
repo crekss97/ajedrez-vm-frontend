@@ -1,31 +1,10 @@
 <main class="publication-page">
-  <section class="publication-layout" aria-labelledby="publication-title">
-    <aside class="publication-intro">
-      <span class="publication-intro__kicker">Para la cartelera</span>
-      <h1 id="publication-title">Poné tu torneo en el mapa.</h1>
-      <p>
-        Compartinos la información de tu próxima competencia y la vamos a preparar para la agenda de
-        Ajedrez VM.
-      </p>
-
-      <ol class="publication-steps" aria-label="Archivos que necesitamos">
-        <li><span aria-hidden="true">01</span><strong>Tus datos</strong><small>Para poder contactarte.</small></li>
-        <li><span aria-hidden="true">02</span><strong>La portada</strong><small>La imagen principal del futuro evento.</small></li>
-        <li><span aria-hidden="true">03</span><strong>Las bases</strong><small>El PDF con todos los datos del torneo.</small></li>
-      </ol>
-
-      <div class="publication-intro__mark" aria-hidden="true">
-        <span>♞</span>
-        <span class="publication-intro__rule"></span>
-        <span>Tu próxima partida</span>
-      </div>
-    </aside>
-
+  <section class="publication-layout" aria-labelledby="form-title">
     <section class="publication-card" aria-labelledby="form-title">
       <div class="publication-card__heading">
         <div>
           <span class="publication-card__eyebrow">Solicitud pública</span>
-          <h2 id="form-title">Contanos dónde se juega.</h2>
+          <h1 id="form-title">Contanos dónde se juega.</h1>
         </div>
         <a class="publication-card__back" routerLink="/">Volver a la agenda</a>
       </div>
@@ -186,7 +165,6 @@
         </fieldset>
 
         <div class="form-footer">
-          <p>El envío no publica el torneo automáticamente.</p>
           <button class="submit-button" type="submit" [disabled]="submitting() || validatingImage() || validatingPdf()">
             @if (submitting()) {
               <span class="submit-spinner" aria-hidden="true"></span>
