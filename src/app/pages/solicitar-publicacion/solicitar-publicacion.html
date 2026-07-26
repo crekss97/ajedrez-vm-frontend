@@ -8,26 +8,26 @@
         <a class="publication-card__back" routerLink="/">Volver a la agenda</a>
       </div>
 
-      @if (successMessage(); as success) {
-        <div id="solicitud-success" class="form-message form-message--success" role="status" aria-live="polite" tabindex="-1">
-          <span class="form-message__mark" aria-hidden="true">✓</span>
-          <p>{{ success }}</p>
-        </div>
-      }
-
-      @if (submitError(); as error) {
-        <div class="form-message form-message--error" role="alert">
-          <span class="form-message__mark" aria-hidden="true">!</span>
-          <p>{{ error }}</p>
-        </div>
-      }
-
       <form
         [formGroup]="solicitudForm"
         (ngSubmit)="submitSolicitud()"
         novalidate
         [attr.aria-busy]="submitting() ? 'true' : null"
       >
+        @if (successMessage(); as success) {
+          <div id="solicitud-success" class="form-message form-message--success" role="status" aria-live="polite" tabindex="-1">
+            <span class="form-message__mark" aria-hidden="true">✓</span>
+            <p>{{ success }}</p>
+          </div>
+        }
+
+        @if (submitError(); as error) {
+          <div class="form-message form-message--error" role="alert">
+            <span class="form-message__mark" aria-hidden="true">!</span>
+            <p>{{ error }}</p>
+          </div>
+        }
+
         <div class="text-fields">
           <div class="field" [class.field-invalid]="hasError('nombre')">
             <label for="solicitud-nombre">Nombre</label>
