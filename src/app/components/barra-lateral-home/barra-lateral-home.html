@@ -22,6 +22,17 @@
     }
   </section>
 
+  <section class="home-sidebar__section home-sidebar__publication publication-cta" aria-labelledby="publication-cta-title">
+    <div class="publication-cta__copy">
+      <span class="publication-cta__eyebrow">¿Organizás un torneo?</span>
+      <h2 id="publication-cta-title">Hagamos lugar a tu próximo evento.</h2>
+      <p>Mandanos el nombre del torneo, su portada y las bases en PDF para sumarlo a la agenda.</p>
+      <a class="publication-cta__link" routerLink="/solicitar-publicacion">
+        Solicitar publicación <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </section>
+
   <section class="home-sidebar__section home-sidebar__puzzle" aria-labelledby="puzzle-title">
     <div class="section-heading">
       <h2 id="puzzle-title">Puzzle del dia</h2>
@@ -33,16 +44,5 @@
     } @else if (puzzle(); as puzzleDiario) {
       <app-tablero-puzzle [puzzle]="puzzleDiario" />
     }
-  </section>
-
-  <section class="home-sidebar__section home-sidebar__publication publication-cta" aria-labelledby="publication-cta-title">
-    <div class="publication-cta__copy">
-      <span class="publication-cta__eyebrow">¿Organizás un torneo?</span>
-      <h2 id="publication-cta-title">Hagamos lugar a tu próxima partida.</h2>
-      <p>Mandanos el nombre del torneo, su portada y las bases en PDF para sumarlo a la agenda.</p>
-      <a class="publication-cta__link" routerLink="/solicitar-publicacion">
-        Solicitar publicación <span aria-hidden="true">↗</span>
-      </a>
-    </div>
   </section>
 </aside>

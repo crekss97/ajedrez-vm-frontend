@@ -89,4 +89,25 @@ describe('SolicitudesPublicacionService', () => {
 
     expect(file?.type).toBe('image/jpeg');
   });
+
+  it('reintenta una notificación editorial sin activar el cargador global', () => {
+    let notification: unknown;
+
+    service.reintentarNotificacion(7).subscribe((response) => {
+      notification = response;
+    });
+
+    const request = httpTesting.expectOne('/api/editor/solicitudes-publicacion/7/notificacion/reintentar');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.context.get(OMITIR_CARGADOR_GLOBAL)).toBeTrue();
+    request.flush({
+      estado: 'enviada',
+      intentos: 1,
+      ultimoError: null,
+      ultimoIntentoEn: '2026-07-25T17:00:00.000Z',
+      enviadaEn: '2026-07-25T17:00:01.000Z',
+    });
+
+    expect(notification).toEqual(jasmine.objectContaining({ estado: 'enviada' }));
+  });
 });
