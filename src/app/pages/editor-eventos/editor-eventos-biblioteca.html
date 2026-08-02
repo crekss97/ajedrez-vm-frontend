@@ -26,7 +26,7 @@
             <article class="event-row">
               <div class="event-row__main">
                 <div class="event-row__labels">
-                  <span class="event-status" [class.event-status--draft]="event.estadoEditorial === 'draft'">{{ event.estadoEditorial === 'published' ? 'Publicado' : 'Borrador' }}</span>
+                  <span class="event-status" [class.event-status--draft]="event.estadoEditorial === 'draft'" [class.event-status--finished]="event.estadoEditorial === 'finished'">{{ statusLabel(event.estadoEditorial) }}</span>
                   @if (event.destacado) {
                     <span class="editor-featured-badge">
                       <span class="editor-featured-badge__mark" aria-hidden="true">★</span>
@@ -38,15 +38,19 @@
                 <small>{{ event.categoria }} · {{ event.fechaInicio | date: 'mediumDate' }} · {{ event.views }} consultas</small>
               </div>
               <div class="event-row__actions">
-                @if (event.estadoEditorial === 'published') {
+                @if (event.estadoEditorial !== 'draft') {
                   <app-compartir-evento
                     [slug]="event.slug"
                     [titulo]="event.titulo"
                     [actualizadoEn]="event.actualizadoEn"
                   />
                 }
-                <a [routerLink]="['/editor/eventos', event.id, 'editar']">Editar</a>
-                <button type="button" (click)="deleteEvent(event.id, event.titulo)">Eliminar</button>
+                @if (event.estadoEditorial === 'finished') {
+                  <a [routerLink]="['/eventos', event.slug]">Consultar</a>
+                } @else {
+                  <a [routerLink]="['/editor/eventos', event.id, 'editar']">Editar</a>
+                  <button type="button" (click)="deleteEvent(event.id, event.titulo)">Eliminar</button>
+                }
               </div>
             </article>
           }

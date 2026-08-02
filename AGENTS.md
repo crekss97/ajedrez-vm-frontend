@@ -8,26 +8,27 @@
 - Ejecutar la suite Karma/Jasmine con `npm test`.
 - No hay scripts dedicados de lint ni typecheck en `package.json`; no asumir que existen.
 
-## Flujo de trabajo
+## Flujo de trabajo local
 
-- OpenProject es la fuente de verdad del backlog. Trabajar sobre un único work package en estado
-  `In progress` y usar su ID numerico en Git y en el PR.
+- La fuente de verdad del backlog es `../ajedrez-vm-backend/backlog.user-stories.json`. Es un archivo
+  local ignorado por Git; no contiene secretos ni se publica.
+- Trabajar sobre una única UH en estado `in_progress` y usar su ID `UH-<id>` en Git y en el PR.
 - Usar GitFlow: `main` representa produccion y `develop` integra el trabajo de la siguiente entrega.
   No hacer commits directos a ninguna de las dos ramas.
-- Crear ramas cortas desde `develop` actualizado con formato `feat/op-<id>-<slug>`,
-  `fix/op-<id>-<slug>` o `chore/op-<id>-<slug>`, y abrir el PR hacia `develop`.
-- Reservar `hotfix/op-<id>-<slug>` para incidentes urgentes de produccion: nace desde `main`, se
+- Crear ramas cortas desde `develop` actualizado con formato `feat/uh-<id>-<slug>`,
+  `fix/uh-<id>-<slug>` o `chore/uh-<id>-<slug>`, y abrir el PR hacia `develop`.
+- Reservar `hotfix/uh-<id>-<slug>` para incidentes urgentes de produccion: nace desde `main`, se
   integra en `main` mediante PR y luego se sincroniza en `develop` mediante otro PR.
 - Crear `release/<version>` desde `develop` solo para estabilizar una entrega; integrarla mediante PR
   en `main`, etiquetar la version y devolver sus cambios a `develop`.
-- No mezclar work packages ni cambios ajenos en una rama. Si una tarea afecta backend y frontend,
-  crear una rama y un PR independientes en cada repositorio con el mismo OP#.
+- No mezclar UH ni cambios ajenos en una rama. Si una tarea afecta backend y frontend,
+  crear una rama y un PR independientes en cada repositorio con el mismo `UH-<id>`.
 - Usar commits convencionales, ejecutar `npm test` y `npm run build`, y no publicar la rama si las
   verificaciones fallan.
-- Incluir en cada PR `OP#<id>`, alcance, pruebas, riesgos, migraciones y pasos de despliegue.
-- Pasar el work package a `In review` al abrir el PR y a `Done` despues de fusionarlo en `develop` y
-  completar los checks. Para `release/*` y `hotfix/*`, verificar tambien produccion.
-- Los comandos de OpenCode `/op-status`, `/op-start`, `/op-pr` y `/op-close` implementan este flujo.
+- Incluir en cada PR `UH-<id>`, alcance, pruebas, riesgos, migraciones y pasos de despliegue.
+- Pasar la UH a `in_review` al abrir el PR y a `done` despues de fusionarlo en `develop` y completar
+  los checks. Para `release/*` y `hotfix/*`, verificar tambien produccion.
+- Los comandos de OpenCode `/uh-status`, `/uh-start`, `/uh-pr` y `/uh-close` implementan este flujo.
 
 ## Configuración
 
@@ -42,7 +43,7 @@
 - `EventosService` combina eventos de la API con eventos editoriales publicados; las consultas de eventos de la API fallan de forma tolerante a una lista vacía.
 - `/login` muestra el acceso editorial y solo inicia Google después del clic explícito. `EditorAuthService` obtiene `/auth/me`; no guardar tokens o sesiones en `localStorage`. El guard de `/editor` valida la sesión remota y preserva `returnUrl`.
 - La cookie es `HttpOnly`; todas las peticiones API usan `withCredentials` mediante el interceptor. Un `401` editorial vuelve a `/login`.
-- Las lecturas públicas usan `/events` y solo reciben `published`; el editor usa `/editor/events` para incluir borradores.
+- Las lecturas públicas usan `/events` y reciben `published` y `finished`; el editor usa `/editor/events` para incluir borradores.
 - Dentro del editor, `/editor/eventos` es la biblioteca; `/editor/eventos/nuevo` crea y `/editor/eventos/:id/editar` edita. No mezclar la lista con el formulario.
 - Imagen y PDF permanecen como `File` en memoria hasta guardar. `POST/PUT /api/events` envía un multipart con `evento`, `imagen` y `adjuntos`; el máximo combinado es 4 MB. Los documentos se muestran en la lista inferior y no se insertan en `descripcionLarga`.
 - `descripcionLarga` se guarda como HTML sanitizable y los PDFs se registran en `adjuntos`; no usar Base64 para imágenes o documentos.

@@ -238,6 +238,14 @@ describe('EventoDetalle', () => {
     expect(registroVisitaService.programar).toHaveBeenCalledOnceWith('torneo-apertura');
   });
 
+  it('mantiene el archivo histórico visible sin programar nuevas visitas', () => {
+    respuesta$.next(crearEvento({ estadoEditorial: 'finished', destacado: false }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Finalizado');
+    expect(registroVisitaService.programar).not.toHaveBeenCalled();
+  });
+
   it('mantiene el evento visible aunque el registro quede programado como operación secundaria', () => {
     registroVisitaService.programar.and.throwError('No se pudo programar');
     respuesta$.next(crearEvento());

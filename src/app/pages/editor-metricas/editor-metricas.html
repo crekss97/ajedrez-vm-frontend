@@ -43,7 +43,7 @@
       <article><span>Vistas del período</span><strong>{{ metrics.totalViews }}</strong><small>{{ metrics.dias }} días analizados</small></article>
       <article><span>Visitantes únicos</span><strong>{{ metrics.uniqueViews }}</strong><small>Identidades distintas</small></article>
       <article><span>Promedio por evento</span><strong>{{ metrics.averageViews }}</strong><small>Vistas del período</small></article>
-      <article><span>Publicados</span><strong>{{ metrics.publishedEvents }}</strong><small>{{ metrics.draftEvents }} borradores</small></article>
+      <article><span>Publicados</span><strong>{{ metrics.publishedEvents }}</strong><small>{{ metrics.finishedEvents }} finalizados · {{ metrics.draftEvents }} borradores</small></article>
     </div>
 
     <div class="charts-grid">
@@ -98,8 +98,8 @@
             <tbody>
               @for (event of metrics.eventsByViews; track event.id) {
                 <tr>
-                  <th scope="row">{{ event.titulo }}</th>
-                  <td><span class="editorial-status" [class.editorial-status--draft]="event.estadoEditorial === 'draft'">{{ event.estadoEditorial === 'published' ? 'Publicado' : 'Borrador' }}</span></td>
+                    <th scope="row">{{ event.titulo }}</th>
+                    <td><span class="editorial-status" [class.editorial-status--draft]="event.estadoEditorial === 'draft'" [class.editorial-status--finished]="event.estadoEditorial === 'finished'">{{ event.estadoEditorial === 'published' ? 'Publicado' : event.estadoEditorial === 'finished' ? 'Finalizado' : 'Borrador' }}</span></td>
                   <td>{{ event.views }}</td>
                   <td>{{ event.uniqueViews }}</td>
                 </tr>

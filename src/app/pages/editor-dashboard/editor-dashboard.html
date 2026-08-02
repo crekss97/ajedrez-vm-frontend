@@ -15,6 +15,9 @@
         <span>Publicados</span><strong>{{ metrics.publishedEvents }}</strong>
       </article>
       <article class="metric-card">
+        <span>Finalizados</span><strong>{{ metrics.finishedEvents }}</strong>
+      </article>
+      <article class="metric-card">
         <span>Vistas del período</span><strong>{{ metrics.totalViews }}</strong>
         <small>Últimos {{ metrics.dias }} días</small>
       </article>
@@ -45,7 +48,7 @@
             @for (draft of drafts.slice(0, 4); track draft.id) {
               <article class="activity-item">
                 <div class="activity-item__labels">
-                  <span class="activity-item__status">{{ draft.estadoEditorial === 'published' ? 'Publicado' : 'Borrador' }}</span>
+                  <span class="activity-item__status">{{ draft.estadoEditorial === 'published' ? 'Publicado' : draft.estadoEditorial === 'finished' ? 'Finalizado' : 'Borrador' }}</span>
                   @if (draft.destacado) {
                     <span class="editor-featured-badge">
                       <span class="editor-featured-badge__mark" aria-hidden="true">★</span>

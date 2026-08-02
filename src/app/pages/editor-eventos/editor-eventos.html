@@ -57,10 +57,10 @@
           @if (hasError('fechaInicio')) { <small id="fecha-inicio-error" class="field-error">{{ errorMessage('fechaInicio') }}</small> }
         </div>
         <div class="field field--date" [class.field-invalid]="hasError('fechaFin')">
-          <label for="fecha-fin-visible">Fecha de fin <em>opcional</em></label>
+          <label for="fecha-fin-visible">Fecha de fin <b aria-hidden="true">*</b></label>
           <div class="date-control">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /></svg>
-            <input id="fecha-fin" type="text" mwlFlatpickr [options]="dateTimeOptions" [minDate]="eventForm.controls.fechaInicio.value || 'today'" formControlName="fechaFin" aria-describedby="fecha-fin-error" [attr.aria-invalid]="hasError('fechaFin') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
+            <input id="fecha-fin" type="text" mwlFlatpickr [options]="dateTimeOptions" [minDate]="eventForm.controls.fechaInicio.value || ''" formControlName="fechaFin" required aria-required="true" aria-describedby="fecha-fin-error" [attr.aria-invalid]="hasError('fechaFin') || null" (flatpickrReady)="configureDateInputAccessibility($event)" (flatpickrClose)="syncDateInputsAccessibility()" />
           </div>
           @if (hasError('fechaFin')) { <small id="fecha-fin-error" class="field-error">{{ errorMessage('fechaFin') }}</small> }
         </div>
@@ -154,7 +154,7 @@
       <section class="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-title" aria-describedby="success-description" cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
         <span class="success-modal__mark" aria-hidden="true">✓</span>
         <h2 id="success-title">El evento ya está guardado</h2>
-        <p id="success-description"><strong>{{ event.titulo }}</strong> se creó como {{ event.estadoEditorial === 'draft' ? 'borrador' : 'publicado' }}. Volvé al resumen para revisar la actividad editorial.</p>
+        <p id="success-description"><strong>{{ event.titulo }}</strong> se creó como {{ editorialStatusLabel(event.estadoEditorial) }}. Volvé al resumen para revisar la actividad editorial.</p>
         <button class="editor-submit" type="button" (click)="closeCreatedModal()">Ir al resumen</button>
       </section>
     </div>

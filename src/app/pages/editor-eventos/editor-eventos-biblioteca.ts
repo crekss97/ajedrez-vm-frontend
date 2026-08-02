@@ -19,6 +19,10 @@ export class EditorEventosBiblioteca {
   protected readonly events$ = this.editorEventosService.drafts$;
   protected readonly actionError = signal('');
 
+  protected statusLabel(status: string | undefined): string {
+    return status === 'published' ? 'Publicado' : status === 'finished' ? 'Finalizado' : 'Borrador';
+  }
+
   protected deleteEvent(id: number, title: string): void {
     if (!window.confirm(`¿Eliminar "${title}"?`)) {
       return;
