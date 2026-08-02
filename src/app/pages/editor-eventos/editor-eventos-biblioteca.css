@@ -15,6 +15,7 @@
 .event-row__main small { color: var(--text-muted); font-size: 0.76rem; }
 .event-status { width: fit-content; padding: 0.25rem 0.5rem; border-radius: 999px; background: rgba(70, 109, 152, 0.14); color: var(--accent-primary-strong); font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
 .event-status--draft { background: rgba(111, 141, 165, 0.18); color: var(--text-soft); }
+.event-status--finished { background: rgba(228, 87, 63, 0.14); color: var(--accent-primary-strong); }
 .event-row__actions { display: flex; flex: 0 1 auto; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0.5rem; }
 .event-row__actions a, .event-row__actions button { padding: 0.65rem 0.8rem; border: 0; border-radius: 999px; background: var(--surface-bg); color: var(--text-main); cursor: pointer; font: inherit; font-size: 0.78rem; font-weight: 800; text-decoration: none; }
 .event-row__actions a:hover, .event-row__actions button:hover { background: var(--text-main); color: var(--surface-bg); }

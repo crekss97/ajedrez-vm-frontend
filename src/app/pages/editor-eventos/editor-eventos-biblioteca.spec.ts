@@ -39,12 +39,20 @@ describe('EditorEventosBiblioteca', () => {
     destacado: false,
     estadoEditorial: 'draft',
   };
+  const finalizado: EventoEditorDraft = {
+    ...publicado,
+    id: 3,
+    slug: 'torneo-finalizado',
+    titulo: 'Torneo finalizado',
+    destacado: false,
+    estadoEditorial: 'finished',
+  };
 
   beforeEach(async () => {
     service = jasmine.createSpyObj<EditorEventosService>(
       'EditorEventosService',
       ['deleteEvent'],
-      { drafts$: of([publicado, borrador]) },
+      { drafts$: of([publicado, borrador, finalizado]) },
     );
     service.deleteEvent.and.returnValue(of(undefined));
 
@@ -62,7 +70,7 @@ describe('EditorEventosBiblioteca', () => {
     const publishedActions = rows[0].querySelector('.event-row__actions') as HTMLElement;
     const draftActions = rows[1].querySelector('.event-row__actions') as HTMLElement;
 
-    expect(rows.length).toBe(2);
+    expect(rows.length).toBe(3);
     expect(rows[0].querySelector('.editor-featured-badge')).not.toBeNull();
     expect(rows[1].querySelector('.editor-featured-badge')).toBeNull();
     expect(publishedActions.querySelector('app-compartir-evento')).not.toBeNull();
@@ -75,5 +83,11 @@ describe('EditorEventosBiblioteca', () => {
       ).toBeTrue();
       expect(Array.from(actions.children).some((child) => child.textContent?.includes('Eliminar'))).toBeTrue();
     }
+
+    const finishedActions = rows[2].querySelector('.event-row__actions') as HTMLElement;
+    expect(rows[2].textContent).toContain('Finalizado');
+    expect(finishedActions.textContent).toContain('Consultar');
+    expect(finishedActions.textContent).not.toContain('Editar');
+    expect(finishedActions.textContent).not.toContain('Eliminar');
   });
 });

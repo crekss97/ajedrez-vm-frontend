@@ -77,7 +77,7 @@ describe('EditorEventos', () => {
     expect(imageInput.getAttribute('aria-required')).toBe('true');
     expect(visibleStartDate.getAttribute('aria-describedby')).toBe('fecha-inicio-error');
     expect(fixture.nativeElement.querySelector('label[for="fecha-inicio-visible"]')).not.toBeNull();
-    expect((component as any).dateTimeOptions.minDate).toBe('today');
+    expect((component as any).dateTimeOptions.minDate).toBeUndefined();
     const remainingHelp = fixture.nativeElement.querySelectorAll('[id$="-help"]');
     expect(remainingHelp.length).toBe(1);
     expect(remainingHelp[0].id).toBe('pdf-help');
@@ -119,16 +119,13 @@ describe('EditorEventos', () => {
     expect(form.hasError('fechaFinAnterior')).toBeFalse();
   });
 
-  it('rechaza fechas de inicio anteriores al día actual', () => {
+  it('acepta fechas de inicio anteriores al día actual', () => {
     const form = (component as any).eventForm;
     form.controls.fechaInicio.setValue('2020-01-01T10:00');
     form.controls.fechaInicio.markAsTouched();
     fixture.detectChanges();
 
-    expect(form.controls.fechaInicio.hasError('fechaAnterior')).toBeTrue();
-    expect(fixture.nativeElement.querySelector('#fecha-inicio-error')?.textContent).toContain(
-      'anterior a hoy',
-    );
+    expect(form.controls.fechaInicio.hasError('fechaAnterior')).toBeFalse();
   });
 
   it('envía las fechas como instantes de Buenos Aires y no incluye precio', () => {
@@ -176,7 +173,7 @@ describe('EditorEventos', () => {
     expect(service.updateEvent).toHaveBeenCalled();
     const input = service.updateEvent.calls.mostRecent().args[1] as EventoEditorInput;
     expect(input.fechaInicio).toBe(savedEvent.fechaInicio);
-    expect(input.fechaFin).toBe(savedEvent.fechaFin);
+    expect(input.fechaFin).toBe(savedEvent.fechaFin!);
   });
 
   it('lleva el foco al primer campo inválido al intentar guardar', async () => {

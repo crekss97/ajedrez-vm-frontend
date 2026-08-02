@@ -67,6 +67,7 @@ export class EditorMetricas {
     zonaHoraria: 'America/Argentina/Buenos_Aires',
     totalEvents: 0,
     publishedEvents: 0,
+    finishedEvents: 0,
     draftEvents: 0,
     featuredEvents: 0,
     totalViews: 0,
@@ -137,10 +138,10 @@ export class EditorMetricas {
   protected readonly statusChartData = computed<ChartData<'doughnut'>>(() => {
     const metrics = this.metrics() ?? this.emptyMetrics;
     return {
-      labels: ['Publicados', 'Borradores'],
+      labels: ['Publicados', 'Finalizados', 'Borradores'],
       datasets: [{
-        data: [metrics.publishedEvents, metrics.draftEvents],
-        backgroundColor: ['#142d3d', '#e6bd55'],
+        data: [metrics.publishedEvents, metrics.finishedEvents, metrics.draftEvents],
+        backgroundColor: ['#142d3d', '#e4573f', '#e6bd55'],
         borderWidth: 0,
       }],
     };

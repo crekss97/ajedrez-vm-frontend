@@ -14,7 +14,6 @@ import {
 } from '../../core/event-image.validation';
 import {
   fromBuenosAiresInput,
-  getTodayBuenosAires,
   isValidBuenosAiresDateTime,
   toBuenosAiresInput,
 } from '../../core/fechas-buenos-aires';
@@ -33,17 +32,6 @@ const buenosAiresDateTimeValidator: ValidatorFn = (
 ): ValidationErrors | null => {
   const value = control.value;
   return value === '' || isValidBuenosAiresDateTime(value) ? null : { fechaInvalida: true };
-};
-
-const futureEventDateValidator: ValidatorFn = (
-  control: AbstractControl,
-): ValidationErrors | null => {
-  const value = control.value;
-  if (value === '' || !isValidBuenosAiresDateTime(value)) {
-    return null;
-  }
-  const today = getTodayBuenosAires();
-  return value.slice(0, 10) >= today ? null : { fechaAnterior: true };
 };
 
 const eventDateRangeValidator: ValidatorFn = (
@@ -123,7 +111,6 @@ export class EditorEventos {
     minuteIncrement: 15,
     allowInput: true,
     disableMobile: true,
-    minDate: 'today',
     locale: Spanish,
     ariaDateFormat: 'j \u0064\u0065 F \u0064\u0065 Y, H:i',
   };
@@ -140,8 +127,8 @@ export class EditorEventos {
     slug: [''], categoria: ['', Validators.required],
     descripcionCorta: ['', [Validators.required, Validators.minLength(this.minShortDescription), Validators.maxLength(this.maxShortDescription)]],
     descripcionLarga: ['', Validators.required],
-    fechaInicio: ['', [Validators.required, buenosAiresDateTimeValidator, futureEventDateValidator]],
-    fechaFin: ['', buenosAiresDateTimeValidator], ubicacion: ['', Validators.required],
+    fechaInicio: ['', [Validators.required, buenosAiresDateTimeValidator]],
+    fechaFin: ['', [Validators.required, buenosAiresDateTimeValidator]], ubicacion: ['', Validators.required],
     organizador: ['', Validators.required],
     imagenUrl: ['', Validators.required],
     destacado: [false], modalidad: ['Presencial' as EventoModalidad, Validators.required],
@@ -178,6 +165,10 @@ export class EditorEventos {
     }
 
     const editingEvent = this.editingEvent();
+    if (editingEvent?.estadoEditorial === 'finished') {
+      this.saveError.set('Los eventos finalizados son de solo consulta.');
+      return;
+    }
     const selectedImage = this.imageFile();
     if (!editingEvent && !selectedImage) {
       this.eventForm.controls.imagenUrl.setErrors({ required: true });
@@ -191,7 +182,7 @@ export class EditorEventos {
       ...value,
       imagenUrl: editingEvent?.imagenUrl ?? '',
       fechaInicio: toEventInstant(value.fechaInicio),
-      fechaFin: value.fechaFin ? toEventInstant(value.fechaFin) : undefined,
+      fechaFin: toEventInstant(value.fechaFin),
       tags: value.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
       linksExternos: [],
       adjuntos: this.attachments(),
@@ -389,10 +380,11 @@ export class EditorEventos {
     if (control.errors['fechaInvalida']) {
       return 'Ingresá una fecha y hora válidas.';
     }
-    if (control.errors['fechaAnterior']) {
-      return 'La fecha de inicio no puede ser anterior a hoy.';
-    }
     return 'Revisá este campo.';
+  }
+
+  protected editorialStatusLabel(status: EventoEstadoEditorial): string {
+    return status === 'published' ? 'publicado' : status === 'finished' ? 'finalizado' : 'borrador';
   }
 
   protected closeCreatedModal(): void {
@@ -424,6 +416,10 @@ export class EditorEventos {
       const event = events.find((draft) => draft.id === eventId);
 
       if (event) {
+        if (event.estadoEditorial === 'finished') {
+          void this.router.navigate(['/eventos', event.slug]);
+          return;
+        }
         this.startEdit(event);
       } else {
         this.saveError.set('No se encontró el evento que querés editar.');
@@ -450,7 +446,7 @@ export class EditorEventos {
 
   private syncFeaturedControl(status: EventoEstadoEditorial): void {
     const featured = this.eventForm.controls.destacado;
-    if (status === 'draft') {
+    if (status !== 'published') {
       featured.setValue(false, { emitEvent: false });
       featured.disable({ emitEvent: false });
       return;

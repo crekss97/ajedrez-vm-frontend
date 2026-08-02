@@ -45,20 +45,21 @@ describe('EditorDashboard', () => {
     });
     metricsService = jasmine.createSpyObj<EditorMetricsService>('EditorMetricsService', ['getMetrics']);
     metricsService.getMetrics.and.returnValue(of({
-       desde: '2026-07-01',
-       hasta: '2026-07-30',
-       dias: 30,
-       zonaHoraria: 'America/Argentina/Buenos_Aires',
-       totalEvents: 2,
-       publishedEvents: 1,
-       draftEvents: 1,
-       featuredEvents: 1,
-       totalViews: 12,
-       uniqueViews: 4,
-        averageViews: 6,
-        viewsByDay: [],
-        viewsByCountry: [],
-        eventsByViews: [],
+      desde: '2026-07-01',
+      hasta: '2026-07-30',
+      dias: 30,
+      zonaHoraria: 'America/Argentina/Buenos_Aires',
+      totalEvents: 2,
+      publishedEvents: 1,
+      finishedEvents: 0,
+      draftEvents: 1,
+      featuredEvents: 1,
+      totalViews: 12,
+      uniqueViews: 4,
+      averageViews: 6,
+      viewsByDay: [],
+      viewsByCountry: [],
+      eventsByViews: [],
     }));
 
     await TestBed.configureTestingModule({

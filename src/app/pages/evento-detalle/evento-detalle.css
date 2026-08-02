@@ -21,6 +21,7 @@
 .event-intro__content app-compartir-evento { margin-top: 1rem; }
 .badge { display: inline-flex; width: fit-content; max-width: 100%; padding: 0.35rem 0.7rem; border-radius: 999px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; overflow-wrap: anywhere; word-break: break-word; }
 .badge { background: var(--accent-primary); color: #fff6ec; }
+.badge--finished { background: var(--text-soft); }
 .panel-label, .detail-list dt { color: var(--text-muted); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
 .detail-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.7fr); align-items: start; gap: 1.5rem; margin-top: 1.5rem; }
 .detail-panel { display: grid; gap: 1rem; min-width: 0; padding: clamp(1.2rem, 3vw, 1.7rem); border: 1px solid var(--border-soft); border-radius: 1.1rem; background: rgba(255, 253, 248, 0.78); box-shadow: var(--shadow-soft); }

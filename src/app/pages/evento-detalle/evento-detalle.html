@@ -30,6 +30,9 @@
         </div>
         <div class="event-intro__content">
           <span class="badge">{{ evento.categoria }}</span>
+          @if (evento.estadoEditorial === 'finished') {
+            <span class="badge badge--finished">Finalizado</span>
+          }
           <h1>{{ evento.titulo }}</h1>
           <p>{{ evento.descripcionCorta }}</p>
           <app-compartir-evento
