@@ -15,7 +15,7 @@ export class EventosService {
 
   getEventos(): Observable<Evento[]> {
     return this.getEventosEditoriales().pipe(
-      map((events) => events.filter((event) => event.estadoEditorial !== 'draft')),
+      map((events) => events.filter((event) => event.estadoEditorial === 'published')),
     );
   }
 
