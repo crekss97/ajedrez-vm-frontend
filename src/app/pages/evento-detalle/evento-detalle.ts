@@ -39,10 +39,12 @@ export class EventoDetalle {
         this.eventosService.getEvento(slug).pipe(
           tap((evento) => {
             this.metadata.actualizar(evento);
-            try {
-              this.cancelarRegistroVisita = this.registroVisita.programar(evento.slug);
-            } catch {
-              this.cancelarRegistroVisita = () => undefined;
+            if (evento.estadoEditorial === 'published') {
+              try {
+                this.cancelarRegistroVisita = this.registroVisita.programar(evento.slug);
+              } catch {
+                this.cancelarRegistroVisita = () => undefined;
+              }
             }
           }),
           catchError(() => {

@@ -43,6 +43,7 @@
 .metrics-table td:nth-last-child(-n + 2), .metrics-table thead th:nth-last-child(-n + 2) { text-align: right; }
 .editorial-status { display: inline-flex; padding: 0.25rem 0.45rem; border-radius: 999px; background: rgba(20, 45, 61, 0.1); color: var(--accent-primary-strong); font-size: 0.68rem; font-weight: 800; }
 .editorial-status--draft { background: rgba(230, 189, 85, 0.2); color: #775b09; }
+.editorial-status--finished { background: rgba(228, 87, 63, 0.14); color: var(--accent-primary-strong); }
 .editor-empty { color: var(--text-muted); font-size: 0.85rem; }
 .metrics-error-card { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: 1rem 1.25rem; background: rgba(177, 57, 42, 0.08); color: var(--accent-primary-strong); }
 .metrics-loading { min-height: 24rem; display: grid; place-items: center; border: 1px solid var(--border-soft); border-radius: 1.15rem; background: rgba(255, 253, 248, 0.72); }

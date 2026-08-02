@@ -1,7 +1,9 @@
+import { EventoEstadoEditorial } from './evento';
+
 export interface EditorMetricEvent {
   id: number;
   titulo: string;
-  estadoEditorial: 'draft' | 'published';
+  estadoEditorial: EventoEstadoEditorial;
   views: number;
   uniqueViews: number;
 }
@@ -30,6 +32,7 @@ export interface EditorMetrics {
   zonaHoraria: string;
   totalEvents: number;
   publishedEvents: number;
+  finishedEvents: number;
   draftEvents: number;
   featuredEvents: number;
   totalViews: number;

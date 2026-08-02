@@ -16,7 +16,7 @@ export interface EventoEditorInput {
   descripcionCorta: string;
   descripcionLarga: string;
   fechaInicio: string;
-  fechaFin?: string;
+  fechaFin: string;
   ubicacion: string;
   organizador: string;
   imagenUrl: string;

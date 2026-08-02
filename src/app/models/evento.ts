@@ -12,7 +12,7 @@ export interface EventoAdjunto {
 }
 
 export type EventoModalidad = 'Presencial' | 'Online' | 'Hibrido';
-export type EventoEstadoEditorial = 'draft' | 'published';
+export type EventoEstadoEditorial = 'draft' | 'published' | 'finished';
 
 export interface Evento {
   id: number;
