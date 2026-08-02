@@ -69,4 +69,29 @@ describe('EventosService', () => {
     expect(resultado.imagenUrl).toBe(`${window.location.origin}/api/uploads/imagen`);
     expect(resultado.adjuntos[0].url).toBe(`${window.location.origin}/api/uploads/bases`);
   });
+
+  it('excluye eventos finalizados del listado público', () => {
+    let resultado: any;
+    service.getEventos().subscribe((events) => (resultado = events));
+
+    const request = httpTesting.expectOne('/api/events');
+    request.flush([
+      {
+        id: 1,
+        slug: 'activo',
+        titulo: 'Evento activo',
+        imagenUrl: '/api/uploads/activo',
+        estadoEditorial: 'published',
+      },
+      {
+        id: 2,
+        slug: 'finalizado',
+        titulo: 'Evento finalizado',
+        imagenUrl: '/api/uploads/finalizado',
+        estadoEditorial: 'finished',
+      },
+    ]);
+
+    expect(resultado.map((event: { slug: string }) => event.slug)).toEqual(['activo']);
+  });
 });

@@ -43,7 +43,7 @@
 - `EventosService` combina eventos de la API con eventos editoriales publicados; las consultas de eventos de la API fallan de forma tolerante a una lista vacía.
 - `/login` muestra el acceso editorial y solo inicia Google después del clic explícito. `EditorAuthService` obtiene `/auth/me`; no guardar tokens o sesiones en `localStorage`. El guard de `/editor` valida la sesión remota y preserva `returnUrl`.
 - La cookie es `HttpOnly`; todas las peticiones API usan `withCredentials` mediante el interceptor. Un `401` editorial vuelve a `/login`.
-- Las lecturas públicas usan `/events` y reciben `published` y `finished`; el editor usa `/editor/events` para incluir borradores.
+- El listado público usa `/events` y recibe solo `published`; el detalle por slug también consulta `finished` como histórico. El editor usa `/editor/events` para incluir borradores.
 - Dentro del editor, `/editor/eventos` es la biblioteca; `/editor/eventos/nuevo` crea y `/editor/eventos/:id/editar` edita. No mezclar la lista con el formulario.
 - Imagen y PDF permanecen como `File` en memoria hasta guardar. `POST/PUT /api/events` envía un multipart con `evento`, `imagen` y `adjuntos`; el máximo combinado es 4 MB. Los documentos se muestran en la lista inferior y no se insertan en `descripcionLarga`.
 - `descripcionLarga` se guarda como HTML sanitizable y los PDFs se registran en `adjuntos`; no usar Base64 para imágenes o documentos.
